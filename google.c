@@ -116,7 +116,7 @@ void handle_google(char *channel, char *from, char *content)
 	char *tmpfile, *url, *title, *desc;
 
 	content += 7;
-	ptr = urlencode(content);
+	ptr = (char*)urlencode((unsigned char*)content);
 	tmpfile = strdup("/tmp/mxw_XXXXXX");
 	mkstemp(tmpfile);
 	asprintf(&ptr2, "http://www.google.co.hu/search?q=%s", ptr);
