@@ -16,13 +16,16 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
+CFLAGS += -g -Wall -O2 -march=$(shell uname -m) -pipe
+
 CFLAGS += -I/usr/include/inetlib
-CFLAGS += -Wall -O2 -march=$(shell uname -m) -pipe
 LDFLAGS += -linetlib
+
+LDFLAGS += $(shell curl-config --libs)
 
 all: mxw
 
 mxw: mxw.o google.o
 
 clean:
-	rm *.o mxw
+	rm -f *.o mxw
