@@ -153,6 +153,7 @@ int main(void)
 	server0.port = PORT;
 	server0.nick = strdup(NICK);
 	server0.user = strdup(USER);
+	server0.pass = strdup(PASS);
 
 	reconnect();
 
