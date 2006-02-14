@@ -27,7 +27,7 @@
 #define NICK "mxw"
 #define PASS "<2dA3xAkt"
 #define USER "mxw"
-#define SERVER "irc.inflame.hu"
+#define SERVER "irc.freenode.net"
 #define PORT 6667
 #define CHANNEL "#fdb"
 
