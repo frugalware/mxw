@@ -16,16 +16,25 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-CFLAGS += -g -Wall -O2 -march=$(shell uname -m) -pipe
+CFLAGS ?= -g -Wall -O2 -march=$(shell uname -m) -pipe
+ifeq ($(shell arch),x86_64)
+CFLAGS += -fPIC
+endif
+LDFLAGS = -ldl -rdynamic
 
 CFLAGS += -I/usr/include/inetlib
 LDFLAGS += -linetlib
 
 LDFLAGS += $(shell curl-config --libs)
 
-all: mxw
+LIBS = libmxw
 
-mxw: mxw.o google.o
+all: mxw $(addsuffix .so,$(LIBS))
+
+mxw: mxw.o
+
+libmxw.so: libmxw.o google.o
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$@ -o $@ $? $(LDFLAGS)
 
 clean:
-	rm -f *.o mxw
+	rm -f *.o *.so mxw
