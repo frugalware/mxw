@@ -33,7 +33,7 @@
 #define PORT 6667
 #define CHANNEL "#fdb"
 
-struct irc_server server0;
+extern struct irc_server server0;
 
 lib_t lib =
 {
@@ -153,6 +153,12 @@ int handle_privmsg(char *raw_data)
 
 void reconnect(void)
 {
+	server0.server = strdup(SERVER);
+	server0.port = PORT;
+	server0.nick = strdup(NICK);
+	server0.user = strdup(USER);
+	server0.pass = strdup(PASS);
+
 	irc_disconnect(&server0);
 	irc_connect(&server0);
 	_irc_raw_send(&server0, "privmsg NickServ :identify %s\n", server0.pass);
@@ -164,13 +170,10 @@ int run(void)
 {
 	int ret, myret=0;
 
-	server0.server = strdup(SERVER);
-	server0.port = PORT;
-	server0.nick = strdup(NICK);
-	server0.user = strdup(USER);
-	server0.pass = strdup(PASS);
-
-	reconnect();
+	if(!server0.server)
+		reconnect();
+	else
+		_irc_raw_send(&server0, "privmsg " CHANNEL " :reload done\n");
 
 	while(1)
 	{

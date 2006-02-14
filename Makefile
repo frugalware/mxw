@@ -34,7 +34,7 @@ all: mxw $(addsuffix .so,$(LIBS))
 mxw: mxw.o
 
 libmxw.so: libmxw.o google.o
-	$(CC) $(CFLAGS) -shared -Wl,-soname,$@ -o $@ $? $(LDFLAGS)
+	$(CC) $(CFLAGS) -shared -Wl,-soname,$@ -o $@ $^ $(LDFLAGS)
 
 clean:
 	rm -f *.o *.so mxw

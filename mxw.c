@@ -19,161 +19,47 @@
  *  USA.
  */
 
-#include <time.h>
+#define _GNU_SOURCE
+#include <stdio.h>
+#include <dlfcn.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <limits.h>
 #include <inetlib.h>
 
-#include "google.h"
-
-#define NICK "mxw"
-#define PASS "<2dA3xAkt"
-#define USER "mxw"
-#define SERVER "irc.freenode.net"
-#define PORT 6667
-#define CHANNEL "#fdb"
+#include "mxw.h"
 
 struct irc_server server0;
 
-char *getchannel(char *data)
-{
-	char buf[BUF_SIZE];
-	char *str, *ptr;
-
-	strcpy(buf, data);
-	str = buf;
-	str = strchr(++str, ' ');
-	str = strchr(++str, ' ');
-	ptr = strchr(++str, ' ');
-	*ptr = '\0';
-
-	return(strdup(str));
-}
-
-char *getto(char *data)
-{
-	char buf[BUF_SIZE];
-	char *str, *ptr;
-
-	strcpy(buf, data);
-	str = buf;
-	str = strchr(++str, ' ');
-	str = strchr(++str, ' ');
-	str = strchr(++str, ' ');
-	ptr = strchr(++str, ' ');
-	if(ptr)
-		*--ptr = '\0';
-	else
-		return(NULL);
-
-	return(strdup(++str));
-}
-
-char *getnick(char *data)
-{
-	char buf[BUF_SIZE];
-	char *str, *ptr;
-
-	strcpy(buf, data);
-	str = buf;
-	ptr = strchr(++str, '!');
-	*ptr = '\0';
-
-	return(strdup(str));
-}
-
-char *getcontent(char *data, char *channel)
-{
-	char *ptr;
-	int i;
-
-	ptr = data;
-	for(i=0;i<3&&ptr;i++)
-		ptr = strchr(++ptr, ' ');
-	if(channel!=NULL)
-		ptr = strchr(++ptr, ' ');
-	else
-		ptr++;
-
-	return(++ptr);
-}
-
-void handle_request(char *channel, char *from, char *content)
-{
-	if(channel)
-	{
-		_irc_raw_send(&server0, "PRIVMSG %s :%s: die plz (%s)\n", channel, from, content);
-		free(channel);
-	}
-	else
-	{
-		_irc_raw_send(&server0, "PRIVMSG %s :die plz (%s)\n", from, content);
-	}
-	free(from);
-}
-
-int handle_privmsg(char *raw_data)
-{
-	char *from, *channel=NULL, *content;
-	char *ptr;
-
-	if((((ptr = getto(raw_data))!=NULL) && !strcmp(ptr, NICK)) || (!strchr(raw_data, '#')))
-	{
-		if(strchr(raw_data, '#')==NULL)
-			from = getnick(raw_data);
-		else
-		{
-			channel = getchannel(raw_data);
-			from = getnick(raw_data);
-		}
-		content = getcontent(raw_data, channel);
-		if(!strncmp(content, "google", strlen("google")))
-			handle_google(channel, from, content);
-		else
-			handle_request(channel, from, content);
-	}
-	if(ptr)
-		free(ptr);
-	ptr=NULL;
-	return(0);
-}
-
-void reconnect(void)
-{
-	irc_disconnect(&server0);
-	irc_connect(&server0);
-	_irc_raw_send(&server0, "privmsg NickServ :identify %s\n", server0.pass);
-	usleep(2000000);
-	_irc_raw_send(&server0, "join " CHANNEL "\n");
-}
-
 int main(void)
 {
-	int ret;
-
-	server0.server = strdup(SERVER);
-	server0.port = PORT;
-	server0.nick = strdup(NICK);
-	server0.user = strdup(USER);
-	server0.pass = strdup(PASS);
-
-	reconnect();
+	void *handle;
+	void *(*infop) (void);
+	char cwd[PATH_MAX+1], *ptr;
 
 	while(1)
 	{
-		// wait till new data arrives, then get it
-		ret = irc_receive(&server0, -1);
-
-		if(ret > 0)
+		// load the lib
+		getcwd(cwd, PATH_MAX);
+		asprintf(&ptr, "%s/libmxw.so", cwd);
+		if ((handle = dlopen(ptr, RTLD_NOW)) == NULL)
 		{
-			// for debugging
-			printf("%s\n", server0.raw_data);
-			if(strstr(server0.raw_data, "PRIVMSG"))
-				handle_privmsg(server0.raw_data);
-
-			// check for ping, and pong if necesary
-			irc_check_ping(&server0);
+			fprintf(stderr, "%s\n", dlerror());
+			return(1);
 		}
-		if(ret < 0)
-			reconnect();
+		free(ptr);
+		if ((infop = dlsym(handle, "info")) == NULL)
+		{
+			fprintf(stderr, "%s\n", dlerror());
+			return(1);
+		}
+		lib_t *lib = infop();
+		lib->handle = handle;
+
+		if(!lib->run())
+			return(0);
+
+		dlclose(lib->handle);
 	}
 	return(0);
 }
