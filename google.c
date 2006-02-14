@@ -161,14 +161,20 @@ void handle_google(char *channel, char *from, char *content)
 			desc = ptr2;
 
 			if(channel)
-			{
-				_irc_raw_send(&server0, "PRIVMSG %s :%s\n", channel, title);
-				free(channel);
-			}
+				ptr=channel;
 			else
-			{
-				_irc_raw_send(&server0, "PRIVMSG %s :wtf google?\n", from);
-			}
+				ptr=from;
+				_irc_raw_send(&server0, "PRIVMSG %s :((google)) %s\n", ptr, title);
+				ptr2=desc;
+				_irc_raw_send(&server0, "PRIVMSG %s :%s\n", ptr, desc);
+				while((ptr2=strchr(ptr2, '\n')))
+				{
+					ptr2++;
+					_irc_raw_send(&server0, "PRIVMSG %s :%s\n", ptr, ptr2);
+				}
+				_irc_raw_send(&server0, "PRIVMSG %s :%s\n", ptr, url);
+			if(channel)
+				free(channel);
 			free(from);
 			free(url);
 			free(title);
