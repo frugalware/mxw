@@ -134,13 +134,13 @@ void handle_google(char *channel, char *from, char *content)
 		{
 			ptr = strstr(ptr, "href=\"");
 			url = strdup(ptr + 6);
-			ptr2 = strstr(url, "\">");
-			*ptr2='\0';
+			if((ptr2 = strstr(url, "\">")))
+				*ptr2='\0';
 
 			ptr = strstr(ptr, "\">");
 			title = strdup(ptr+2);
-			ptr2 = strstr(title, "</a>");
-			*ptr2='\0';
+			if((ptr2 = strstr(title, "</a>")))
+				*ptr2='\0';
 			ptr2 = striptags(title);
 			free(title);
 			title = ptr2;
