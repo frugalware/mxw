@@ -87,24 +87,18 @@ unsigned char *urlencode(unsigned char *s)
 	return(t);
 }
 
-char *bold2irc(char *from)
+char *striptags(char *from)
 {
-	char *ret, *ptr;
+	char *ret, *ptr, *ptr2;
+	int i;
 
 	ret = strdup(from);
-	while((ptr=strstr(ret, "<b>")))
+	while((ptr=strchr(ret, '<')))
 	{
-		*ptr='';
-		memmove(ptr+1, ptr+3, strlen(ptr)-2);
-	}
-	while((ptr=strstr(ret, "</b>")))
-	{
-		*ptr='';
-		memmove(ptr+1, ptr+4, strlen(ptr)-3);
-	}
-	while((ptr=strstr(ret, "<br>")))
-	{
-		memmove(ptr, ptr+4, strlen(ptr)-3);
+		ptr2=ptr;
+		i=0;
+		for(i=0;*ptr2 && *ptr2 != '>';i++,ptr2++);
+		memmove(ptr, ptr+i+1, strlen(ptr)-i);
 	}
 	return(ret);
 }
@@ -147,19 +141,24 @@ void handle_google(char *channel, char *from, char *content)
 			title = strdup(ptr+2);
 			ptr2 = strstr(title, "</a>");
 			*ptr2='\0';
-			ptr2 = bold2irc(title);
+			ptr2 = striptags(title);
 			free(title);
 			title = ptr2;
 
 			ptr = strstr(ptr, "=-1>");
 			desc = strdup(ptr+4);
 			if((ptr2 = strstr(desc, "<br>")))
-				ptr2 += 4;
-			if(!strncmp(ptr2, "<font", 5))
-				*ptr2='\0';
-			else if((ptr2 = strstr(ptr2, "<br>")))
-				*ptr2='\0';
-			ptr2 = bold2irc(desc);
+			{
+				if(!strncmp(ptr2+4, "<font", 5) && *(ptr2+4))
+					*(ptr2+4)='\0';
+				else
+				{
+					ptr2 += 4;
+					if((ptr2 = strstr(ptr2, "<br>")))
+						*ptr2='\0';
+				}
+			}
+			ptr2 = striptags(desc);
 			free(desc);
 			desc = ptr2;
 
