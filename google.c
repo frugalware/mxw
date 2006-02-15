@@ -155,8 +155,8 @@ void handle_google(char *channel, char *from, char *content)
 			desc = strdup(ptr+4);
 			ptr2 = strstr(desc, "<br>");
 			ptr2 += 4;
-			ptr2 = strstr(ptr2, "<br>");
-			*ptr2='\0';
+			if((ptr2 = strstr(ptr2, "<br>")))
+				*ptr2='\0';
 			ptr2 = bold2irc(desc);
 			free(desc);
 			desc = ptr2;
