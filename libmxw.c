@@ -140,7 +140,7 @@ int handle_privmsg(char *raw_data)
 		content = getcontent(raw_data, channel);
 		if(!strncmp(content, "google", strlen("google")))
 			handle_google(channel, from, content);
-		if(!strncmp(content, "reload", strlen("reload")))
+		else if(!strncmp(content, "reload", strlen("reload")))
 			return(1);
 		else
 			handle_request(channel, from, content);
