@@ -132,12 +132,14 @@ void handle_google(char *channel, char *from, char *content)
 		fread(line, 1, 4096, fp);
 		if((ptr=strstr(line, "<p class=g>")))
 		{
-			ptr = strstr(ptr, "href=\"");
+			if(!(ptr = strstr(ptr, "href=\"")))
+				return;
 			url = strdup(ptr + 6);
 			if((ptr2 = strstr(url, "\">")))
 				*ptr2='\0';
 
-			ptr = strstr(ptr, "\">");
+			if(!(ptr = strstr(ptr, "\">")))
+				return;
 			title = strdup(ptr+2);
 			if((ptr2 = strstr(title, "</a>")))
 				*ptr2='\0';
@@ -145,22 +147,29 @@ void handle_google(char *channel, char *from, char *content)
 			free(title);
 			title = ptr2;
 
-			ptr = strstr(ptr, "=-1>");
-			desc = strdup(ptr+4);
-			if((ptr2 = strstr(desc, "<br>")))
+			if(!(ptr = strstr(ptr, "=-1>")))
 			{
-				if(!strncmp(ptr2+4, "<font", 5) && *(ptr2+4))
-					*(ptr2+4)='\0';
-				else
-				{
-					ptr2 += 4;
-					if((ptr2 = strstr(ptr2, "<br>")))
-						*ptr2='\0';
-				}
+				// unknown file type so just omit the desc
+				desc=strdup("");
 			}
-			ptr2 = striptags(desc);
-			free(desc);
-			desc = ptr2;
+			else
+			{
+				desc = strdup(ptr+4);
+				if((ptr2 = strstr(desc, "<br>")))
+				{
+					if(!strncmp(ptr2+4, "<font", 5) && *(ptr2+4))
+						*(ptr2+4)='\0';
+					else
+					{
+						ptr2 += 4;
+						if((ptr2 = strstr(ptr2, "<br>")))
+							*ptr2='\0';
+					}
+				}
+				ptr2 = striptags(desc);
+				free(desc);
+				desc = ptr2;
+			}
 
 			if(channel)
 				ptr=channel;
