@@ -113,12 +113,12 @@ void handle_request(char *channel, char *from, char *content)
 {
 	if(channel)
 	{
-		_irc_raw_send(&server0, "PRIVMSG %s :%s: die plz (%s)\n", channel, from, content);
+		_irc_raw_send(&server0, "PRIVMSG %s :%s: die plz\n", channel, from);
 		free(channel);
 	}
 	else
 	{
-		_irc_raw_send(&server0, "PRIVMSG %s :die plz (%s)\n", from, content);
+		_irc_raw_send(&server0, "PRIVMSG %s :die plz\n", from);
 	}
 	free(from);
 }
