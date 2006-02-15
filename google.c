@@ -134,6 +134,7 @@ void handle_google(char *channel, char *from, char *content)
 	fp = fopen(tmpfile, "r");
 	while(!feof(fp))
 	{
+		memset(line, 0, 4096);
 		fread(line, 1, 4096, fp);
 		if((ptr=strstr(line, "<p class=g>")))
 		{
