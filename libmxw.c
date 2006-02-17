@@ -24,6 +24,7 @@
 
 #include "mxw.h"
 #include "google.h"
+#include "eval.h"
 #include "libmxw.h"
 #include "config.h"
 
@@ -136,6 +137,8 @@ int handle_privmsg(char *raw_data)
 			handle_google(channel, from, content, KEY);
 		else if(!strncmp(content, "reload", strlen("reload")))
 			return(1);
+		else if(!strncmp(content, "eval", strlen("eval")))
+			handle_eval(channel, from, content, MASTER);
 		else
 			handle_request(channel, from, content);
 	}
