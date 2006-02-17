@@ -87,18 +87,24 @@ unsigned char *urlencode(unsigned char *s)
 	return(t);
 }
 
-char *striptags(char *from)
+char *bold2irc(char *from)
 {
-	char *ret, *ptr, *ptr2;
-	int i;
+	char *ret, *ptr;
 
 	ret = strdup(from);
-	while((ptr=strchr(ret, '<')))
+	while((ptr=strstr(ret, "<b>")))
 	{
-		ptr2=ptr;
-		i=0;
-		for(i=0;*ptr2 && *ptr2 != '>';i++,ptr2++);
-		memmove(ptr, ptr+i+1, strlen(ptr)-i);
+		*ptr='';
+		memmove(ptr+1, ptr+3, strlen(ptr)-2);
+	}
+	while((ptr=strstr(ret, "</b>")))
+	{
+		*ptr='';
+		memmove(ptr+1, ptr+4, strlen(ptr)-3);
+	}
+	while((ptr=strstr(ret, "<br>")))
+	{
+		memmove(ptr, ptr+4, strlen(ptr)-3);
 	}
 	return(ret);
 }
