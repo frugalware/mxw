@@ -25,13 +25,7 @@
 #include "mxw.h"
 #include "google.h"
 #include "libmxw.h"
-
-#define NICK "mxw"
-#define PASS "<2dA3xAkt"
-#define USER "mxw"
-#define SERVER "irc.freenode.net"
-#define PORT 6667
-#define CHANNEL "#fdb"
+#include "config.h"
 
 extern struct irc_server server0;
 
@@ -139,7 +133,7 @@ int handle_privmsg(char *raw_data)
 		}
 		content = getcontent(raw_data, channel);
 		if(!strncmp(content, "google", strlen("google")))
-			handle_google(channel, from, content);
+			handle_google(channel, from, content, KEY);
 		else if(!strncmp(content, "reload", strlen("reload")))
 			return(1);
 		else

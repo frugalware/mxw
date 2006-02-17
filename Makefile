@@ -22,14 +22,15 @@ CFLAGS += -fPIC
 endif
 LDFLAGS = -ldl -rdynamic
 
-CFLAGS += -I/usr/include/inetlib
-LDFLAGS += -linetlib
-
-LDFLAGS += $(shell curl-config --libs)
+CFLAGS += -I/usr/include/inetlib -Ilibgoogleapi
+LDFLAGS += -linetlib -Llibgoogleapi -lgoogleapi -lgsoap
 
 LIBS = libmxw
 
-all: mxw $(addsuffix .so,$(LIBS))
+all: googleapi mxw $(addsuffix .so,$(LIBS))
+
+googleapi:
+	$(MAKE) -C libgoogleapi
 
 mxw: mxw.o
 
@@ -38,3 +39,4 @@ libmxw.so: libmxw.o google.o
 
 clean:
 	rm -f *.o *.so mxw
+	$(MAKE) -C libgoogleapi clean

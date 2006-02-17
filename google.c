@@ -22,70 +22,10 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <string.h>
-#include <curl/curl.h>
 #include <inetlib.h>
+#include <google.h>
 
 extern struct irc_server server0;
-
-int download(char *from, char *to)
-{
-	CURL *easyhandle;
-	FILE *fp;
-
-	if ((fp = fopen(to, "w")) == NULL)
-	{
-		perror("could not open file for writing");
-		return(1);
-	}
-	
-	if (curl_global_init(CURL_GLOBAL_ALL) != 0)
-		return(1);
-	if ((easyhandle = curl_easy_init()) == NULL)
-		return(1);
-
-	if (curl_easy_setopt(easyhandle, CURLOPT_VERBOSE, 1) != 0)
-		return(1);
-	if (curl_easy_setopt(easyhandle, CURLOPT_WRITEDATA, fp) != 0)
-		return(1);
-	if (curl_easy_setopt(easyhandle, CURLOPT_URL, from) != 0)
-		return(1);
-	if (curl_easy_perform(easyhandle) != 0)
-		return(1);
-	
-	curl_easy_cleanup(easyhandle);
-	curl_global_cleanup();
-	return(0);
-}
-
-unsigned char *urlencode(unsigned char *s)
-{
-	unsigned char *t, *p, *tp;
-
-	if(s == NULL)
-		return(NULL);
-	t = (unsigned char*)malloc(strlen((char*)s)*3+1);
-
-	tp=t;
-	for(p=s; *p; p++)
-	{
-		if((*p > 0x00 && *p < ',') ||
-			(*p > '9' && *p < 'A') ||
-			(*p > 'Z' && *p < '_') ||
-			(*p > '_' && *p < 'a') ||
-			(*p > 'z' && *p < 0xA1))
-		{
-			sprintf((char*)tp, "%%%02X", *p);
-			tp += 3;
-		}
-		else
-		{
-			*tp = *p;
-			tp++;
-		}
-	}
-	*tp='\0';
-	return(t);
-}
 
 char *bold2irc(char *from)
 {
@@ -109,97 +49,40 @@ char *bold2irc(char *from)
 	return(ret);
 }
 
-void handle_google(char *channel, char *from, char *content)
+void handle_google(char *channel, char *from, char *content, char *key)
 {
-	FILE *fp;
-	char line[4097], *ptr, *ptr2;
-	char *tmpfile, *url, *title, *desc;
+	char *ptr;
+	char *title=NULL, *desc=NULL;
 
 	content += 7;
-	ptr = (char*)urlencode((unsigned char*)content);
-	tmpfile = strdup("/tmp/mxw_XXXXXX");
-	mkstemp(tmpfile);
-	asprintf(&ptr2, "http://www.google.co.hu/search?q=%s", ptr);
-	if(download(ptr2, tmpfile))
+	gsearch_t *s = google(key, "search", content);
+	if(channel)
+		ptr=channel;
+	else
+		ptr=from;
+	if(s->title == NULL)
 	{
-		free(ptr);
-		free(ptr2);
-		unlink(tmpfile);
-		free(tmpfile);
+		_irc_raw_send(&server0, "PRIVMSG %s :lol @ u\n", ptr);
 		return;
 	}
-	free(ptr);
-	free(ptr2);
+	if(s->title)
+		title = bold2irc(s->title);
+	if(s->desc)
+		desc = bold2irc(s->desc);
 
-	fp = fopen(tmpfile, "r");
-	while(!feof(fp))
-	{
-		memset(line, 0, 4096);
-		fread(line, 1, 4096, fp);
-		if((ptr=strstr(line, "<p class=g>")))
-		{
-			if(!(ptr = strstr(ptr, "href=\"")))
-				return;
-			url = strdup(ptr + 6);
-			if((ptr2 = strstr(url, "\">")))
-				*ptr2='\0';
-
-			if(!(ptr = strstr(ptr, "\">")))
-				return;
-			title = strdup(ptr+2);
-			if((ptr2 = strstr(title, "</a>")))
-				*ptr2='\0';
-			ptr2 = striptags(title);
-			free(title);
-			title = ptr2;
-
-			if(!(ptr = strstr(ptr, "=-1>")))
-			{
-				// unknown file type so just omit the desc
-				desc=strdup("");
-			}
-			else
-			{
-				desc = strdup(ptr+4);
-				if((ptr2 = strstr(desc, "<br>")))
-				{
-					if(!strncmp(ptr2+4, "<font", 5) && *(ptr2+4))
-						*(ptr2+4)='\0';
-					else
-					{
-						ptr2 += 4;
-						if((ptr2 = strstr(ptr2, "<br>")))
-							*ptr2='\0';
-					}
-				}
-				ptr2 = striptags(desc);
-				free(desc);
-				desc = ptr2;
-			}
-
-			if(channel)
-				ptr=channel;
-			else
-				ptr=from;
+			if(title)
 				_irc_raw_send(&server0, "PRIVMSG %s :((google)) %s\n", ptr, title);
-				ptr2=desc;
+			if(desc)
 				_irc_raw_send(&server0, "PRIVMSG %s :%s\n", ptr, desc);
-				while((ptr2=strchr(ptr2, '\n')))
-				{
-					ptr2++;
-					_irc_raw_send(&server0, "PRIVMSG %s :%s\n", ptr, ptr2);
-				}
-				_irc_raw_send(&server0, "PRIVMSG %s :%s\n", ptr, url);
+			if(s->url)
+				_irc_raw_send(&server0, "PRIVMSG %s :%s\n", ptr, s->url);
 			if(channel)
 				free(channel);
 			free(from);
-			free(url);
 			free(title);
 			free(desc);
-			break;
-		}
-	}
-	fclose(fp);
-	unlink(tmpfile);
-	free(tmpfile);
+			free(s->title);
+			free(s->desc);
+			free(s->url);
+			free(s);
 }
