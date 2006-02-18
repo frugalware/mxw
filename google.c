@@ -49,6 +49,30 @@ char *bold2irc(char *from)
 	return(ret);
 }
 
+void handle_spell(char *channel, char *from, char *content, char *key)
+{
+	char *ptr;
+
+	content += 6;
+	ptr = (char*)google(key, "spell", content);
+	if(ptr==NULL)
+	{
+		if(channel)
+			_irc_raw_send(&server0, "PRIVMSG %s :%s: hey, what's the problem here?\n", channel, from);
+		else
+			_irc_raw_send(&server0, "PRIVMSG %s :hey, what's the problem here?\n", from);
+	}
+	else
+	{
+		if(channel)
+			_irc_raw_send(&server0, "PRIVMSG %s :%s: %s, moron!\n", channel, from, ptr);
+		else
+			_irc_raw_send(&server0, "PRIVMSG %s :%s, moron!\n", from, ptr);
+	}
+	if(ptr)
+		free(ptr);
+}
+
 void handle_google(char *channel, char *from, char *content, char *key)
 {
 	char *ptr;

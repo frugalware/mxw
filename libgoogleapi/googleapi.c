@@ -59,7 +59,7 @@ void *google(char *key, char *dir, char *arg)
       return(NULL);
     }
     else
-      printf("Suggested spelling: %s\n", r?r:"<NONE>");
+      return(r?strdup(r):NULL);
   }
   else
     fprintf(stderr, "Unknown directive\n");
