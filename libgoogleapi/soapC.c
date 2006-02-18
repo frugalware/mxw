@@ -1391,8 +1391,8 @@ SOAP_FMAC3 int SOAP_FMAC4 soap_put_api__doSpellingSuggestion(struct soap *soap, 
 SOAP_FMAC3 int SOAP_FMAC4 soap_out_api__doSpellingSuggestion(struct soap *soap, const char *tag, int id, const struct api__doSpellingSuggestion *a, const char *type)
 {
 	soap_element_begin_out(soap, tag, soap_embedded_id(soap, id, a, SOAP_TYPE_api__doSpellingSuggestion), type);
-	soap_out_xsd__string(soap, "key", -1, &a->key, "");
-	soap_out_xsd__string(soap, "phrase", -1, &a->phrase, "");
+	soap_out_xsd__string(soap, "key", -1, &a->key, "xsd:string");
+	soap_out_xsd__string(soap, "phrase", -1, &a->phrase, "xsd:string");
 	soap_element_end_out(soap, tag);
 	return SOAP_OK;
 }
