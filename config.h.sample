@@ -2,6 +2,7 @@
 #define PASS "secret"
 #define KEY "googlekey"
 #define USER "foo"
+#define MASTER "master"
 #define SERVER "irc.freenode.net"
 #define PORT 6667
 #define CHANNEL "#yourchan"
