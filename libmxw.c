@@ -123,9 +123,9 @@ int handle_privmsg(char *raw_data)
 	char *from, *channel=NULL, *content;
 	char *ptr;
 
-	if((((ptr = getto(raw_data))!=NULL) && !strcmp(ptr, NICK)) || (!strchr(raw_data, '#')))
+	if((((ptr = getto(raw_data))!=NULL) && !strcmp(ptr, NICK)) || (!strstr(raw_data, "PRIVMSG #")))
 	{
-		if(strchr(raw_data, '#')==NULL)
+		if(!strstr(raw_data, "PRIVMSG #"))
 			from = getnick(raw_data);
 		else
 		{
