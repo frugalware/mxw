@@ -118,6 +118,11 @@ void handle_request(char *channel, char *from, char *content)
 	free(from);
 }
 
+void handle_threedot(char *channel, char *from)
+{
+	_irc_raw_send(&server0, "PRIVMSG %s :%s: stop writing ...s please. it's annoying. thanks\n", channel, from);
+}
+
 int handle_privmsg(char *raw_data)
 {
 	char *from, *channel=NULL, *content;
@@ -143,6 +148,15 @@ int handle_privmsg(char *raw_data)
 			handle_eval(channel, from, content, MASTER);
 		else
 			handle_request(channel, from, content);
+	}
+	else if(strstr(raw_data, "PRIVMSG #"))
+	{
+		from = getnick(raw_data);
+		content = strstr(raw_data, CHANNEL);
+		content += strlen(CHANNEL);
+		if(strstr(content, " ... "))
+			handle_threedot(CHANNEL, from);
+		free(from);
 	}
 	if(ptr)
 		free(ptr);
