@@ -84,6 +84,11 @@ void handle_google(char *channel, char *from, char *content, char *key)
 		ptr=channel;
 	else
 		ptr=from;
+	if(s == NULL)
+	{
+		_irc_raw_send(&server0, "PRIVMSG %s :google: ping\n", ptr);
+		return;
+	}
 	if(s->title == NULL)
 	{
 		_irc_raw_send(&server0, "PRIVMSG %s :lol @ u\n", ptr);
