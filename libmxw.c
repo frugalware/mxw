@@ -130,6 +130,11 @@ void handle_bugs(char *channel, char *from)
 		"http://bugs.frugalware.org\n", channel, from);
 }
 
+void handle_rtfm(char *channel, char *from)
+{
+	_irc_raw_send(&server0, "PRIVMSG %s :%s: rtfm => if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs.php, probably your question is answered there\n", channel, from);
+}
+
 int handle_privmsg(char *raw_data)
 {
 	char *from, *channel=NULL, *content;
@@ -155,6 +160,8 @@ int handle_privmsg(char *raw_data)
 			handle_eval(channel, from, content, MASTER);
 		else if(!strncmp(content, "bugs", strlen("bugs")))
 			handle_bugs(channel, from);
+		else if(!strncmp(content, "rtfm", strlen("rtfm")))
+			handle_rtfm(channel, from);
 		else
 			handle_request(channel, from, content);
 	}
