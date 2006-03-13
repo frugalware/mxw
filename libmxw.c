@@ -123,6 +123,13 @@ void handle_threedot(char *channel, char *from)
 	_irc_raw_send(&server0, "PRIVMSG %s :%s: stop writing ...s please. it's annoying. thanks\n", channel, from);
 }
 
+void handle_bugs(char *channel, char *from)
+{
+	_irc_raw_send(&server0, "PRIVMSG %s :%s: bugs => here we can help, but if you want a bug/feature "
+		"to be fixed/implemented, then please file a bugreport/feature request at "
+		"http://bugs.frugalware.org\n", channel, from);
+}
+
 int handle_privmsg(char *raw_data)
 {
 	char *from, *channel=NULL, *content;
@@ -146,6 +153,8 @@ int handle_privmsg(char *raw_data)
 			return(1);
 		else if(!strncmp(content, "eval", strlen("eval")))
 			handle_eval(channel, from, content, MASTER);
+		else if(!strncmp(content, "bugs", strlen("bugs")))
+			handle_bugs(channel, from);
 		else
 			handle_request(channel, from, content);
 	}
