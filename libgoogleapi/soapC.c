@@ -808,7 +808,7 @@ SOAP_FMAC3 enum _Enum_1 * SOAP_FMAC4 soap_in_xsd__boolean(struct soap *soap, con
 			return NULL;
 	}
 	else
-	{	a = (enum _Enum_1 *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_xsd__boolean, 0, sizeof(enum _Enum_1), 0, NULL);
+	{	a = (enum _Enum_1 *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_xsd__boolean, 0, sizeof(enum _Enum_1), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -839,7 +839,7 @@ static const struct soap_code_map soap_codes__Enum_1[] =
 };
 
 SOAP_FMAC3S const char* SOAP_FMAC4S soap__Enum_12s(struct soap *soap, enum _Enum_1 n)
-{	const char *s = soap_str_code(soap_codes__Enum_1, (long)n);
+{	const char *s = soap_code_str(soap_codes__Enum_1, (long)n);
 	if (s)
 		return s;
 	return soap_long2s(soap, (long)n);
@@ -891,7 +891,7 @@ SOAP_FMAC3 enum _Enum_1 * SOAP_FMAC4 soap_in__Enum_1(struct soap *soap, const ch
 			return NULL;
 	}
 	else
-	{	a = (enum _Enum_1 *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE__Enum_1, 0, sizeof(enum _Enum_1), 0, NULL);
+	{	a = (enum _Enum_1 *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE__Enum_1, 0, sizeof(enum _Enum_1), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1033,7 +1033,7 @@ SOAP_FMAC3 struct SOAP_ENV__Fault * SOAP_FMAC4 soap_in_SOAP_ENV__Fault(struct so
 			return NULL;
 	}
 	else
-	{	a = (struct SOAP_ENV__Fault *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_SOAP_ENV__Fault, 0, sizeof(struct SOAP_ENV__Fault), 0, NULL);
+	{	a = (struct SOAP_ENV__Fault *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_SOAP_ENV__Fault, 0, sizeof(struct SOAP_ENV__Fault), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1110,7 +1110,7 @@ SOAP_FMAC3 struct SOAP_ENV__Reason * SOAP_FMAC4 soap_in_SOAP_ENV__Reason(struct 
 			return NULL;
 	}
 	else
-	{	a = (struct SOAP_ENV__Reason *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_SOAP_ENV__Reason, 0, sizeof(struct SOAP_ENV__Reason), 0, NULL);
+	{	a = (struct SOAP_ENV__Reason *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_SOAP_ENV__Reason, 0, sizeof(struct SOAP_ENV__Reason), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1195,7 +1195,7 @@ SOAP_FMAC3 struct SOAP_ENV__Detail * SOAP_FMAC4 soap_in_SOAP_ENV__Detail(struct 
 			return NULL;
 	}
 	else
-	{	a = (struct SOAP_ENV__Detail *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_SOAP_ENV__Detail, 0, sizeof(struct SOAP_ENV__Detail), 0, NULL);
+	{	a = (struct SOAP_ENV__Detail *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_SOAP_ENV__Detail, 0, sizeof(struct SOAP_ENV__Detail), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1283,7 +1283,7 @@ SOAP_FMAC3 struct SOAP_ENV__Code * SOAP_FMAC4 soap_in_SOAP_ENV__Code(struct soap
 			return NULL;
 	}
 	else
-	{	a = (struct SOAP_ENV__Code *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_SOAP_ENV__Code, 0, sizeof(struct SOAP_ENV__Code), 0, NULL);
+	{	a = (struct SOAP_ENV__Code *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_SOAP_ENV__Code, 0, sizeof(struct SOAP_ENV__Code), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1357,7 +1357,7 @@ SOAP_FMAC3 struct SOAP_ENV__Header * SOAP_FMAC4 soap_in_SOAP_ENV__Header(struct 
 			return NULL;
 	}
 	else
-	{	a = (struct SOAP_ENV__Header *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_SOAP_ENV__Header, 0, sizeof(struct SOAP_ENV__Header), 0, NULL);
+	{	a = (struct SOAP_ENV__Header *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_SOAP_ENV__Header, 0, sizeof(struct SOAP_ENV__Header), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1442,7 +1442,7 @@ SOAP_FMAC3 struct api__doSpellingSuggestion * SOAP_FMAC4 soap_in_api__doSpelling
 			return NULL;
 	}
 	else
-	{	a = (struct api__doSpellingSuggestion *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_api__doSpellingSuggestion, 0, sizeof(struct api__doSpellingSuggestion), 0, NULL);
+	{	a = (struct api__doSpellingSuggestion *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_api__doSpellingSuggestion, 0, sizeof(struct api__doSpellingSuggestion), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1519,7 +1519,7 @@ SOAP_FMAC3 struct api__doSpellingSuggestionResponse * SOAP_FMAC4 soap_in_api__do
 			return NULL;
 	}
 	else
-	{	a = (struct api__doSpellingSuggestionResponse *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_api__doSpellingSuggestionResponse, 0, sizeof(struct api__doSpellingSuggestionResponse), 0, NULL);
+	{	a = (struct api__doSpellingSuggestionResponse *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_api__doSpellingSuggestionResponse, 0, sizeof(struct api__doSpellingSuggestionResponse), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1602,7 +1602,7 @@ SOAP_FMAC3 struct api__doGetCachedPage * SOAP_FMAC4 soap_in_api__doGetCachedPage
 			return NULL;
 	}
 	else
-	{	a = (struct api__doGetCachedPage *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_api__doGetCachedPage, 0, sizeof(struct api__doGetCachedPage), 0, NULL);
+	{	a = (struct api__doGetCachedPage *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_api__doGetCachedPage, 0, sizeof(struct api__doGetCachedPage), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1679,7 +1679,7 @@ SOAP_FMAC3 struct api__doGetCachedPageResponse * SOAP_FMAC4 soap_in_api__doGetCa
 			return NULL;
 	}
 	else
-	{	a = (struct api__doGetCachedPageResponse *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_api__doGetCachedPageResponse, 0, sizeof(struct api__doGetCachedPageResponse), 0, NULL);
+	{	a = (struct api__doGetCachedPageResponse *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_api__doGetCachedPageResponse, 0, sizeof(struct api__doGetCachedPageResponse), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1826,7 +1826,7 @@ SOAP_FMAC3 struct api__doGoogleSearch * SOAP_FMAC4 soap_in_api__doGoogleSearch(s
 			return NULL;
 	}
 	else
-	{	a = (struct api__doGoogleSearch *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_api__doGoogleSearch, 0, sizeof(struct api__doGoogleSearch), 0, NULL);
+	{	a = (struct api__doGoogleSearch *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_api__doGoogleSearch, 0, sizeof(struct api__doGoogleSearch), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -1906,7 +1906,7 @@ SOAP_FMAC3 struct api__doGoogleSearchResponse * SOAP_FMAC4 soap_in_api__doGoogle
 			return NULL;
 	}
 	else
-	{	a = (struct api__doGoogleSearchResponse *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_api__doGoogleSearchResponse, 0, sizeof(struct api__doGoogleSearchResponse), 0, NULL);
+	{	a = (struct api__doGoogleSearchResponse *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_api__doGoogleSearchResponse, 0, sizeof(struct api__doGoogleSearchResponse), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -2059,7 +2059,7 @@ SOAP_FMAC3 struct api__GoogleSearchResult * SOAP_FMAC4 soap_in_api__GoogleSearch
 			return NULL;
 	}
 	else
-	{	a = (struct api__GoogleSearchResult *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_api__GoogleSearchResult, 0, sizeof(struct api__GoogleSearchResult), 0, NULL);
+	{	a = (struct api__GoogleSearchResult *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_api__GoogleSearchResult, 0, sizeof(struct api__GoogleSearchResult), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -2175,7 +2175,7 @@ SOAP_FMAC3 struct ResultElementArray * SOAP_FMAC4 soap_in_ResultElementArray(str
 			return NULL;
 	}
 	else
-	{	a = (struct ResultElementArray *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_ResultElementArray, 0, sizeof(struct ResultElementArray), 0, NULL);
+	{	a = (struct ResultElementArray *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_ResultElementArray, 0, sizeof(struct ResultElementArray), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -2318,7 +2318,7 @@ SOAP_FMAC3 struct api__ResultElement * SOAP_FMAC4 soap_in_api__ResultElement(str
 			return NULL;
 	}
 	else
-	{	a = (struct api__ResultElement *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_api__ResultElement, 0, sizeof(struct api__ResultElement), 0, NULL);
+	{	a = (struct api__ResultElement *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_api__ResultElement, 0, sizeof(struct api__ResultElement), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -2434,7 +2434,7 @@ SOAP_FMAC3 struct DirectoryCategoryArray * SOAP_FMAC4 soap_in_DirectoryCategoryA
 			return NULL;
 	}
 	else
-	{	a = (struct DirectoryCategoryArray *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_DirectoryCategoryArray, 0, sizeof(struct DirectoryCategoryArray), 0, NULL);
+	{	a = (struct DirectoryCategoryArray *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_DirectoryCategoryArray, 0, sizeof(struct DirectoryCategoryArray), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -2517,7 +2517,7 @@ SOAP_FMAC3 struct api__DirectoryCategory * SOAP_FMAC4 soap_in_api__DirectoryCate
 			return NULL;
 	}
 	else
-	{	a = (struct api__DirectoryCategory *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_api__DirectoryCategory, 0, sizeof(struct api__DirectoryCategory), 0, NULL);
+	{	a = (struct api__DirectoryCategory *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_api__DirectoryCategory, 0, sizeof(struct api__DirectoryCategory), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
@@ -2581,7 +2581,7 @@ SOAP_FMAC3 struct xsd__base64Binary * SOAP_FMAC4 soap_in_xsd__base64Binary(struc
 			return NULL;
 	}
 	else
-	{	a = (struct xsd__base64Binary *)soap_id_forward(soap, soap->href, (void**)a, SOAP_TYPE_xsd__base64Binary, 0, sizeof(struct xsd__base64Binary), 0, NULL);
+	{	a = (struct xsd__base64Binary *)soap_id_forward(soap, soap->href, (void**)a, 0, SOAP_TYPE_xsd__base64Binary, 0, sizeof(struct xsd__base64Binary), 0, NULL);
 		if (soap->body && soap_element_end_in(soap, tag))
 			return NULL;
 	}
