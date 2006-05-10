@@ -25,6 +25,7 @@
 #include "mxw.h"
 #include "google.h"
 #include "eval.h"
+#include "opme.h"
 #include "libmxw.h"
 #include "config.h"
 
@@ -163,6 +164,8 @@ int handle_privmsg(char *raw_data)
 			return(1);
 		else if(!strncmp(content, "eval", strlen("eval")))
 			handle_eval(channel, from, content, MASTER);
+		else if(!strncmp(content, "opme", strlen("opme")))
+			handle_opme(channel, from, content);
 		else if(!strncmp(content, "bugs", strlen("bugs")))
 			handle_bugs(channel, from);
 		else if(!strncmp(content, "rtfm", strlen("rtfm")))

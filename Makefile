@@ -34,7 +34,7 @@ googleapi:
 
 mxw: mxw.o
 
-libmxw.so: libmxw.o google.o eval.o
+libmxw.so: libmxw.o google.o eval.o opme.o
 	$(CC) $(CFLAGS) -shared -Wl,-soname,$@ -o $@ $^ $(LDFLAGS)
 
 clean:
