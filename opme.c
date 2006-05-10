@@ -51,3 +51,19 @@ void handle_opme(char *channel, char *from, char *content)
 	snprintf(buf, 512, "MODE %s +o %s\n", CHANNEL, from);
 	_irc_raw_send(&server0, buf);
 }
+
+void handle_whois(char *raw)
+{
+	char *ptr, *nick;
+
+	if((ptr=strstr(raw, "320 " NICK)))
+	{
+		nick = strdup(ptr+strlen(NICK)+5);
+		ptr = nick;
+		while(*ptr!=' ')
+			ptr++;
+		*ptr='\0';
+		_irc_raw_send(&server0, "PRIVMSG %s :%s: yes, i know your pass\n", CHANNEL, nick);
+		free(nick);
+	}
+}

@@ -223,6 +223,7 @@ int run(void)
 		{
 			// for debugging
 			printf("%s\n", server0.raw_data);
+			handle_whois(server0.raw_data);
 			if(strstr(server0.raw_data, "PRIVMSG"))
 				myret += handle_privmsg(server0.raw_data);
 
