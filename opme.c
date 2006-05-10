@@ -37,7 +37,10 @@ void handle_opme(char *channel, char *from, char *content)
 		ptr=channel;
 	else
 		ptr=from;
-	if (strcmp(from, "vmiklos"))
+	if (strcmp(from, "crazy||") && strcmp(from, "boobaa") && strcmp(from, "slin") &&
+		strcmp(from, "priyank") && strcmp(from, "bmh1980") && strcmp(from, "krix") &&
+		 strcmp(from, "DNAku") && strcmp(from, "janny") && strcmp(from, "AlexExtreme") &&
+		 strcmp(from, "xbit`") && strcmp(from, "vmiklos") && strcmp(from, "IroNiQ"))
 	{
 		_irc_raw_send(&server0, "PRIVMSG %s :Segmentation fault\n", ptr);
 		return;
