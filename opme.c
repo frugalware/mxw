@@ -31,7 +31,6 @@ extern struct irc_server server0;
 void handle_opme(char *channel, char *from, char *content)
 {
 	char *ptr;
-	char buf[512];
 
 	if(channel)
 		ptr=channel;
@@ -48,8 +47,7 @@ void handle_opme(char *channel, char *from, char *content)
 
 	content += 5;
 
-	snprintf(buf, 512, "MODE %s +o %s\n", CHANNEL, from);
-	_irc_raw_send(&server0, buf);
+	_irc_raw_send(&server0, "MODE %s +o %s\n", CHANNEL, from);
 }
 
 void handle_whois(char *raw)
