@@ -47,7 +47,7 @@ void handle_opme(char *channel, char *from, char *content)
 
 	content += 5;
 
-	_irc_raw_send(&server0, "MODE %s +o %s\n", CHANNEL, from);
+	_irc_raw_send(&server0, "WHOIS %s\n", from);
 }
 
 void handle_whois(char *raw)
@@ -61,7 +61,8 @@ void handle_whois(char *raw)
 		while(*ptr!=' ')
 			ptr++;
 		*ptr='\0';
-		_irc_raw_send(&server0, "PRIVMSG %s :%s: yes, i know your pass\n", CHANNEL, nick);
+		//_irc_raw_send(&server0, "PRIVMSG %s :%s: haha, i know your pass\n", CHANNEL, nick);
+		_irc_raw_send(&server0, "MODE %s +o %s\n", CHANNEL, nick);
 		free(nick);
 	}
 }
