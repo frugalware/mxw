@@ -6,3 +6,5 @@
 #define SERVER "irc.freenode.net"
 #define PORT 6667
 #define CHANNEL "#yourchan"
+#define AUTHORSFILE "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
+

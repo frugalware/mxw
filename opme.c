@@ -23,11 +23,80 @@
 #include <stdio.h>
 #include <string.h>
 #include <inetlib.h>
+#include <stdlib.h>
+#include <libxml/xmlmemory.h>
+#include <libxml/parser.h>
 
 #include "config.h"
 
 extern struct irc_server server0;
 
+int checkAuthor(xmlDoc *doc, xmlNode *cur, char *nick)
+{
+	xmlChar *key;
+	cur = cur->xmlChildrenNode;
+
+	while (cur != NULL)
+	{
+		key = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
+		if ((!xmlStrcmp(cur->name, (const xmlChar *)"nick")))
+		{
+			if ((!xmlStrcmp(key, (const xmlChar *)nick)))
+			{
+				xmlFree(key);
+				return(1);
+			}
+		}
+		xmlFree(key);
+		cur = cur->next;
+	}
+	return(0);
+}
+
+int checkAuthors(char *nick)
+{
+	xmlDocPtr doc;
+	xmlNodePtr cur;
+
+	doc = xmlParseFile(AUTHORSFILE);
+
+	if(doc == NULL)
+	{
+		fprintf(stderr, "document not parsed successfully\n");
+		return(0);
+	}
+
+	cur = xmlDocGetRootElement(doc);
+
+	if(cur == NULL)
+	{
+		fprintf(stderr, "empty document\n");
+		xmlFreeDoc(doc);
+		return(0);
+	}
+
+	if(xmlStrcmp(cur->name, (const xmlChar *)"authors"))
+	{
+		fprintf(stderr, "document of the wrong type, root node != authors");
+		xmlFreeDoc(doc);
+		return(0);
+	}
+
+	cur = cur->xmlChildrenNode;
+	while(cur != NULL)
+	{
+		if((!xmlStrcmp(cur->name, (const xmlChar *)"author")))
+			if(checkAuthor(doc, cur, nick))
+			{
+				xmlFreeDoc(doc);
+				return(1);
+			}
+		cur = cur->next;
+	}
+
+	xmlFreeDoc(doc);
+	return(0);
+}
 void handle_opme(char *channel, char *from, char *content)
 {
 	char *ptr;
@@ -36,10 +105,7 @@ void handle_opme(char *channel, char *from, char *content)
 		ptr=channel;
 	else
 		ptr=from;
-	if (strcmp(from, "crazy||") && strcmp(from, "boobaa") && strcmp(from, "slin") &&
-		strcmp(from, "priyank") && strcmp(from, "bmh1980") && strcmp(from, "krix") &&
-		 strcmp(from, "DNAku") && strcmp(from, "janny") && strcmp(from, "AlexExtreme") &&
-		 strcmp(from, "xbit`") && strcmp(from, "vmiklos") && strcmp(from, "IroNiQ"))
+	if (!checkAuthors(from))
 	{
 		_irc_raw_send(&server0, "PRIVMSG %s :Segmentation fault\n", ptr);
 		return;

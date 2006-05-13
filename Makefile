@@ -25,6 +25,9 @@ LDFLAGS = -ldl -rdynamic
 CFLAGS += -I/usr/include/inetlib -Ilibgoogleapi
 LDFLAGS += -linetlib -Llibgoogleapi -lgoogleapi -lgsoap
 
+CFLAGS += -Wall $(shell pkg-config --cflags libxml-2.0)
+LDFLAGS += $(shell pkg-config --libs libxml-2.0)
+
 LIBS = libmxw
 
 all: googleapi mxw $(addsuffix .so,$(LIBS))
