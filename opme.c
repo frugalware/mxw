@@ -28,6 +28,7 @@
 #include <libxml/parser.h>
 
 #include "config.h"
+#include "libmxw.h"
 
 extern struct irc_server server0;
 
@@ -116,6 +117,19 @@ void handle_opme(char *channel, char *from, char *content)
 	_irc_raw_send(&server0, "WHOIS %s\n", from);
 }
 
+void handle_join(char *raw_data)
+{
+	char *from = getnick(raw_data);
+
+	if(strstr(raw_data, "JOIN :" CHANNEL2))
+	{
+		if (checkAuthors(from))
+		{
+			_irc_raw_send(&server0, "MODE %s +v %s\n", CHANNEL2, from);
+		}
+	}
+}
+
 void handle_whois(char *raw)
 {
 	char *ptr, *nick;
@@ -127,7 +141,6 @@ void handle_whois(char *raw)
 		while(*ptr!=' ')
 			ptr++;
 		*ptr='\0';
-		//_irc_raw_send(&server0, "PRIVMSG %s :%s: haha, i know your pass\n", CHANNEL, nick);
 		_irc_raw_send(&server0, "MODE %s +o %s\n", CHANNEL, nick);
 		free(nick);
 	}

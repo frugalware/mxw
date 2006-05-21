@@ -175,7 +175,7 @@ int handle_privmsg(char *raw_data)
 		else
 			handle_request(channel, from, content);
 	}
-	else if(strstr(raw_data, "PRIVMSG #"))
+	else if(strstr(raw_data, "PRIVMSG " CHANNEL " "))
 	{
 		from = getnick(raw_data);
 		content = strstr(raw_data, CHANNEL);
@@ -203,6 +203,7 @@ void reconnect(void)
 	_irc_raw_send(&server0, "privmsg NickServ :identify %s\n", server0.pass);
 	usleep(2000000);
 	_irc_raw_send(&server0, "join " CHANNEL "\n");
+	_irc_raw_send(&server0, "join " CHANNEL2 "\n");
 }
 
 int run(void)
@@ -226,6 +227,8 @@ int run(void)
 			handle_whois(server0.raw_data);
 			if(strstr(server0.raw_data, "PRIVMSG"))
 				myret += handle_privmsg(server0.raw_data);
+			if(strstr(server0.raw_data, "JOIN"))
+				handle_join(server0.raw_data);
 
 			// check for ping, and pong if necesary
 			irc_check_ping(&server0);
