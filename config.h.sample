@@ -10,3 +10,4 @@
 #define AUTHORSFILE "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 #define PACKAGESCHAN "#yourchan"
 #define BLOGSCHAN "#yourchan"
+#define BUGSCHAN "#yourchan"

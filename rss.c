@@ -28,7 +28,8 @@ int dorss (char *rss, char *target, char *channel, time_t *lastupd)
 	    {
 		    if(!strcmp(channel, "packages"))
 			    _irc_raw_send(&server0, "PRIVMSG %s :14%s 7%s 3%s\n", target, channel, item->author, item->title);
-		    else if(!strcmp(channel, "blogs"))
+		    // blogs and bugs
+		    else
 			    _irc_raw_send(&server0, "PRIVMSG %s :14%s 7%s 3%s\n", target, channel, item->title, item->link);
 	    }
 	    if(*lastupd==0)

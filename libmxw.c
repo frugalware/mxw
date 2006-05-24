@@ -209,7 +209,7 @@ void reconnect(void)
 
 void check_rss(void)
 {
-	static time_t packages=0, blogs=0;
+	static time_t packages=0, blogs=0, bugs=0;
 	static time_t lastupd=0;
 	time_t current = time(NULL);
 
@@ -220,6 +220,7 @@ void check_rss(void)
 	lastupd = current;
 	dorss("http://frugalware.org/rss.php?type=packages", PACKAGESCHAN, "packages", &packages);
 	dorss("http://frugalware.org/rss.php?type=blogs", BLOGSCHAN, "blogs", &blogs);
+	dorss("http://frugalware.org/rss.php?type=bugs", BUGSCHAN, "bugs", &bugs);
 }
 
 int run(void)
