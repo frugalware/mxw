@@ -210,6 +210,14 @@ void reconnect(void)
 void check_rss(void)
 {
 	static time_t packages=0, blogs=0;
+	static time_t lastupd=0;
+	time_t current = time(NULL);
+
+	if(!lastupd)
+		lastupd=time(NULL);
+	if((lastupd!=current) && ((current-lastupd)<180))
+		return;
+	lastupd = current;
 	dorss("http://frugalware.org/rss.php?type=packages", PACKAGESCHAN, "packages", &packages);
 	dorss("http://blogs.frugalware.org/xmlsrv/rss2.php?blog=1", BLOGSCHAN, "blogs", &blogs);
 }
