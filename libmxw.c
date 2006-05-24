@@ -209,8 +209,9 @@ void reconnect(void)
 
 void check_rss(void)
 {
-	static time_t packages=0;
+	static time_t packages=0, blogs=0;
 	dorss("http://frugalware.org/rss.php?type=packages", PACKAGESCHAN, "packages", &packages);
+	dorss("http://blogs.frugalware.org/xmlsrv/rss2.php?blog=1", BLOGSCHAN, "blogs", &blogs);
 }
 
 int run(void)
