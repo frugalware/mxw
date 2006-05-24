@@ -28,6 +28,7 @@
 #include "opme.h"
 #include "libmxw.h"
 #include "config.h"
+#include "rss.h"
 
 extern struct irc_server server0;
 
@@ -206,6 +207,12 @@ void reconnect(void)
 	_irc_raw_send(&server0, "join " CHANNEL2 "\n");
 }
 
+void check_rss(void)
+{
+	static time_t packages=0;
+	dorss("http://frugalware.org/rss.php?type=packages", PACKAGESCHAN, "packages", &packages);
+}
+
 int run(void)
 {
 	int ret, myret=0;
@@ -232,6 +239,7 @@ int run(void)
 
 			// check for ping, and pong if necesary
 			irc_check_ping(&server0);
+			check_rss();
 		}
 		if(ret < 0)
 			reconnect();

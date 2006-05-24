@@ -28,6 +28,9 @@ LDFLAGS += -linetlib -Llibgoogleapi -lgoogleapi -lgsoap
 CFLAGS += -Wall $(shell pkg-config --cflags libxml-2.0)
 LDFLAGS += $(shell pkg-config --libs libxml-2.0)
 
+LDFLAGS += $(shell curl-config --libs)
+LDFLAGS += $(shell pkg-config --libs mrss)
+
 LIBS = libmxw
 
 all: googleapi mxw $(addsuffix .so,$(LIBS))
@@ -37,7 +40,7 @@ googleapi:
 
 mxw: mxw.o
 
-libmxw.so: libmxw.o google.o eval.o opme.o
+libmxw.so: libmxw.o google.o eval.o opme.o rss.o getdate.o
 	$(CC) $(CFLAGS) -shared -Wl,-soname,$@ -o $@ $^ $(LDFLAGS)
 
 clean:
