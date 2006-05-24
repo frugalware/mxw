@@ -219,7 +219,7 @@ void check_rss(void)
 		return;
 	lastupd = current;
 	dorss("http://frugalware.org/rss.php?type=packages", PACKAGESCHAN, "packages", &packages);
-	dorss("http://blogs.frugalware.org/xmlsrv/rss2.php?blog=1", BLOGSCHAN, "blogs", &blogs);
+	dorss("http://frugalware.org/rss.php?type=blogs", BLOGSCHAN, "blogs", &blogs);
 }
 
 int run(void)
