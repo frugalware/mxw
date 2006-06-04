@@ -187,7 +187,10 @@ void handle_kick(char *channel, char *from, char *content)
 		*ptr = '\0';
 
 	// 3 for the 3 spaces: " kick nick "
-	why = strdup(content+strlen("kick")+strlen(from)+3);
+	if(strlen(content)>strlen("kick")+strlen(from)+3)
+		why = strdup(content+strlen("kick")+strlen(from)+3);
+	else
+		why = strdup("can't we all be friends?");
 
 	if(!channel)
 		channel=from;
