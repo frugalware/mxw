@@ -171,7 +171,7 @@ void handle_devoiceme(char *channel, char *from, char *content)
 		return;
 
 	t->owner = strdup(from);
-	t->cmd = g_strdup_printf("MODE %s +v %s", ptr, from);
+	t->cmd = g_strdup_printf("MODE %s -v %s", ptr, from);
 	todo = g_list_append(todo, t);
 
 	_irc_raw_send(&server0, "WHOIS %s\n", from);
