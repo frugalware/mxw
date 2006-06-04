@@ -26,11 +26,15 @@
 #include <stdlib.h>
 #include <libxml/xmlmemory.h>
 #include <libxml/parser.h>
+#include <glib.h>
 
 #include "config.h"
 #include "libmxw.h"
+#include "opme.h"
 
 extern struct irc_server server0;
+
+GList *todo=NULL;
 
 int checkAuthor(xmlDoc *doc, xmlNode *cur, char *nick)
 {
@@ -101,6 +105,7 @@ int checkAuthors(char *nick)
 void handle_opme(char *channel, char *from, char *content)
 {
 	char *ptr;
+	todo_t *t;
 
 	if(channel)
 		ptr=channel;
@@ -112,7 +117,12 @@ void handle_opme(char *channel, char *from, char *content)
 		return;
 	}
 
-	content += 5;
+	if((t = (todo_t *)malloc(sizeof(todo_t))) == NULL)
+		return;
+
+	t->owner = strdup(from);
+	t->cmd = g_strdup_printf("MODE %s +o %s", ptr, from);
+	todo = g_list_append(todo, t);
 
 	_irc_raw_send(&server0, "WHOIS %s\n", from);
 }
@@ -133,6 +143,7 @@ void handle_join(char *raw_data)
 void handle_whois(char *raw)
 {
 	char *ptr, *nick;
+	int i;
 
 	if((ptr=strstr(raw, "320 " NICK)))
 	{
@@ -141,7 +152,17 @@ void handle_whois(char *raw)
 		while(*ptr!=' ')
 			ptr++;
 		*ptr='\0';
-		_irc_raw_send(&server0, "MODE %s +o %s\n", CHANNEL, nick);
+		for(i=0;i<g_list_length(todo);i++)
+		{
+			todo_t *t = g_list_nth_data(todo, i);
+			if(!strcmp(t->owner, nick))
+			{
+				_irc_raw_send(&server0, "%s\n", t->cmd);
+				free(t->owner);
+				free(t->cmd);
+				todo = g_list_remove(todo, t);
+			}
+		}
 		free(nick);
 	}
 }
