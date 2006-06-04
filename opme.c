@@ -135,7 +135,14 @@ void handle_join(char *raw_data)
 	{
 		if (checkAuthors(from))
 		{
-			_irc_raw_send(&server0, "MODE %s +v %s\n", CHANNEL2, from);
+			todo_t *t;
+
+			if((t = (todo_t *)malloc(sizeof(todo_t))) == NULL)
+				return;
+			t->owner = strdup(from);
+			t->cmd = g_strdup_printf("MODE %s +v %s", CHANNEL2, from);
+			todo = g_list_append(todo, t);
+			_irc_raw_send(&server0, "WHOIS %s\n", from);
 		}
 	}
 }
