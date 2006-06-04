@@ -177,6 +177,38 @@ void handle_devoiceme(char *channel, char *from, char *content)
 	_irc_raw_send(&server0, "WHOIS %s\n", from);
 }
 
+void handle_kick(char *channel, char *from, char *content)
+{
+	char *who, *why, *ptr;
+	todo_t *t;
+
+	who = strdup(content+strlen("kick "));
+	if((ptr = strstr(who, " ")))
+		*ptr = '\0';
+
+	// 3 for the 3 spaces: " kick nick "
+	why = strdup(content+strlen("kick")+strlen(from)+3);
+
+	if(!channel)
+		channel=from;
+	if (!checkAuthors(from))
+	{
+		_irc_raw_send(&server0, "PRIVMSG %s :%s: haha\n", channel, from);
+		return;
+	}
+
+	if((t = (todo_t *)malloc(sizeof(todo_t))) == NULL)
+		return;
+
+	t->owner = strdup(from);
+	t->cmd = g_strdup_printf("KICK %s %s :%s", channel, who, why);
+	todo = g_list_append(todo, t);
+	free(who);
+	free(why);
+
+	_irc_raw_send(&server0, "WHOIS %s\n", from);
+}
+
 void handle_join(char *raw_data)
 {
 	char *from = getnick(raw_data);
