@@ -175,6 +175,10 @@ int handle_privmsg(char *raw_data)
 			handle_eval(channel, from, content, MASTER);
 		else if(!strncmp(content, "opme", strlen("opme")))
 			handle_opme(channel, from, content);
+		else if(!strncmp(content, "voiceme", strlen("voiceme")))
+			handle_voiceme(channel, from, content);
+		else if(!strncmp(content, "devoiceme", strlen("devoiceme")))
+			handle_devoiceme(channel, from, content);
 		else if(!strncmp(content, "bugs", strlen("bugs")))
 			handle_bugs(channel, from);
 		else if(!strncmp(content, "rtfm", strlen("rtfm")))

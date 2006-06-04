@@ -127,6 +127,56 @@ void handle_opme(char *channel, char *from, char *content)
 	_irc_raw_send(&server0, "WHOIS %s\n", from);
 }
 
+void handle_voiceme(char *channel, char *from, char *content)
+{
+	char *ptr;
+	todo_t *t;
+
+	if(channel)
+		ptr=channel;
+	else
+		ptr=from;
+	if (!checkAuthors(from))
+	{
+		_irc_raw_send(&server0, "PRIVMSG %s :u r t3h w4nn4b3\n", ptr);
+		return;
+	}
+
+	if((t = (todo_t *)malloc(sizeof(todo_t))) == NULL)
+		return;
+
+	t->owner = strdup(from);
+	t->cmd = g_strdup_printf("MODE %s +v %s", ptr, from);
+	todo = g_list_append(todo, t);
+
+	_irc_raw_send(&server0, "WHOIS %s\n", from);
+}
+
+void handle_devoiceme(char *channel, char *from, char *content)
+{
+	char *ptr;
+	todo_t *t;
+
+	if(channel)
+		ptr=channel;
+	else
+		ptr=from;
+	if (!checkAuthors(from))
+	{
+		_irc_raw_send(&server0, "PRIVMSG %s :(null)\n", ptr);
+		return;
+	}
+
+	if((t = (todo_t *)malloc(sizeof(todo_t))) == NULL)
+		return;
+
+	t->owner = strdup(from);
+	t->cmd = g_strdup_printf("MODE %s +v %s", ptr, from);
+	todo = g_list_append(todo, t);
+
+	_irc_raw_send(&server0, "WHOIS %s\n", from);
+}
+
 void handle_join(char *raw_data)
 {
 	char *from = getnick(raw_data);
