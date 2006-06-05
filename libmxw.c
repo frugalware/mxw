@@ -31,6 +31,7 @@
 #include "rss.h"
 
 extern struct irc_server server0;
+extern char *reload_chan;
 
 lib_t lib =
 {
@@ -170,7 +171,10 @@ int handle_privmsg(char *raw_data)
 		else if(!strncmp(content, "spell", strlen("spell")))
 			handle_spell(channel, from, content, KEY);
 		else if(!strncmp(content, "reload", strlen("reload")))
+		{
+			reload_chan = strdup(channel);
 			return(1);
+		}
 		else if(!strncmp(content, "eval", strlen("eval")))
 			handle_eval(channel, from, content, MASTER);
 		else if(!strncmp(content, "opme", strlen("opme")))
@@ -248,7 +252,10 @@ int run(void)
 	if(!server0.server)
 		reconnect();
 	else
-		_irc_raw_send(&server0, "privmsg " CHANNEL " :reload done\n");
+	{
+		_irc_raw_send(&server0, "privmsg %s :reload done\n", reload_chan);
+		free(reload_chan);
+	}
 
 	while(1)
 	{

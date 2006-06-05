@@ -30,6 +30,7 @@
 #include "mxw.h"
 
 struct irc_server server0;
+char *reload_chan;
 
 int main(void)
 {
