@@ -20,6 +20,7 @@
  */
 
 #include <time.h>
+#include <signal.h>
 #include <inetlib.h>
 
 #include "mxw.h"
@@ -42,6 +43,12 @@ lib_t lib =
 lib_t *info()
 {
 	 return &lib;
+}
+
+void cleanup(int signum)
+{
+	_irc_raw_send(&server0, "QUIT\n");
+	exit(signum);
 }
 
 char *getchannel(char *data)
@@ -248,6 +255,11 @@ void check_rss(void)
 int run(void)
 {
 	int ret, myret=0;
+
+	/* set signal handlers */
+	signal(SIGINT, cleanup);
+	signal(SIGTERM, cleanup);
+	signal(SIGSEGV, cleanup);
 
 	if(!server0.server)
 		reconnect();
