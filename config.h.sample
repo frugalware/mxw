@@ -7,6 +7,7 @@
 #define PORT 6667
 #define CHANNEL "#yourchan"
 #define CHANNEL2 "#yourchan2"
+#define CHANNEL3 "#yourchan3"
 #define AUTHORSFILE "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 #define PACKAGESCHAN "#yourchan"
 #define BLOGSCHAN "#yourchan"
