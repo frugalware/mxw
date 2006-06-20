@@ -16,7 +16,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 #
 
-CFLAGS ?= -g -Wall -O2 -march=$(shell uname -m) -pipe
+CFLAGS ?= -g -Wall -Werror -O2 -pipe
 ifeq ($(shell arch),x86_64)
 CFLAGS += -fPIC
 endif
@@ -25,10 +25,10 @@ LDFLAGS = -ldl -rdynamic
 CFLAGS += -I/usr/include/inetlib -Ilibgoogleapi
 LDFLAGS += -linetlib -Llibgoogleapi -lgoogleapi -lgsoap
 
-CFLAGS += -Wall $(shell pkg-config --cflags libxml-2.0)
+CFLAGS += $(shell pkg-config --cflags libxml-2.0)
 LDFLAGS += $(shell pkg-config --libs libxml-2.0)
 
-CFLAGS += -Wall $(shell pkg-config --cflags glib-2.0)
+CFLAGS += $(shell pkg-config --cflags glib-2.0)
 LDFLAGS += $(shell pkg-config --libs glib-2.0)
 
 LDFLAGS += $(shell curl-config --libs)
