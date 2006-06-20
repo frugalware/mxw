@@ -12,6 +12,7 @@ int dorss (char *rss, char *target, char *channel, time_t *lastupd)
 	mrss_t *data;
 	mrss_error_t ret;
 	mrss_item_t *item;
+	char *ptr;
 
 	if ((ret=mrss_parse_url(rss, &data)))
 	{
@@ -28,8 +29,12 @@ int dorss (char *rss, char *target, char *channel, time_t *lastupd)
 		if(get_date(item->pubDate, NULL)>*lastupd)
 		{
 			if(!strcmp(channel, "packages"))
+			{
+				if((ptr = strchr(item->author, '@')))
+					*ptr='\0';
 				_irc_raw_send(&server0, "PRIVMSG %s :14%s 7%s 3%s\n",
 					target, channel, item->author, item->title);
+			}
 			// blogs and bugs
 			else
 				_irc_raw_send(&server0, "PRIVMSG %s :14%s 7%s 3%s\n",
