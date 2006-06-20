@@ -248,9 +248,9 @@ void check_rss(void)
 	if((lastupd!=current) && ((current-lastupd)<180))
 		return;
 	lastupd = current;
-	dorss("http://frugalware.org/rss.php?type=packages", PACKAGESCHAN, "packages", &packages);
-	dorss("http://frugalware.org/rss.php?type=blogs", BLOGSCHAN, "blogs", &blogs);
-	dorss("http://frugalware.org/rss.php?type=bugs", BUGSCHAN, "bugs", &bugs);
+	dorss("http://frugalware.org/rss/packages", PACKAGESCHAN, "packages", &packages);
+	dorss("http://frugalware.org/rss/blogs", BLOGSCHAN, "blogs", &blogs);
+	dorss("http://frugalware.org/rss/bugs", BUGSCHAN, "bugs", &bugs);
 }
 
 int run(void)
