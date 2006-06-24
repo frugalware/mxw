@@ -142,7 +142,7 @@ void handle_bugs(char *channel, char *from)
 
 void handle_rtfm(char *channel, char *from)
 {
-	_irc_raw_send(&server0, "PRIVMSG %s :%s: rtfm => if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs.php, probably your question is answered there\n", channel, from);
+	_irc_raw_send(&server0, "PRIVMSG %s :%s: rtfm => if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs/, probably your question is answered there\n", channel, from);
 }
 
 void handle_flame(char *channel, char *from)
