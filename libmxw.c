@@ -280,7 +280,7 @@ int run(void)
 	while(1)
 	{
 		// wait till new data arrives, then get it
-		ret = irc_receive(&server0, -1);
+		ret = irc_receive(&server0, 300);
 
 		if(ret > 0)
 		{
