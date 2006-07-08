@@ -133,6 +133,11 @@ void handle_threedot(char *channel, char *from)
 	_irc_raw_send(&server0, "PRIVMSG %s :%s: stop writing ...s please. it's annoying. thanks\n", channel, from);
 }
 
+void handle_au(char *channel, char *from)
+{
+	_irc_raw_send(&server0, "PRIVMSG %s :%s: 22:13 -!- Mojojojo [n=Mojojojo@reaktor.linuxforum.hu] has quit [Read error: 104 (Connection reset by peer)]\n", channel, from);
+}
+
 void handle_bugs(char *channel, char *from)
 {
 	_irc_raw_send(&server0, "PRIVMSG %s :%s: bugs => here we can help, but if you want a bug/feature "
@@ -219,6 +224,8 @@ int handle_privmsg(char *raw_data)
 		content += strlen(CHANNEL);
 		if(strstr(content, " ... "))
 			handle_threedot(CHANNEL, from);
+		if(strstr(content, " :-au"))
+			handle_au(CHANNEL, from);
 		free(from);
 	}
 	if(ptr)
