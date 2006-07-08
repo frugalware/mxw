@@ -224,8 +224,15 @@ int handle_privmsg(char *raw_data)
 		content += strlen(CHANNEL);
 		if(strstr(content, " ... "))
 			handle_threedot(CHANNEL, from);
+		free(from);
+	}
+	else if(strstr(raw_data, "PRIVMSG #debian.hu "))
+	{
+		from = getnick(raw_data);
+		content = strstr(raw_data, "#debian.hu");
+		content += strlen("#debian.hu");
 		if(strstr(content, " :-au"))
-			handle_au(CHANNEL, from);
+			handle_au("#debian.hu", from);
 		free(from);
 	}
 	if(ptr)
