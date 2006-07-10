@@ -231,8 +231,8 @@ int handle_privmsg(char *raw_data)
 		from = getnick(raw_data);
 		content = strstr(raw_data, "#debian.hu");
 		content += strlen("#debian.hu");
-		if(strstr(content, " :-au"))
-			handle_au("#debian.hu", from);
+		/*if(strstr(content, " :-au"))
+			handle_au("#debian.hu", from);*/
 		free(from);
 	}
 	if(ptr)
