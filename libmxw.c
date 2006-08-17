@@ -138,11 +138,11 @@ void handle_au(char *channel, char *from)
 	_irc_raw_send(&server0, "PRIVMSG %s :%s: 22:13 -!- Mojojojo [n=Mojojojo@reaktor.linuxforum.hu] has quit [Read error: 104 (Connection reset by peer)]\n", channel, from);
 }
 
-void handle_bugs(char *channel, char *from)
+void handle_bugs(char *channel, char *from, char *name)
 {
-	_irc_raw_send(&server0, "PRIVMSG %s :%s: bugs => here we can help, but if you want a bug/feature "
+	_irc_raw_send(&server0, "PRIVMSG %s :%s: %s => here we can help, but if you want a bug/feature "
 		"to be fixed/implemented, then please file a bugreport/feature request at "
-		"http://bugs.frugalware.org\n", channel, from);
+		"http://bugs.frugalware.org\n", channel, from, name);
 }
 
 void handle_rtfm(char *channel, char *from)
@@ -203,7 +203,9 @@ int handle_privmsg(char *raw_data)
 		else if(!strncmp(content, "kick", strlen("kick")))
 			handle_kick(channel, from, content);
 		else if(!strncmp(content, "bugs", strlen("bugs")))
-			handle_bugs(channel, from);
+			handle_bugs(channel, from, "bugs");
+		else if(!strncmp(content, "bts", strlen("bts")))
+			handle_bugs(channel, from, "bts");
 		else if(!strncmp(content, "rtfm", strlen("rtfm")))
 			handle_rtfm(channel, from);
 		else if(!strncmp(content, "nvidia", strlen("nvidia")))
