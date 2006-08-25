@@ -3,6 +3,7 @@
 #include <mrss.h>
 #include <inetlib.h>
 
+#include "config.h"
 #include "getdate.h"
 
 extern struct irc_server server0;
@@ -32,8 +33,13 @@ int dorss (char *rss, char *target, char *channel, time_t *lastupd)
 			{
 				if((ptr = strchr(item->author, '@')))
 					*ptr='\0';
-				_irc_raw_send(&server0, "PRIVMSG %s :14%s7 %s3 %s\n",
-					target, channel, item->author, item->title);
+				// send the syncpkg'd packages to the bugs channel
+				if(!strcmp(item->author, "syncpkgd"))
+					_irc_raw_send(&server0, "PRIVMSG %s :14%s7 %s3 %s\n",
+						BUGSCHAN, channel, item->author, item->title);
+				else
+					_irc_raw_send(&server0, "PRIVMSG %s :14%s7 %s3 %s\n",
+						target, channel, item->author, item->title);
 			}
 			// blogs and bugs
 			else
