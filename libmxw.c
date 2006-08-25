@@ -150,11 +150,6 @@ void handle_rtfm(char *channel, char *from)
 	_irc_raw_send(&server0, "PRIVMSG %s :%s: rtfm => if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs/, probably your question is answered there\n", channel, from);
 }
 
-void handle_nvidia(char *channel, char *from)
-{
-	_irc_raw_send(&server0, "PRIVMSG %s :%s: nvidia => an excellent description of the issues with xorg-7.1 at hand: http://www.nvnews.net/vbulletin/showthread.php?t=71767\n", channel, from);
-}
-
 void handle_flame(char *channel, char *from)
 {
 	_irc_raw_send(&server0, "PRIVMSG %s :%s: flame => Frugalware is best! All other distros suck! Oh, sure, we plan to take over the world any minute now ;)\n", channel, from);
@@ -208,8 +203,6 @@ int handle_privmsg(char *raw_data)
 			handle_bugs(channel, from, "bts");
 		else if(!strncmp(content, "rtfm", strlen("rtfm")))
 			handle_rtfm(channel, from);
-		else if(!strncmp(content, "nvidia", strlen("nvidia")))
-			handle_nvidia(channel, from);
 		else if(!strncmp(content, "flame", strlen("flame")))
 			handle_flame(channel, from);
 		else if(!strncmp(content, ":)", strlen(":)")))
