@@ -155,6 +155,13 @@ void handle_flame(char *channel, char *from)
 	_irc_raw_send(&server0, "PRIVMSG %s :%s: flame => Frugalware is best! All other distros suck! Oh, sure, we plan to take over the world any minute now ;)\n", channel, from);
 }
 
+void handle_dance(char *channel, char *from)
+{
+	_irc_raw_send(&server0, "PRIVMSG %s :0-<\n", channel);
+	_irc_raw_send(&server0, "PRIVMSG %s :0-/\n", channel);
+	_irc_raw_send(&server0, "PRIVMSG %s :0-\\\n", channel);
+}
+
 void handle_smiley(char *channel, char *from, int mode)
 {
 	if(mode==0)
@@ -205,6 +212,8 @@ int handle_privmsg(char *raw_data)
 			handle_rtfm(channel, from);
 		else if(!strncmp(content, "flame", strlen("flame")))
 			handle_flame(channel, from);
+		else if(!strncmp(content, "dance", strlen("dance")))
+			handle_dance(channel, from);
 		else if(!strncmp(content, ":)", strlen(":)")))
 			handle_smiley(channel, from, 0);
 		else if(!strncmp(content, ":D", strlen(":D")))
