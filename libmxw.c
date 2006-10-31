@@ -118,19 +118,19 @@ void handle_request(char *channel, char *from, char *content)
 {
 	if(channel)
 	{
-		_irc_raw_send(&server0, "PRIVMSG %s :%s: die plz\n", channel, from);
+		_irc_raw_send(&server0, "PRIVMSG %s :%s: hi!\n", channel, from);
 		free(channel);
 	}
 	else
 	{
-		_irc_raw_send(&server0, "PRIVMSG %s :die plz\n", from);
+		_irc_raw_send(&server0, "PRIVMSG %s :hi!\n", from);
 	}
 	free(from);
 }
 
 void handle_threedot(char *channel, char *from)
 {
-	_irc_raw_send(&server0, "PRIVMSG %s :%s: stop writing ...s please. it's annoying. thanks\n", channel, from);
+	_irc_raw_send(&server0, "PRIVMSG %s :%s: please could you not use ... so much, it gets annoying :)\n", channel, from);
 }
 
 void handle_au(char *channel, char *from)
