@@ -264,7 +264,7 @@ void reconnect(void)
 
 void check_rss(void)
 {
-	static time_t packages=0, blogs=0, bugs=0;
+	static time_t packages=0, blogs=0, bugs=0, ts=0;
 	static time_t lastupd=0;
 	time_t current = time(NULL);
 
@@ -276,6 +276,7 @@ void check_rss(void)
 	dorss("http://frugalware.org/rss/packages", PACKAGESCHAN, "packages", &packages);
 	dorss("http://frugalware.org/rss/blogs", BLOGSCHAN, "blogs", &blogs);
 	dorss("http://frugalware.org/rss/bugs", BUGSCHAN, "bugs", &bugs);
+	dorss("http://frugalware.org/~vmiklos/tsmon/tsmon.py", TSCHAN, "ts", &ts);
 }
 
 int run(void)
