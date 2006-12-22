@@ -130,7 +130,9 @@ void handle_request(char *channel, char *from, char *content)
 
 void handle_threedot(char *channel, char *from)
 {
-	_irc_raw_send(&server0, "PRIVMSG %s :%s: please could you not use ... so much, it gets annoying :)\n", channel, from);
+	_irc_raw_send(&server0, "PRIVMSG %s :%s: using \"...\" so much isn't "
+			"polite to other users. please consider changing that "
+			"habit.\n", channel, from);
 }
 
 void handle_au(char *channel, char *from)
