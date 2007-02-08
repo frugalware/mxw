@@ -212,6 +212,34 @@ void handle_kick(char *channel, char *from, char *content)
 	_irc_raw_send(&server0, "WHOIS %s\n", from);
 }
 
+void handle_voice(char *channel, char *from, char *content)
+{
+	char *who, *ptr;
+	todo_t *t;
+
+	who = strdup(content+strlen("voice "));
+	if((ptr = strstr(who, " ")))
+		*ptr = '\0';
+
+	if(!channel)
+		channel=from;
+	if (!checkAuthors(from))
+	{
+		_irc_raw_send(&server0, "PRIVMSG %s :%s: nice try\n", channel, from);
+		return;
+	}
+
+	if((t = (todo_t *)malloc(sizeof(todo_t))) == NULL)
+		return;
+
+	t->owner = strdup(from);
+	t->cmd = g_strdup_printf("MODE %s +v %s", channel, who);
+	todo = g_list_append(todo, t);
+	free(who);
+
+	_irc_raw_send(&server0, "WHOIS %s\n", from);
+}
+
 void handle_join(char *raw_data)
 {
 	char *from = getnick(raw_data);
