@@ -208,6 +208,8 @@ int handle_privmsg(char *raw_data)
 			handle_kick(channel, from, content);
 		else if(!strncmp(content, "voice", strlen("voice")))
 			handle_voice(channel, from, content);
+		else if(!strncmp(content, "devoice", strlen("devoice")))
+			handle_devoice(channel, from, content);
 		else if(!strncmp(content, "bugs", strlen("bugs")))
 			handle_bugs(channel, from, "bugs");
 		else if(!strncmp(content, "bts", strlen("bts")))
