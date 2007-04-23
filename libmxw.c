@@ -135,6 +135,12 @@ void handle_threedot(char *channel, char *from)
 			"habit.\n", channel, from);
 }
 
+void handle_usehu(char *channel, char *from)
+{
+	_irc_raw_send(&server0, "PRIVMSG %s :%s: nem, viccbol van belole csomag\n",
+			channel, from);
+}
+
 void handle_au(char *channel, char *from)
 {
 	_irc_raw_send(&server0, "PRIVMSG %s :%s: 22:13 -!- Mojojojo [n=Mojojojo@reaktor.linuxforum.hu] has quit [Read error: 104 (Connection reset by peer)]\n", channel, from);
@@ -236,13 +242,13 @@ int handle_privmsg(char *raw_data)
 			handle_threedot(CHANNEL, from);
 		free(from);
 	}
-	else if(strstr(raw_data, "PRIVMSG #debian.hu "))
+	else if(strstr(raw_data, "PRIVMSG #frugalware.hu "))
 	{
 		from = getnick(raw_data);
-		content = strstr(raw_data, "#debian.hu");
-		content += strlen("#debian.hu");
-		/*if(strstr(content, " :-au"))
-			handle_au("#debian.hu", from);*/
+		content = strstr(raw_data, "#frugalware.hu");
+		content += strlen("#frugalware.hu");
+		if(strstr(content, " :hasznal valaki"))
+			handle_usehu("#frugalware.hu", from);
 		free(from);
 	}
 	if(ptr)
@@ -266,6 +272,7 @@ void reconnect(void)
 	_irc_raw_send(&server0, "join " CHANNEL "\n");
 	_irc_raw_send(&server0, "join " CHANNEL2 "\n");
 	_irc_raw_send(&server0, "join " CHANNEL3 "\n");
+	_irc_raw_send(&server0, "join " CHANNEL4 "\n");
 }
 
 void check_rss(void)
