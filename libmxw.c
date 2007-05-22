@@ -237,7 +237,6 @@ int handle_privmsg(char *raw_data)
 			if(ptr)
 			{
 				_irc_raw_send(&server0, "PRIVMSG %s :%s: %s\n", channel, from, ptr);
-				free(ptr);
 			}
 			else
 				_irc_raw_send(&server0, "PRIVMSG %s :xe.com hates me ;/\n", channel);
