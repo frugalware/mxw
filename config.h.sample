@@ -8,6 +8,8 @@
 #define CHANNEL "#yourchan"
 #define CHANNEL2 "#yourchan2"
 #define CHANNEL3 "#yourchan3"
+#define CHANNEL4 "#yourchan4"
+#define CHANNEL5 "#yourchan5"
 #define AUTHORSFILE "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 #define PACKAGESCHAN "#yourchan"
 #define BLOGSCHAN "#yourchan"

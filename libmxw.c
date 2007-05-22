@@ -284,6 +284,7 @@ void reconnect(void)
 	_irc_raw_send(&server0, "join " CHANNEL2 "\n");
 	_irc_raw_send(&server0, "join " CHANNEL3 "\n");
 	_irc_raw_send(&server0, "join " CHANNEL4 "\n");
+	_irc_raw_send(&server0, "join " CHANNEL5 "\n");
 }
 
 void check_rss(void)
