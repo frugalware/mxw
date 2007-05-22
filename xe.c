@@ -55,14 +55,14 @@ static size_t curl_cb(void *ptr, size_t size, size_t nmemb, void *stream)
 
 char *xe(char *params)
 {
-	int amount;
+	float amount;
 	char from[PATH_MAX];
 	char to[PATH_MAX];
 	char url[PATH_MAX];
 
-	if(sscanf(params, "%d %s in %s", &amount, from, to) != 3)
+	if(sscanf(params, "%f %s in %s", &amount, from, to) != 3)
 		return(NULL);
-	snprintf(url, PATH_MAX, "http://frugalware.org/~vmiklos/xe/%d/%s/in/%s", amount, from, to);
+	snprintf(url, PATH_MAX, "http://frugalware.org/~vmiklos/xe/%f/%s/in/%s", amount, from, to);
 	CURL *easyhandle;
 	if (curl_global_init(CURL_GLOBAL_ALL) != 0)
 		return(NULL);
@@ -87,7 +87,7 @@ char *xe(char *params)
 
 int xe_check(char *str)
 {
-	return(match(str, "^[0-9]+ [a-z]+ in [a-z]+$"));
+	return(match(str, "^[0-9.]+ [a-z]+ in [a-z]+$"));
 }
 
 #if 0
