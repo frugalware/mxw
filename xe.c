@@ -79,7 +79,10 @@ char *xe(char *params)
 
 	curl_easy_cleanup(easyhandle);
 	curl_global_cleanup();
-	return(curl_ret);
+	if(!strncmp(curl_ret, "<!DOCTYPE HTML", strlen("<!DOCTYPE HTML")))
+		return(NULL);
+	else
+		return(curl_ret);
 }
 
 int xe_check(char *str)

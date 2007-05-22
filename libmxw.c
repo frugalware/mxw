@@ -232,7 +232,16 @@ int handle_privmsg(char *raw_data)
 		else if(!strncmp(content, ":D", strlen(":D")))
 			handle_smiley(channel, from, 1);
 		else if(xe_check(content))
-			_irc_raw_send(&server0, "PRIVMSG %s :%s: %s\n", channel, from, xe(content));
+		{
+			ptr = xe(content);
+			if(ptr)
+			{
+				_irc_raw_send(&server0, "PRIVMSG %s :%s: %s\n", channel, from, ptr);
+				free(ptr);
+			}
+			else
+				_irc_raw_send(&server0, "PRIVMSG %s :xe.com hates me ;/\n", channel);
+		}
 		else
 			handle_request(channel, from, content);
 	}
