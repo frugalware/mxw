@@ -43,7 +43,7 @@ googleapi:
 
 mxw: mxw.o
 
-libmxw.so: libmxw.o google.o eval.o opme.o rss.o getdate.o
+libmxw.so: libmxw.o google.o eval.o opme.o rss.o getdate.o xe.o
 	$(CC) $(CFLAGS) -shared -Wl,-soname,$@ -o $@ $^ $(LDFLAGS)
 
 clean:

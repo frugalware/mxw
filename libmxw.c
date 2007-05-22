@@ -30,6 +30,7 @@
 #include "libmxw.h"
 #include "config.h"
 #include "rss.h"
+#include "xe.h"
 
 extern struct irc_server server0;
 extern char *reload_chan;
@@ -230,6 +231,8 @@ int handle_privmsg(char *raw_data)
 			handle_smiley(channel, from, 0);
 		else if(!strncmp(content, ":D", strlen(":D")))
 			handle_smiley(channel, from, 1);
+		else if(xe_check(content))
+			_irc_raw_send(&server0, "PRIVMSG %s :%s: %s\n", channel, from, xe(content));
 		else
 			handle_request(channel, from, content);
 	}
