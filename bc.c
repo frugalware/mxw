@@ -99,6 +99,7 @@ char *bc(char *params)
 	if(popen2(args, &pin, &pout) == -1)
 		return(NULL);
 
+	params += strlen("calc ");
 	fprintf(pin, "%s\n", params);
 	fclose(pin);
 
@@ -114,7 +115,7 @@ char *bc(char *params)
 
 int bc_check(char *str)
 {
-	return(match(str, "^[0-9.+-*/ ()]+$"));
+	return(match(str, "^calc "));
 }
 
 #if 0
