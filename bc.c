@@ -104,7 +104,7 @@ char *bc(char *params)
 	fclose(pin);
 
 	fgets(buf, 255, pout);
-	if(buf)
+	if(strlen(buf))
 		buf[strlen(buf)-1]='\0';
 	fclose(pout);
 
