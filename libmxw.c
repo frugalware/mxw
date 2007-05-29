@@ -31,6 +31,7 @@
 #include "config.h"
 #include "rss.h"
 #include "xe.h"
+#include "bc.h"
 
 extern struct irc_server server0;
 extern char *reload_chan;
@@ -241,6 +242,16 @@ int handle_privmsg(char *raw_data)
 			else
 				_irc_raw_send(&server0, "PRIVMSG %s :xe.com hates me ;/\n", channel);
 		}
+		else if(bc_check(content))
+		{
+			ptr = bc(content);
+			if(ptr)
+			{
+				_irc_raw_send(&server0, "PRIVMSG %s :%s: %s\n", channel, from, ptr);
+			}
+			else
+				_irc_raw_send(&server0, "PRIVMSG %s :%s: bc says you're stupid\n", channel, from);
+		}
 		else
 			handle_request(channel, from, content);
 	}
@@ -279,7 +290,7 @@ void reconnect(void)
 	irc_disconnect(&server0);
 	irc_connect(&server0);
 	_irc_raw_send(&server0, "privmsg NickServ :identify %s\n", server0.pass);
-	usleep(2000000);
+	usleep(4000000);
 	_irc_raw_send(&server0, "join " CHANNEL "\n");
 	_irc_raw_send(&server0, "join " CHANNEL2 "\n");
 	_irc_raw_send(&server0, "join " CHANNEL3 "\n");
