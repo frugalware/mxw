@@ -232,6 +232,8 @@ int handle_privmsg(char *raw_data)
 			handle_smiley(channel, from, 0);
 		else if(!strncmp(content, ":D", strlen(":D")))
 			handle_smiley(channel, from, 1);
+		else if(!strncmp(content, "ping", strlen("ping")))
+			_irc_raw_send(&server0, "PRIVMSG %s :pong\n", channel);
 		else if(xe_check(content))
 		{
 			ptr = xe(content);
