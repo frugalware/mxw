@@ -1,7 +1,7 @@
 /*
- *  google.c for mxw
+ *  google.c for mxw - USE ONLY FOR YOUR OWN!
  * 
- *  Copyright (c) 2006 by Miklos Vajna <vmiklos@frugalware.org>
+ *  Copyright (c) 2007 by Miklos Vajna <vmiklos@frugalware.org>
  * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -20,98 +20,76 @@
  */
 
 #define _GNU_SOURCE
+#include <curl/curl.h>
 #include <stdio.h>
+#include <regex.h>
+#include <limits.h>
 #include <string.h>
-#include <inetlib.h>
-#include <google.h>
+#include <stdlib.h>
 
-extern struct irc_server server0;
+char curl_ret[PATH_MAX] = "";
 
-char *bold2irc(char *from)
+static size_t curl_cb(void *ptr, size_t size, size_t nmemb, void *stream)
 {
-	char *ret, *ptr;
-
-	ret = strdup(from);
-	while((ptr=strstr(ret, "<b>")))
-	{
-		*ptr='';
-		memmove(ptr+1, ptr+3, strlen(ptr)-2);
-	}
-	while((ptr=strstr(ret, "</b>")))
-	{
-		*ptr='';
-		memmove(ptr+1, ptr+4, strlen(ptr)-3);
-	}
-	while((ptr=strstr(ret, "<br>")))
-	{
-		memmove(ptr, ptr+4, strlen(ptr)-3);
-	}
-	return(ret);
+	char tmp[PATH_MAX], *p;
+	p = strndup(ptr, size*nmemb);
+	snprintf(tmp, PATH_MAX, "%s", curl_ret);
+	snprintf(curl_ret, PATH_MAX, "%s%s", tmp, p);
+	free(p);
+	return(size*nmemb);
 }
 
-void handle_spell(char *channel, char *from, char *content, char *key)
+int google(char *params, char **title, char **desc, char **link)
 {
-	char *ptr;
+	char url[PATH_MAX];
 
-	content += 6;
-	ptr = (char*)google(key, "spell", content);
-	if(ptr==NULL)
-	{
-		if(channel)
-			_irc_raw_send(&server0, "PRIVMSG %s :%s: hey, what's the problem here?\n", channel, from);
-		else
-			_irc_raw_send(&server0, "PRIVMSG %s :hey, what's the problem here?\n", from);
-	}
+	curl_ret[0] = '\0';
+	snprintf(url, PATH_MAX, "http://frugalware.org/~vmiklos/google/%s", params);
+	CURL *easyhandle;
+	if (curl_global_init(CURL_GLOBAL_ALL) != 0)
+		return(-1);
+	if ((easyhandle = curl_easy_init()) == NULL)
+		return(-1);
+
+	if (curl_easy_setopt(easyhandle, CURLOPT_WRITEFUNCTION, curl_cb) != 0)
+		return(-1);
+	if (curl_easy_setopt(easyhandle, CURLOPT_URL, url) != 0)
+		return(-1);
+	if (curl_easy_perform(easyhandle) != 0)
+		return(-1);
+
+	curl_easy_cleanup(easyhandle);
+	curl_global_cleanup();
+	if(strstr(curl_ret, "<html>"))
+		return(-1);
 	else
 	{
-		if(channel)
-			_irc_raw_send(&server0, "PRIVMSG %s :%s: %s, moron!\n", channel, from, ptr);
-		else
-			_irc_raw_send(&server0, "PRIVMSG %s :%s, moron!\n", from, ptr);
+		char *ptr;
+		*title = curl_ret;
+		if((ptr = strchr(*title, '\n')))
+			*ptr++ = '\0';
+		*desc = ptr;
+		if((ptr = strchr(*desc, '\n')))
+			*ptr++ = '\0';
+		*link = ptr;
+		if((ptr = strchr(*link, '\n')))
+			*ptr = '\0';
+		return(0);
 	}
-	if(ptr)
-		free(ptr);
 }
 
-void handle_google(char *channel, char *from, char *content, char *key)
+#if 0
+int main(int argc, char **argv)
 {
-	char *ptr;
-	char *title=NULL, *desc=NULL;
-
-	content += 7;
-	gsearch_t *s = google(key, "search", content);
-	if(channel)
-		ptr=channel;
+	char *title, *desc, *url;
+	if (google("frugalware", &title, &desc, &url) == -1)
+		printf("errors occured\n");
 	else
-		ptr=from;
-	if(s == NULL)
 	{
-		_irc_raw_send(&server0, "PRIVMSG %s :google: ping\n", ptr);
-		return;
+		printf("title: '%s'\n", title);
+		printf("desc: '%s'\n", desc);
+		printf("url: '%s'\n", url);
 	}
-	if(s->title == NULL)
-	{
-		_irc_raw_send(&server0, "PRIVMSG %s :lol @ u\n", ptr);
-		return;
-	}
-	if(s->title)
-		title = bold2irc(s->title);
-	if(s->desc)
-		desc = bold2irc(s->desc);
-
-			if(title)
-				_irc_raw_send(&server0, "PRIVMSG %s :((google)) %s\n", ptr, title);
-			if(desc)
-				_irc_raw_send(&server0, "PRIVMSG %s :%s\n", ptr, desc);
-			if(s->url)
-				_irc_raw_send(&server0, "PRIVMSG %s :%s\n", ptr, s->url);
-			if(channel)
-				free(channel);
-			free(from);
-			free(title);
-			free(desc);
-			free(s->title);
-			free(s->desc);
-			free(s->url);
-			free(s);
+	return(0);
 }
+#endif

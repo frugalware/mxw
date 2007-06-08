@@ -196,9 +196,23 @@ int handle_privmsg(char *raw_data)
 		}
 		content = getcontent(raw_data, channel);
 		if(!strncmp(content, "google", strlen("google")))
-			handle_google(channel, from, content, KEY);
-		else if(!strncmp(content, "spell", strlen("spell")))
-			handle_spell(channel, from, content, KEY);
+		{
+			char *title, *desc, *url, *ptr;
+			ptr = content;
+			if((ptr = strchr(content, ' ')))
+					ptr++;
+			if (google(ptr, &title, &desc, &url) == -1)
+				_irc_raw_send(&server0, "PRIVMSG %s :google: ping\n", channel);
+			else
+			{
+				if(title)
+					_irc_raw_send(&server0, "PRIVMSG %s :((google)) %s\n", channel, title);
+				if(desc)
+					_irc_raw_send(&server0, "PRIVMSG %s :%s\n", channel, desc);
+				if(url)
+					_irc_raw_send(&server0, "PRIVMSG %s :%s\n", channel, url);
+			}
+		}
 		else if(!strncmp(content, "reload", strlen("reload")))
 		{
 			reload_chan = strdup(channel);

@@ -22,9 +22,8 @@ CFLAGS += -fPIC
 endif
 LDFLAGS = -ldl -rdynamic
 
-CFLAGS += -I/usr/include/inetlib -Ilibgoogleapi
-LDFLAGS += -linetlib -Llibgoogleapi -lgoogleapi -lgsoap
-
+CFLAGS += -I/usr/include/inetlib
+LDFLAGS += -linetlib
 CFLAGS += $(shell pkg-config --cflags libxml-2.0)
 LDFLAGS += $(shell pkg-config --libs libxml-2.0)
 
@@ -36,10 +35,7 @@ LDFLAGS += $(shell pkg-config --libs mrss)
 
 LIBS = libmxw
 
-all: googleapi mxw $(addsuffix .so,$(LIBS))
-
-googleapi:
-	$(MAKE) -C libgoogleapi
+all: mxw $(addsuffix .so,$(LIBS))
 
 mxw: mxw.o
 
@@ -48,4 +44,3 @@ libmxw.so: libmxw.o google.o eval.o opme.o rss.o getdate.o xe.o bc.o
 
 clean:
 	rm -f *.o *.so mxw
-	$(MAKE) -C libgoogleapi clean
