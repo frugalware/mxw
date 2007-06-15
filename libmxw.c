@@ -130,6 +130,20 @@ void handle_request(char *channel, char *from, char *content)
 	free(from);
 }
 
+void handle_negative(char *channel, char *from, char *content)
+{
+	if(channel)
+	{
+		_irc_raw_send(&server0, "PRIVMSG %s :%s: nope\n", channel, from);
+		free(channel);
+	}
+	else
+	{
+		_irc_raw_send(&server0, "PRIVMSG %s :nope\n", from);
+	}
+	free(from);
+}
+
 void handle_threedot(char *channel, char *from)
 {
 	_irc_raw_send(&server0, "PRIVMSG %s :%s: using \"...\" so much isn't "
@@ -268,6 +282,8 @@ int handle_privmsg(char *raw_data)
 			else
 				_irc_raw_send(&server0, "PRIVMSG %s :%s: bc says you're stupid\n", channel, from);
 		}
+		else if(strstr(content, "suck"))
+			handle_negative(channel, from, content);
 		else
 			handle_request(channel, from, content);
 	}
