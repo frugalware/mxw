@@ -13,11 +13,26 @@ class Mxw2(SingleServerIRCBot):
 
 	def on_privmsg(self, c, e):
 		nick = e.source().split("!")[0]
-		c.privmsg(nick, "hey %s!" % nick)
+		self.command(c, nick, nick, e.arguments()[0])
 
 	def on_pubmsg(self, c, e):
+		# highlight
 		if e.arguments()[0].startswith(c.get_nickname()):
-			c.privmsg(e.target(), "hey %s!" % e.source().split("!")[0])
+			source = e.source().split("!")[0]
+			data = e.arguments()[0][len(c.get_nickname()):].strip()
+			if data[:1] == "," or data[:1] == ":":
+				data = data[1:].strip()
+			self.command(c, source, e.target(), data)
+
+	def command(self, c, source, target, data):
+		argv = data.split(' ')
+		ret = []
+		if argv[0] == ":)":
+			c.privmsg(target, "%s: :D" % source)
+		elif argv[0] == ":D":
+			c.privmsg(target, "%s: lol" % source)
+		else:
+			c.privmsg(target, "%s: '%s' is not a valid command" % (source, cmd))
 
 if __name__ == "__main__":
 	mxw2 = Mxw2()
