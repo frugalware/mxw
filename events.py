@@ -28,4 +28,4 @@ def command(self, c, source, target, data):
 	elif argv[0] == ":D":
 		c.privmsg(target, "%s: lol" % source)
 	else:
-		c.privmsg(target, "%s: '%s' is not a validd command" % (source, argv[0]))
+		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
