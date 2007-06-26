@@ -1,4 +1,4 @@
-import traceback, inspect, sys, password, time, urllib
+import traceback, inspect, sys, password, time, urllib, re
 from xml.dom import minidom
 from sgmllib import SGMLParser
 
@@ -58,6 +58,8 @@ def command(self, c, source, target, data):
 	# web services
 	elif argv[0] == "google":
 		google(c, source, target, argv[1:])
+	elif len(argv) > 3 and re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4])):
+		xe(c, source, target, argv)
 	# end of web services
 	elif argv[0] == ":)":
 		c.privmsg(target, "%s: :D" % source)
@@ -133,6 +135,38 @@ def google(c, source, target, data):
 	c.privmsg(target, parser.titles[0])
 	c.privmsg(target, parser.descs[0])
 	c.privmsg(target, parser.links[0])
+
+def xe(c, source, target, opts):
+	class myurlopener(urllib.FancyURLopener):
+		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
+
+	class HTMLParser(SGMLParser):
+		def handle_data(self, text):
+			if text.startswith("1 %s = " % self.fro):
+				self.ret = text
+
+	urllib._urlopener = myurlopener()
+	amount = opts[0]
+	fro = opts[1].upper()
+	to = opts[3].upper()
+
+	if amount[-1] == "K":
+		amount = float(amount[:-1])*1000
+	elif amount[-1] == "M":
+		amount = float(amount[:-1])*1000000
+
+	# wtf this is always 1
+	data = urllib.urlencode({'Amount':1, 'From':fro,'To':to})
+	sock = urllib.urlopen('http://www.xe.com/ucc/convert.cgi', data)
+
+	parser = HTMLParser()
+	parser.fro = fro
+	parser.reset()
+	parser.feed(sock.read())
+	ret = re.sub('.* = ', '', parser.ret).lower().split(' ')
+	c.privmsg(target, "%.3lf %s" % (float(ret[0])*float(amount), ret[1]))
+	parser.close()
+	sock.close()
 
 def inxml(nick):
 	xmldoc = minidom.parse(config.authors)
