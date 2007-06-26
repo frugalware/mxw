@@ -318,9 +318,10 @@ def on_bug(self, c, e):
 	c.privmsg(config.owner, "%s at file %s line %d" % (stype, badline[1], badline[2]))
 
 def on_join(self, c, e):
-	nick = e.source().split("!")[0]
-	cmd = 'c.mode("%s", "+v %s")' % (e.target(), nick)
-	safe_eval(nick, cmd, c)
+	if e.target() == "#frugalware.dev":
+		nick = e.source().split("!")[0]
+		cmd = 'c.mode("%s", "+v %s")' % (e.target(), nick)
+		safe_eval(nick, cmd, c)
 
 def on_identified(self, c, e):
 	global todo
