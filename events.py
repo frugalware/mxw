@@ -1,10 +1,11 @@
-import traceback, inspect, sys
+import traceback, inspect, sys, password, time
 from xml.dom import minidom
 
 class config:
 	server = "irc.freenode.net"
 	port = 6667
 	nick  = "mxw2"
+	password = password.password
 	realname = "yeah"
 	channels = ['#fdb']
 	authors = "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
@@ -43,6 +44,11 @@ def inxml(nick):
 # the event handlers
 ##
 def on_welcome(self, c, e):
+	c.privmsg("nickserv", "ghost %s %s" % (config.nick, config.password))
+	time.sleep(2)
+	c.nick(config.nick)
+	c.privmsg("nickserv", "identify %s" % config.password)
+	time.sleep(2)
 	for i in config.channels:
 		c.join(i)
 
