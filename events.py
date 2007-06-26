@@ -211,8 +211,10 @@ def on_pubmsg(self, c, e):
 			data = data[1:].strip()
 		command(self, c, source, e.target(), data)
 	# trigger
-	if " ... " in e.arguments()[0]:
+	elif " ... " in e.arguments()[0]:
 		c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)
+	elif e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0]):
+		c.privmsg(e.target(), "nem, viccbol van belole csomag")
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
