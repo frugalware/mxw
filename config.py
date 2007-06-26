@@ -7,3 +7,5 @@ class config:
 	nick  = "mxw2"
 	realname = "yeah"
 	channels = ['#test']
+	# for reporting bugs
+	owner = "vmiklos"

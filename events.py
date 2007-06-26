@@ -23,6 +23,9 @@ def command(self, c, source, target, data):
 	if argv[0] == "reload":
 		self.reload()
 		c.privmsg(target, "%s: reload done" % source)
+	# FIXME: better auth & error handling
+	elif argv[0] == "eval" and source == config.owner:
+		c.privmsg(target, "%s: eval result: '%s'" % (source, eval(" ".join(argv[1:]))))
 	elif argv[0] == ":)":
 		c.privmsg(target, "%s: :D" % source)
 	elif argv[0] == ":D":
