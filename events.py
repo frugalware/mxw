@@ -28,6 +28,10 @@ class config:
 			Rss("http://frugalware.org/rss/bugs", "#frugalware.dev", "bugs"),
 			Rss("http://frugalware.org/~vmiklos/ping2rss/ping2rss.py", "#frugalware.dev", "ping")]
 	duped_feeds = "feeds"
+	database = {
+			":)": ":D",
+			":D": "lol"
+			}
 
 todo = {}
 
@@ -76,10 +80,8 @@ def command(self, c, source, target, data):
 	elif argv[0] == "calc":
 		calc(c, source, target, argv[1:])
 	# database commands
-	elif argv[0] == ":)":
-		c.privmsg(target, "%s: :D" % source)
-	elif argv[0] == ":D":
-		c.privmsg(target, "%s: lol" % source)
+	elif argv[0] in config.database.keys():
+		c.privmsg(target, "%s: %s" % (source, config.database[argv[0]]))
 	# misc
 	elif argv[0] == "reload":
 		self.reload()
