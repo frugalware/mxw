@@ -17,5 +17,9 @@ class Mxw2(SingleServerIRCBot):
 				self.events[i] = getattr(events, i)
 
 if __name__ == "__main__":
-	mxw2 = Mxw2()
-	mxw2.start()
+	while True:
+		try:
+			mxw2 = Mxw2()
+			mxw2.start()
+		except Exception:
+			pass
