@@ -86,7 +86,7 @@ def command(self, c, source, target, data):
 	# database commands
 	elif argv[0] in config.database.keys():
 		record = config.database[argv[0]]
-		if "\n" in record:
+		if "\n" in record or " " not in record:
 			for i in record.split("\n"):
 				c.privmsg(target, "%s" % i)
 		else:
