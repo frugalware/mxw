@@ -277,10 +277,10 @@ def on_pubmsg(self, c, e):
 	source = e.source().split("!")[0]
 	# highlight
 	if e.arguments()[0].startswith(c.get_nickname()):
-		data = e.arguments()[0][len(c.get_nickname()):].strip()
+		data = e.arguments()[0][len(c.get_nickname()):]
 		if data[:1] == "," or data[:1] == ":":
-			data = data[1:].strip()
-		command(self, c, source, e.target(), data)
+			data = data[1:]
+		command(self, c, source, e.target(), data.strip())
 	# trigger
 	elif " ... " in e.arguments()[0]:
 		c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)
