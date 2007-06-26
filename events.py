@@ -37,13 +37,8 @@ todo = {}
 def command(self, c, source, target, data):
 	argv = data.split(' ')
 	ret = []
-	if argv[0] == "reload":
-		self.reload()
-		c.privmsg(target, "%s: reload done" % source)
-	elif argv[0] == "eval":
-		safe_eval(source, " ".join(argv[1:]), c)
 	# operator commands
-	elif argv[0] == "opme":
+	if argv[0] == "opme":
 		cmd = 'c.mode("%s", "+o %s")' % (target, source)
 		safe_eval(source, cmd, c)
 	elif argv[0] == "voiceme":
@@ -81,6 +76,11 @@ def command(self, c, source, target, data):
 		c.privmsg(target, "%s: :D" % source)
 	elif argv[0] == ":D":
 		c.privmsg(target, "%s: lol" % source)
+	elif argv[0] == "reload":
+		self.reload()
+		c.privmsg(target, "%s: reload done" % source)
+	elif argv[0] == "eval":
+		safe_eval(source, " ".join(argv[1:]), c)
 	else:
 		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
 
