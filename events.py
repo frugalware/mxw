@@ -1,4 +1,4 @@
-import traceback, inspect, sys, password, time, urllib, re, pickle
+import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
 sys.path.append("/usr/lib")
 import feedparser
 from xml.dom import minidom
@@ -72,10 +72,15 @@ def command(self, c, source, target, data):
 	elif len(argv) > 3 and re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4])):
 		xe(c, source, target, argv)
 	# end of web services
+	# cmdline frontend commands
+	elif argv[0] == "calc":
+		calc(c, source, target, argv[1:])
+	# database commands
 	elif argv[0] == ":)":
 		c.privmsg(target, "%s: :D" % source)
 	elif argv[0] == ":D":
 		c.privmsg(target, "%s: lol" % source)
+	# misc
 	elif argv[0] == "reload":
 		self.reload()
 		c.privmsg(target, "%s: reload done" % source)
@@ -83,6 +88,20 @@ def command(self, c, source, target, data):
 		safe_eval(source, " ".join(argv[1:]), c)
 	else:
 		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
+
+def calc(c, source, target, data):
+	input = " ".join(data)
+	pout, pin = popen2.popen2("bc")
+	pin.write("scale=2;%s\n" % input)
+	pin.close()
+	ret = "".join(pout.readlines()).strip()
+	pout.close()
+	if len(ret):
+		if ret[0] == ".":
+			ret = "0" + ret
+		c.privmsg(target, "%s=%s" % (input, ret))
+	else:
+		c.privmsg(target, "parse error")
 
 def google(c, source, target, data):
 	class myurlopener(urllib.FancyURLopener):
