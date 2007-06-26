@@ -1,6 +1,17 @@
-import traceback, inspect, sys, password, time, urllib, re
+import traceback, inspect, sys, password, time, urllib, re, pickle
+sys.path.append("/usr/lib")
+import feedparser
 from xml.dom import minidom
 from sgmllib import SGMLParser
+
+class Rss:
+	def __init__(self, url, target, title):
+		self.url = url
+		self.target = target
+		self.title = title
+		self.feed = None
+		# TODO: after debugging, set this to time.time()
+		self.updated = 0
 
 class config:
 	server = "irc.freenode.net"
@@ -12,6 +23,12 @@ class config:
 	authors = "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 	# for reporting bugs
 	owner = "vmiklos"
+
+	feeds = [Rss("http://frugalware.org/rss/packages", "#frugalware", "packages"),
+			Rss("http://frugalware.org/rss/blogs", "#frugalware", "blogs"),
+			Rss("http://frugalware.org/rss/bugs", "#frugalware.dev", "bugs"),
+			Rss("http://frugalware.org/~vmiklos/ping2rss/ping2rss.py", "#frugalware.dev", "ping")]
+	duped_feeds = "feeds"
 
 todo = {}
 
@@ -168,6 +185,33 @@ def xe(c, source, target, opts):
 	parser.close()
 	sock.close()
 
+def check_rss(self, c, e):
+	current = time.time()
+	for i in config.feeds:
+		gray = i.title
+		i.feed = feedparser.parse(i.url)
+		for j in i.feed.entries:
+			target = i.target
+			if time.mktime(j.updated_parsed) > i.updated:
+				#c.privmsg("#fdb", "new rss entry!")
+				if i.title == "packages":
+					brown = j.author.split('@')[0]
+					green = j.title
+					if brown == "syncpkgd":
+						target = "#frugalware.dev"
+				elif i.title == "ping":
+					brown = j.author
+					green = j.title
+				else: # blogs and bugs
+					brown = j.title
+					green = j.link
+				# FIXME
+				target = "#fdb"
+				c.privmsg(target, "14%s7 %s3 %s" % (gray, brown, green))
+				# to avoid floods
+				time.sleep(2)
+		i.updated = time.mktime(i.feed.entries[0].updated_parsed)
+
 def inxml(nick):
 	xmldoc = minidom.parse(config.authors)
 	for i in xmldoc.getElementsByTagName('author'):
@@ -239,3 +283,6 @@ def on_identified(self, c, e):
 		return
 	eval(todo[nick][-1])
 	del todo[nick]
+
+def on_ping(self, c, e):
+	check_rss(self, c, e)
