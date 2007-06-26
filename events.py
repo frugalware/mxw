@@ -1,4 +1,5 @@
 import traceback, inspect, sys
+from xml.dom import minidom
 
 class config:
 	server = "irc.freenode.net"
@@ -6,8 +7,11 @@ class config:
 	nick  = "mxw2"
 	realname = "yeah"
 	channels = ['#fdb']
+	authors = "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 	# for reporting bugs
 	owner = "vmiklos"
+
+todo = {}
 
 ##
 # functions used by event handlers
@@ -27,6 +31,13 @@ def command(self, c, source, target, data):
 		c.privmsg(target, "%s: lol" % source)
 	else:
 		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
+
+def inxml(nick):
+	xmldoc = minidom.parse(config.authors)
+	for i in xmldoc.getElementsByTagName('author'):
+		if unicode(nick) == i.getElementsByTagName("nick")[0].firstChild.toxml():
+			return True
+	return False
 
 ##
 # the event handlers
@@ -57,3 +68,25 @@ def on_bug(self, c, e):
 
 	badline = inspect.trace()[-1]
 	c.privmsg(config.owner, "%s at file %s line %d" % (stype, badline[1], badline[2]))
+
+def on_join(self, c, e):
+	global todo
+
+	nick = e.source().split("!")[0]
+	if not inxml(nick):
+		return
+	cmd = "MODE %s +v %s" % (e.target(), nick)
+	if nick in todo.keys():
+		todo[nick].append(cmd)
+	else:
+		todo[nick] = [cmd]
+	c.whois([nick])
+
+def on_identified(self, c, e):
+	global todo
+
+	nick = e.arguments()[0]
+	if nick not in todo.keys():
+		return
+	c.send_raw(todo[nick][-1])
+	del todo[nick]
