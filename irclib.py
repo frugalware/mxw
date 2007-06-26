@@ -1428,6 +1428,7 @@ numeric_events = {
 	"317": "whoisidle",
 	"318": "endofwhois",
 	"319": "whoischannels",
+	"320": "identified",
 	"321": "liststart",
 	"322": "list",
 	"323": "listend",
