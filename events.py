@@ -1,11 +1,11 @@
 import traceback, inspect, sys
 
 class config:
-	server = "localhost"
+	server = "irc.freenode.net"
 	port = 6667
 	nick  = "mxw2"
 	realname = "yeah"
-	channels = ['#test']
+	channels = ['#fdb']
 	# for reporting bugs
 	owner = "vmiklos"
 
