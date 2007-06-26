@@ -25,6 +25,17 @@ def command(self, c, source, target, data):
 		c.privmsg(target, "%s: reload done" % source)
 	elif argv[0] == "eval":
 		safe_eval(source, " ".join(argv[1:]), c)
+	# operator commands
+	elif argv[0] == "opme":
+		cmd = 'c.mode("%s", "+o %s")' % (target, source)
+		safe_eval(source, cmd, c)
+	elif argv[0] == "voiceme":
+		cmd = 'c.mode("%s", "+v %s")' % (target, source)
+		safe_eval(source, cmd, c)
+	elif argv[0] == "devoiceme":
+		cmd = 'c.mode("%s", "-v %s")' % (target, source)
+		safe_eval(source, cmd, c)
+	# end of operator commands
 	elif argv[0] == ":)":
 		c.privmsg(target, "%s: :D" % source)
 	elif argv[0] == ":D":
