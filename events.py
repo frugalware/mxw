@@ -15,10 +15,10 @@ class Rss:
 class config:
 	server = "irc.freenode.net"
 	port = 6667
-	nick  = "mxw2"
+	nick  = "mxw_"
 	password = password.password
 	realname = "yeah"
-	channels = ['#fdb']
+	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#debian.hu']
 	authors = "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 	# for reporting bugs
 	owner = "vmiklos"
