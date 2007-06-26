@@ -35,6 +35,24 @@ def command(self, c, source, target, data):
 	elif argv[0] == "devoiceme":
 		cmd = 'c.mode("%s", "-v %s")' % (target, source)
 		safe_eval(source, cmd, c)
+	elif argv[0] == "voice":
+		if len(argv) < 2:
+			c.privmsg(target, "%s: 'voice' requires a parameter (nick)" % source)
+			return
+		cmd = 'c.mode("%s", "+v %s")' % (target, argv[1])
+		safe_eval(source, cmd, c)
+	elif argv[0] == "devoice":
+		if len(argv) < 2:
+			c.privmsg(target, "%s: 'devoice' requires a parameter (nick)" % source)
+			return
+		cmd = 'c.mode("%s", "-v %s")' % (target, argv[1])
+		safe_eval(source, cmd, c)
+	elif argv[0] == "kick":
+		if len(argv) < 3:
+			c.privmsg(target, "%s: 'kick' requires two parameter (nick, reason)" % source)
+			return
+		cmd = 'c.kick("%s", "%s", "%s")' % (target, argv[1], argv[2])
+		safe_eval(source, cmd, c)
 	# end of operator commands
 	elif argv[0] == ":)":
 		c.privmsg(target, "%s: :D" % source)
