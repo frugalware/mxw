@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 from ircbot import SingleServerIRCBot
-from config import config
 import events
 
 class Mxw2(SingleServerIRCBot):
 	def __init__(self):
+		config = events.config
 		SingleServerIRCBot.__init__(self, [(config.server, config.port)], config.nick, config.realname)
 		self.reload()
 	
