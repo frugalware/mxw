@@ -1,6 +1,6 @@
 import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
 sys.path.append("/usr/lib")
-import feedparser
+import feedparser, htmlentitydefs
 from xml.dom import minidom
 from sgmllib import SGMLParser
 
@@ -79,6 +79,8 @@ def command(self, c, source, target, data):
 		google(c, source, target, argv[1:])
 	elif len(argv) > 3 and re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4])):
 		xe(c, source, target, argv)
+	elif argv[0] == "lc":
+		lc(c, source, target)
 	# end of web services
 	# cmdline frontend commands
 	elif argv[0] == "calc":
@@ -211,6 +213,24 @@ def xe(c, source, target, opts):
 	parser.feed(sock.read())
 	ret = re.sub('.* = ', '', parser.ret).lower().split(' ')
 	c.privmsg(target, "%.3lf %s" % (float(ret[0])*float(amount), ret[1]))
+	parser.close()
+	sock.close()
+
+def lc(c, source, target):
+	class HTMLParser(SGMLParser):
+		def start_img(self, attrs):
+			for k, v in attrs:
+				if k == "alt":
+					self.state = v
+
+	sock = urllib.urlopen('http://dawn.royalcomp.hu/~raas/lc.html')
+
+	parser = HTMLParser()
+	parser.reset()
+	parser.feed(sock.read())
+	for i in htmlentitydefs.entitydefs:
+		parser.state = re.sub('&%s;' % i, htmlentitydefs.entitydefs[i], parser.state)
+	c.privmsg(target, "Gratulalunk, Te is porgettel egyet a LAMMERSZAMLALON! %s" % parser.state)
 	parser.close()
 	sock.close()
 
