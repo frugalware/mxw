@@ -1,5 +1,6 @@
-import traceback, inspect, sys, password, time
+import traceback, inspect, sys, password, time, urllib
 from xml.dom import minidom
+from sgmllib import SGMLParser
 
 class config:
 	server = "irc.freenode.net"
@@ -54,12 +55,84 @@ def command(self, c, source, target, data):
 		cmd = 'c.kick("%s", "%s", "%s")' % (target, argv[1], argv[2])
 		safe_eval(source, cmd, c)
 	# end of operator commands
+	# web services
+	elif argv[0] == "google":
+		google(c, source, target, argv[1:])
+	# end of web services
 	elif argv[0] == ":)":
 		c.privmsg(target, "%s: :D" % source)
 	elif argv[0] == ":D":
 		c.privmsg(target, "%s: lol" % source)
 	else:
 		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
+
+def google(c, source, target, data):
+	class myurlopener(urllib.FancyURLopener):
+		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
+
+	class HTMLParser(SGMLParser):
+		def reset(self):
+			SGMLParser.reset(self)
+			self.inh2 = False
+			self.indesc = False
+			self.titles = []
+			self.title = []
+			self.descs = []
+			self.desc = []
+			self.links = []
+			self.link = None
+
+		def start_h2(self, attrs):
+			for k, v in attrs:
+				if k == "class" and v == "r":
+					self.inh2 = True
+
+		def start_td(self, attrs):
+			for k, v in attrs:
+				if k == "class" and v == "j":
+					self.indesc = True
+
+		def end_h2(self):
+			self.titles.append("".join(self.title))
+			self.title = []
+			self.links.append(self.link)
+			self.link = None
+			self.inh2 = False
+
+		def start_br(self, attrs):
+			if self.indesc:
+				self.descs.append("".join(self.desc))
+				self.desc = []
+				self.indesc = False
+
+		def start_a(self, attrs):
+			if self.inh2 and not self.link:
+				for k, v in attrs:
+					if k == "href":
+						self.link = v
+
+		def handle_data(self, text):
+			if self.inh2:
+				self.title.append(text)
+			elif self.indesc:
+				self.desc.append(text)
+
+	if len(data) < 1:
+		c.privmsg(target, "%s: 'google' requires a parameter (search term)" % source)
+		return
+	urllib._urlopener = myurlopener()
+	sock = urllib.urlopen("http://www.google.com/search?" + urllib.urlencode({'q':" ".join(data)}))
+	page = sock.read()
+	sock.close()
+
+	parser = HTMLParser()
+	parser.reset()
+	parser.feed(page)
+	parser.close()
+
+	c.privmsg(target, parser.titles[0])
+	c.privmsg(target, parser.descs[0])
+	c.privmsg(target, parser.links[0])
 
 def inxml(nick):
 	xmldoc = minidom.parse(config.authors)
