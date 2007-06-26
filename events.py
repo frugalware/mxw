@@ -10,8 +10,7 @@ class Rss:
 		self.target = target
 		self.title = title
 		self.feed = None
-		# TODO: after debugging, set this to time.time()
-		self.updated = 0
+		self.updated = time.time()
 
 class config:
 	server = "irc.freenode.net"
@@ -205,8 +204,6 @@ def check_rss(self, c, e):
 				else: # blogs and bugs
 					brown = j.title
 					green = j.link
-				# FIXME
-				target = "#fdb"
 				c.privmsg(target, "14%s7 %s3 %s" % (gray, brown, green))
 				# to avoid floods
 				time.sleep(2)
