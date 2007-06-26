@@ -1,5 +1,27 @@
 from config import config
 
+##
+# functions used by event handlers
+##
+def command(self, c, source, target, data):
+	argv = data.split(' ')
+	ret = []
+	if argv[0] == "reload":
+		self.reload()
+		c.privmsg(target, "%s: reload done" % source)
+	# FIXME: better auth & error handling
+	elif argv[0] == "eval" and source == config.owner:
+		c.privmsg(target, "%s: eval result: '%s'" % (source, eval(" ".join(argv[1:]))))
+	elif argv[0] == ":)":
+		c.privmsg(target, "%s: :D" % source)
+	elif argv[0] == ":D":
+		c.privmsg(target, "%s: lol" % source)
+	else:
+		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
+
+##
+# the event handlers
+##
 def on_welcome(self, c, e):
 	for i in config.channels:
 		c.join(i)
@@ -16,19 +38,3 @@ def on_pubmsg(self, c, e):
 		if data[:1] == "," or data[:1] == ":":
 			data = data[1:].strip()
 		command(self, c, source, e.target(), data)
-
-def command(self, c, source, target, data):
-	argv = data.split(' ')
-	ret = []
-	if argv[0] == "reload":
-		self.reload()
-		c.privmsg(target, "%s: reload done" % source)
-	# FIXME: better auth & error handling
-	elif argv[0] == "eval" and source == config.owner:
-		c.privmsg(target, "%s: eval result: '%s'" % (source, eval(" ".join(argv[1:]))))
-	elif argv[0] == ":)":
-		c.privmsg(target, "%s: :D" % source)
-	elif argv[0] == ":D":
-		c.privmsg(target, "%s: lol" % source)
-	else:
-		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
