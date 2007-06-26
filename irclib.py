@@ -1039,8 +1039,8 @@ class SimpleIRCClient:
     def _dispatcher(self, c, e):
         """[Internal]"""
         m = "on_" + e.eventtype()
-        if hasattr(self, m):
-            getattr(self, m)(c, e)
+	if m in self.events.keys():
+            self.events[m](self, c, e)
 
     def _dcc_disconnect(self, c, e):
         self.dcc_connections.remove(c)
