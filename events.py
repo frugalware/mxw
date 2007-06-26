@@ -3,7 +3,6 @@ import traceback, inspect, sys
 class config:
 	server = "localhost"
 	port = 6667
-	channel = "#test"
 	nick  = "mxw2"
 	realname = "yeah"
 	channels = ['#test']
