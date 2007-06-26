@@ -203,13 +203,16 @@ def on_privmsg(self, c, e):
 	command(self, c, nick, nick, e.arguments()[0])
 
 def on_pubmsg(self, c, e):
+	source = e.source().split("!")[0]
 	# highlight
 	if e.arguments()[0].startswith(c.get_nickname()):
-		source = e.source().split("!")[0]
 		data = e.arguments()[0][len(c.get_nickname()):].strip()
 		if data[:1] == "," or data[:1] == ":":
 			data = data[1:].strip()
 		command(self, c, source, e.target(), data)
+	# trigger
+	if " ... " in e.arguments()[0]:
+		c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
