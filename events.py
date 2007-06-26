@@ -85,7 +85,12 @@ def command(self, c, source, target, data):
 		calc(c, source, target, argv[1:])
 	# database commands
 	elif argv[0] in config.database.keys():
-		c.privmsg(target, "%s: %s" % (source, config.database[argv[0]]))
+		record = config.database[argv[0]]
+		if "\n" in record:
+			for i in record.split("\n"):
+				c.privmsg(target, "%s" % i)
+		else:
+			c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
 	# misc
 	elif argv[0] == "reload":
 		self.reload()
