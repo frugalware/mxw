@@ -23,9 +23,8 @@ def command(self, c, source, target, data):
 	if argv[0] == "reload":
 		self.reload()
 		c.privmsg(target, "%s: reload done" % source)
-	# FIXME: better auth & error handling
-	elif argv[0] == "eval" and source == config.owner:
-		c.privmsg(target, "%s: eval result: '%s'" % (source, eval(" ".join(argv[1:]))))
+	elif argv[0] == "eval":
+		safe_eval(source, " ".join(argv[1:]), c)
 	elif argv[0] == ":)":
 		c.privmsg(target, "%s: :D" % source)
 	elif argv[0] == ":D":
@@ -39,6 +38,17 @@ def inxml(nick):
 		if unicode(nick) == i.getElementsByTagName("nick")[0].firstChild.toxml():
 			return True
 	return False
+
+def safe_eval(nick, cmd, c):
+	global todo
+
+	if not inxml(nick):
+		return
+	if nick in todo.keys():
+		todo[nick].append(cmd)
+	else:
+		todo[nick] = [cmd]
+	c.whois([nick])
 
 ##
 # the event handlers
@@ -76,17 +86,9 @@ def on_bug(self, c, e):
 	c.privmsg(config.owner, "%s at file %s line %d" % (stype, badline[1], badline[2]))
 
 def on_join(self, c, e):
-	global todo
-
 	nick = e.source().split("!")[0]
-	if not inxml(nick):
-		return
-	cmd = "MODE %s +v %s" % (e.target(), nick)
-	if nick in todo.keys():
-		todo[nick].append(cmd)
-	else:
-		todo[nick] = [cmd]
-	c.whois([nick])
+	cmd = 'c.mode("%s", "+v %s")' % (e.target(), nick)
+	safe_eval(nick, cmd, c)
 
 def on_identified(self, c, e):
 	global todo
@@ -94,5 +96,5 @@ def on_identified(self, c, e):
 	nick = e.arguments()[0]
 	if nick not in todo.keys():
 		return
-	c.send_raw(todo[nick][-1])
+	eval(todo[nick][-1])
 	del todo[nick]
