@@ -71,7 +71,7 @@ import time
 import types
 
 VERSION = 0, 4, 6
-DEBUG = 0
+DEBUG = 1
 
 # TODO
 # ----
