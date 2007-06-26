@@ -1,3 +1,4 @@
+import traceback, inspect, sys
 from config import config
 
 ##
@@ -38,3 +39,13 @@ def on_pubmsg(self, c, e):
 		if data[:1] == "," or data[:1] == ":":
 			data = data[1:].strip()
 		command(self, c, source, e.target(), data)
+
+def on_bug(self, c, e):
+	type, value, tb = sys.exc_info()
+	stype = str(type).split("'")[1]
+	print "Traceback (most recent call last):"
+	print "".join(traceback.format_tb(tb)).strip()
+	print "%s: %s" % (stype, value)
+
+	badline = inspect.trace()[-1]
+	c.privmsg(config.owner, "%s at file %s line %d" % (stype, badline[1], badline[2]))
