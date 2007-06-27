@@ -82,8 +82,6 @@ def command(self, c, source, target, data):
 		google(c, source, target, argv[1:])
 	elif argv[0] == "fight":
 		fight(c, source, target, argv[1:])
-	elif len(argv) > 3 and re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4])):
-		xe(c, source, target, argv)
 	elif argv[0] == "lc":
 		lc(c, source, target)
 	# end of web services
@@ -338,6 +336,7 @@ def on_privmsg(self, c, e):
 
 def on_pubmsg(self, c, e):
 	source = e.source().split("!")[0]
+	argv = e.arguments()[0].split(" ")
 	# highlight
 	if e.arguments()[0].startswith(c.get_nickname()):
 		data = e.arguments()[0][len(c.get_nickname()):]
@@ -359,6 +358,8 @@ def on_pubmsg(self, c, e):
 		lines = "".join(sock.readlines()).split("\000\n")
 		sock.close()
 		c.privmsg(e.target(), "Yow! %s" % random.choice(lines).replace("\n", ' ').strip())
+	elif len(argv) > 3 and re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4])):
+		xe(c, source, e.target(), argv)
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
