@@ -1,6 +1,6 @@
 import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
 sys.path.append("/usr/lib")
-import feedparser, htmlentitydefs, random
+import feedparser, htmlentitydefs, random, os
 from xml.dom import minidom
 from sgmllib import SGMLParser
 
@@ -257,6 +257,32 @@ def help(c, source, target, argv):
 		except KeyError:
 			c.privmsg(target, "%s: no such command" % source)
 
+def uptime(c, source, target, argv):
+	"""tells you the amount of time the bot is available"""
+	sock = open("/proc/stat")
+	buf = sock.readlines()
+	sock.close()
+	for i in buf:
+		if i.startswith("btime "):
+			btime = int(i.split(' ')[1].strip())
+
+	sock = open("/proc/%s/stat" % os.getpid())
+	buf = sock.read()
+	sock.close()
+	ptime = btime+int(buf.split(' ')[21])/100
+
+	diff = time.time()-ptime
+
+	min = 60
+	hour = min * 60
+	day = hour * 24
+
+	days = int(diff / day)
+	hours = int((diff % day) / hour)
+	minutes = int((diff % hour) / min)
+	seconds = int(diff % min)
+	c.privmsg(target, "%s uptime: %dd %dh %dm %ds" % (c.get_nickname(), days, hours, minutes, seconds))
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
@@ -298,7 +324,8 @@ class config:
 			"help": help,
 			"calc": calc,
 			"eval": myeval,
-			"reload": myreload
+			"reload": myreload,
+			"uptime": uptime
 			}
 
 todo = {}
