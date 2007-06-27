@@ -257,7 +257,8 @@ def check_rss(self, c, e):
 				c.privmsg(target, "14%s7 %s3 %s" % (gray, brown, green))
 				# to avoid floods
 				time.sleep(2)
-		i.updated = time.mktime(i.feed.entries[0].updated_parsed)
+		if len(i.feed.entries):
+			i.updated = time.mktime(i.feed.entries[0].updated_parsed)
 
 def inxml(nick):
 	xmldoc = minidom.parse(config.authors)
