@@ -59,13 +59,9 @@ def topic(c, source, target, argv):
 	cmd = 'c.topic("%s", "%s")' % (target, " ".join(argv))
 	safe_eval(source, cmd, c)
 
-def reload(c, source, target, argv):
-	"""reloads the event handlers"""
-	self.reload()
-
 def myeval(c, source, target, argv):
 	"""evaluates an expression"""
-	safe_eval(source, " ".join(data), c)
+	safe_eval(source, " ".join(argv), c)
 
 def calc(c, source, target, data):
 	"""calculates the value of an experssion using bc"""
@@ -244,6 +240,19 @@ def lc(c, source, target, data):
 	c.privmsg(target, "Gratulalunk, Te is porgettel egyet a LAMMERSZAMLALON! %s" % parser.state)
 	parser.close()
 	sock.close()
+
+def help(c, source, target, argv):
+	"""prints this help message"""
+	if len(argv) < 1:
+		cmds = config.commands.keys()
+		cmds.sort()
+		c.privmsg(target, "%s: available commands: %s" % (source, ", ".join(cmds)))
+	else:
+		try:
+			c.privmsg(target, "%s: %s" % (source, config.commands[argv[0]].__doc__))
+		except KeyError:
+			c.privmsg(target, "%s: no such command" % source)
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
@@ -282,8 +291,8 @@ class config:
 			"fight": fight,
 			"lc": lc,
 			# misc
+			"help": help,
 			"calc": calc,
-			"reload": reload,
 			"eval": myeval
 			}
 
@@ -306,6 +315,8 @@ def command(self, c, source, target, data):
 				c.privmsg(target, "%s" % i)
 		else:
 			c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
+	elif argv[0] == "reload":
+		safe_eval(source, 'self.reload()', c)
 	else:
 		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
 
@@ -421,7 +432,8 @@ def on_identified(self, c, e):
 	if nick not in todo.keys():
 		return
 	eval(todo[nick][-1])
-	del todo[nick]
+	if nick in todo.keys():
+		del todo[nick]
 
 def on_ping(self, c, e):
 	check_rss(self, c, e)
