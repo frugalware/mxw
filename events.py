@@ -47,14 +47,11 @@ def command(self, c, source, target, data):
 	ret = []
 	# operator commands
 	if argv[0] == "opme":
-		cmd = 'c.mode("%s", "+o %s")' % (target, source)
-		safe_eval(source, cmd, c)
+		safe_eval(source, 'c.mode("%s", "+o %s")' % (target, source), c)
 	elif argv[0] == "voiceme":
-		cmd = 'c.mode("%s", "+v %s")' % (target, source)
-		safe_eval(source, cmd, c)
+		safe_eval(source, 'c.mode("%s", "+v %s")' % (target, source), c)
 	elif argv[0] == "devoiceme":
-		cmd = 'c.mode("%s", "-v %s")' % (target, source)
-		safe_eval(source, cmd, c)
+		safe_eval(source, 'c.mode("%s", "-v %s")' % (target, source), c)
 	elif argv[0] == "voice":
 		if len(argv) < 2:
 			c.privmsg(target, "%s: 'voice' requires a parameter (nick)" % source)
@@ -96,7 +93,6 @@ def command(self, c, source, target, data):
 	# misc
 	elif argv[0] == "reload":
 		self.reload()
-		c.privmsg(target, "%s: reload done" % source)
 	elif argv[0] == "eval":
 		safe_eval(source, " ".join(argv[1:]), c)
 	# database commands
