@@ -314,6 +314,14 @@ def on_pubmsg(self, c, e):
 		lines = sock.readlines()
 		sock.close()
 		c.privmsg(e.target(), "Yepp! %s" % random.choice(lines))
+	elif e.arguments()[0] == "yow!":
+		sock = open("yow.lines")
+
+		lines = "".join(sock.readlines()).split("\000\n")
+		sock.close()
+		out = "Yow! %s" % random.choice(lines).strip()
+		for i in out.split("\n"):
+			c.privmsg(e.target(), i)
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
