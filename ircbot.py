@@ -88,14 +88,11 @@ class SingleServerIRCBot(SimpleIRCClient):
 		password = None
 		if len(self.server_list[0]) > 2:
 			password = self.server_list[0][2]
-		try:
-			self.connect(self.server_list[0][0],
-						 self.server_list[0][1],
-						 self._nickname,
-						 password,
-						 ircname=self._realname)
-		except ServerConnectionError:
-			pass
+		self.connect(self.server_list[0][0],
+					 self.server_list[0][1],
+					 self._nickname,
+					 password,
+					 ircname=self._realname)
 
 	def _on_disconnect(self, c, e):
 		"""[Internal]"""
