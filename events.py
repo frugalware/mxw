@@ -227,6 +227,10 @@ def xe(c, source, target, opts):
 		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
 
 	class HTMLParser(SGMLParser):
+		def reset(self):
+			SGMLParser.reset(self)
+			self.ret = None
+
 		def handle_data(self, text):
 			if text.startswith("1 %s = " % self.fro):
 				self.ret = text
@@ -249,6 +253,8 @@ def xe(c, source, target, opts):
 	parser.fro = fro
 	parser.reset()
 	parser.feed(sock.read())
+	if not parser.ret:
+		return
 	ret = re.sub('.* = ', '', parser.ret).lower().split(' ')
 	c.privmsg(target, "%.3lf %s" % (float(ret[0])*float(amount), ret[1]))
 	parser.close()
