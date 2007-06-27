@@ -85,6 +85,12 @@ def command(self, c, source, target, data):
 	# cmdline frontend commands
 	elif argv[0] == "calc":
 		calc(c, source, target, argv[1:])
+	# misc
+	elif argv[0] == "reload":
+		self.reload()
+		c.privmsg(target, "%s: reload done" % source)
+	elif argv[0] == "eval":
+		safe_eval(source, " ".join(argv[1:]), c)
 	# database commands
 	elif argv[0] in config.database.keys():
 		record = config.database[argv[0]]
@@ -93,12 +99,6 @@ def command(self, c, source, target, data):
 				c.privmsg(target, "%s" % i)
 		else:
 			c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
-	# misc
-	elif argv[0] == "reload":
-		self.reload()
-		c.privmsg(target, "%s: reload done" % source)
-	elif argv[0] == "eval":
-		safe_eval(source, " ".join(argv[1:]), c)
 	else:
 		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
 
