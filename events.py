@@ -302,7 +302,7 @@ def on_pubmsg(self, c, e):
 			data = data[1:]
 		command(self, c, source, e.target(), data.strip())
 	# trigger
-	elif " ... " in e.arguments()[0]:
+	elif e.target() == "#frugalware" and " ... " in e.arguments()[0]:
 		c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)
 	elif e.target()[-3:] == ".hu" and re.match("^haszn..?l valaki", e.arguments()[0]):
 		c.privmsg(e.target(), "nem, viccbol van belole csomag")
