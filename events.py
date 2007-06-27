@@ -1,6 +1,6 @@
 import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
 sys.path.append("/usr/lib")
-import feedparser, htmlentitydefs
+import feedparser, htmlentitydefs, random
 from xml.dom import minidom
 from sgmllib import SGMLParser
 
@@ -86,6 +86,11 @@ def command(self, c, source, target, data):
 	elif argv[0] == "calc":
 		calc(c, source, target, argv[1:])
 	# misc
+	elif argv[0] == "yepp!":
+		sock = open("akii-fun.lines")
+		lines = sock.readlines()
+		sock.close()
+		c.privmsg(target, "Yepp! %s" % random.choice(lines))
 	elif argv[0] == "reload":
 		self.reload()
 		c.privmsg(target, "%s: reload done" % source)
