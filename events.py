@@ -83,6 +83,8 @@ def command(self, c, source, target, data):
 	# web services
 	elif argv[0] == "google":
 		google(c, source, target, argv[1:])
+	elif argv[0] == "fight":
+		fight(c, source, target, argv[1:])
 	elif len(argv) > 3 and re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4])):
 		xe(c, source, target, argv)
 	elif argv[0] == "lc":
@@ -189,6 +191,42 @@ def google(c, source, target, data):
 	c.privmsg(target, parser.titles[0])
 	c.privmsg(target, parser.descs[0])
 	c.privmsg(target, parser.links[0])
+
+def fight(c, source, target, data):
+	class HTMLParser(SGMLParser):
+		def reset(self):
+			SGMLParser.reset(self)
+			self.results = []
+			self.inspan = False
+
+		def start_span(self, attrs):
+			self.inspan = True
+
+		def end_span(self):
+			self.inspan = False
+
+		def handle_data(self, text):
+			if self.inspan:
+				self.results.append(text.strip().split(' ')[0])
+
+	if len(data) < 1:
+		c.privmsg(target, "%s: 'fight' requires two parameters" % source)
+		return
+	word1, word2 = data[:2]
+	sock = urllib.urlopen("http://www.googlefight.com/query.php?lang=en_GB&word1=%s&word2=%s" % (word1, word2))
+	page = sock.read()
+	sock.close()
+
+	parser = HTMLParser()
+	parser.reset()
+	parser.feed(page)
+	parser.close()
+
+	if int(parser.results[0].replace(',', '')) > int(parser.results[1].replace(',', '')):
+		win = word1
+	else:
+		win = word2
+	c.privmsg(target, "googlefight: %s wins! %s vs %s" % (win, parser.results[0], parser.results[1]))
 
 def xe(c, source, target, opts):
 	class myurlopener(urllib.FancyURLopener):
