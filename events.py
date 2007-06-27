@@ -63,6 +63,10 @@ def myeval(c, source, target, argv):
 	"""evaluates an expression"""
 	safe_eval(source, " ".join(argv), c)
 
+def myreload(c, source, target, argv):
+	"""reloads the event handlers"""
+	safe_eval(source, 'self.reload()', c)
+
 def calc(c, source, target, data):
 	"""calculates the value of an experssion using bc"""
 	input = " ".join(data)
@@ -293,7 +297,8 @@ class config:
 			# misc
 			"help": help,
 			"calc": calc,
-			"eval": myeval
+			"eval": myeval,
+			"reload": myreload
 			}
 
 todo = {}
@@ -315,8 +320,6 @@ def command(self, c, source, target, data):
 				c.privmsg(target, "%s" % i)
 		else:
 			c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
-	elif argv[0] == "reload":
-		safe_eval(source, 'self.reload()', c)
 	else:
 		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
 
