@@ -315,19 +315,16 @@ def on_pubmsg(self, c, e):
 		c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)
 	elif e.target()[-3:] == ".hu" and re.match("^haszn..?l valaki", e.arguments()[0]):
 		c.privmsg(e.target(), "nem, viccbol van belole csomag")
-	elif e.target()[-3:] == ".hu" and e.arguments()[0] == "yepp!":
+	elif e.arguments()[0] == "yepp!":
 		sock = open("akii-fun.lines")
-		lines = sock.readlines()
-		sock.close()
-		c.privmsg(e.target(), "Yepp! %s" % random.choice(lines))
-	elif e.arguments()[0] == "yow!":
-		sock = open("yow.lines")
-
 		lines = "".join(sock.readlines()).split("\000\n")
 		sock.close()
-		out = "Yow! %s" % random.choice(lines).strip()
-		for i in out.split("\n"):
-			c.privmsg(e.target(), i)
+		c.privmsg(e.target(), "Yepp! %s" % random.choice(lines).replace("\n", ' ').strip())
+	elif e.arguments()[0] == "yow!":
+		sock = open("yow.lines")
+		lines = "".join(sock.readlines()).split("\000\n")
+		sock.close()
+		c.privmsg(e.target(), "Yow! %s" % random.choice(lines).replace("\n", ' ').strip())
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
