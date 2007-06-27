@@ -73,6 +73,12 @@ def command(self, c, source, target, data):
 			return
 		cmd = 'c.kick("%s", "%s", "%s")' % (target, argv[1], argv[2])
 		safe_eval(source, cmd, c)
+	elif argv[0] == "topic":
+		if len(argv) < 2:
+			c.privmsg(target, "%s: 'topic' requires a parameter (new topic)" % source)
+			return
+		cmd = 'c.topic("%s", "%s")' % (target, " ".join(argv[1:]))
+		safe_eval(source, cmd, c)
 	# end of operator commands
 	# web services
 	elif argv[0] == "google":
