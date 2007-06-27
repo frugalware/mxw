@@ -12,99 +12,63 @@ class Rss:
 		self.feed = None
 		self.updated = time.time()
 
-class config:
-	server = "irc.freenode.net"
-	port = 6667
-	nick  = "mxw_"
-	password = password.password
-	realname = "yeah"
-	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#debian.hu']
-	authors = "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
-	# for reporting bugs
-	owner = "vmiklos"
-
-	feeds = [Rss("http://frugalware.org/rss/packages", "#frugalware", "packages"),
-			Rss("http://frugalware.org/rss/blogs", "#frugalware", "blogs"),
-			Rss("http://frugalware.org/rss/bugs", "#frugalware.dev", "bugs"),
-			Rss("http://frugalware.org/~vmiklos/ping2rss/ping2rss.py", "#frugalware.dev", "ping")]
-	duped_feeds = "feeds"
-	database = {
-			":)": ":D",
-			":D": "lol",
-			"bugs": "here we can help, but if you want a bug/feature to be fixed/implemented, then please file a bugreport/feature request at http://bugs.frugalware.org",
-			"rtfm": "if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs/, probably your question is answered there",
-			"flame": "Frugalware is best! All other distros suck! Oh, sure, we plan to take over the world any minute now ;)",
-			"dance": "0-<\n0-/\n0-\\"
-			}
-
-todo = {}
-
 ##
-# functions used by event handlers
+# functions used by commands
 ##
-def command(self, c, source, target, data):
-	argv = data.split(' ')
-	ret = []
-	# operator commands
-	if argv[0] == "opme":
-		safe_eval(source, 'c.mode("%s", "+o %s")' % (target, source), c)
-	elif argv[0] == "voiceme":
-		safe_eval(source, 'c.mode("%s", "+v %s")' % (target, source), c)
-	elif argv[0] == "devoiceme":
-		safe_eval(source, 'c.mode("%s", "-v %s")' % (target, source), c)
-	elif argv[0] == "voice":
-		if len(argv) < 2:
-			c.privmsg(target, "%s: 'voice' requires a parameter (nick)" % source)
-			return
-		cmd = 'c.mode("%s", "+v %s")' % (target, argv[1])
-		safe_eval(source, cmd, c)
-	elif argv[0] == "devoice":
-		if len(argv) < 2:
-			c.privmsg(target, "%s: 'devoice' requires a parameter (nick)" % source)
-			return
-		cmd = 'c.mode("%s", "-v %s")' % (target, argv[1])
-		safe_eval(source, cmd, c)
-	elif argv[0] == "kick":
-		if len(argv) < 3:
-			c.privmsg(target, "%s: 'kick' requires two parameter (nick, reason)" % source)
-			return
-		cmd = 'c.kick("%s", "%s", "%s")' % (target, argv[1], argv[2])
-		safe_eval(source, cmd, c)
-	elif argv[0] == "topic":
-		if len(argv) < 2:
-			c.privmsg(target, "%s: 'topic' requires a parameter (new topic)" % source)
-			return
-		cmd = 'c.topic("%s", "%s")' % (target, " ".join(argv[1:]))
-		safe_eval(source, cmd, c)
-	# end of operator commands
-	# web services
-	elif argv[0] == "google":
-		google(c, source, target, argv[1:])
-	elif argv[0] == "fight":
-		fight(c, source, target, argv[1:])
-	elif argv[0] == "lc":
-		lc(c, source, target)
-	# end of web services
-	# cmdline frontend commands
-	elif argv[0] == "calc":
-		calc(c, source, target, argv[1:])
-	# misc
-	elif argv[0] == "reload":
-		self.reload()
-	elif argv[0] == "eval":
-		safe_eval(source, " ".join(argv[1:]), c)
-	# database commands
-	elif argv[0] in config.database.keys():
-		record = config.database[argv[0]]
-		if "\n" in record or " " not in record:
-			for i in record.split("\n"):
-				c.privmsg(target, "%s" % i)
-		else:
-			c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
-	else:
-		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
+def opme(c, source, target, argv):
+	"""gives operator status to you on the current channel"""
+	safe_eval(source, 'c.mode("%s", "+o %s")' % (target, source), c)
+
+def voiceme(c, source, target, argv):
+	"""gives voice to you on the current channel"""
+	safe_eval(source, 'c.mode("%s", "+v %s")' % (target, source), c)
+
+def devoiceme(c, source, target, argv):
+	"""takes voice from you on the current channel"""
+	safe_eval(source, 'c.mode("%s", "-v %s")' % (target, source), c)
+
+def voice(c, source, target, argv):
+	"""gives voice to somebody on the current channel"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'voice' requires a parameter (nick)" % source)
+		return
+	cmd = 'c.mode("%s", "+v %s")' % (target, argv[0])
+	safe_eval(source, cmd, c)
+
+def devoice(c, source, target, argv):
+	"""takes voice from somebody on the current channel"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'devoice' requires a parameter (nick)" % source)
+		return
+	cmd = 'c.mode("%s", "-v %s")' % (target, argv[0])
+	safe_eval(source, cmd, c)
+
+def kick(c, source, target, argv):
+	"""kicks somebody from the current channel with a reason"""
+	if len(argv) < 2:
+		c.privmsg(target, "%s: 'kick' requires two parameter (nick, reason)" % source)
+		return
+	cmd = 'c.kick("%s", "%s", "%s")' % (target, argv[0], argv[1])
+	safe_eval(source, cmd, c)
+
+def topic(c, source, target, argv):
+	"""change the topic of a channel"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'topic' requires a parameter (new topic)" % source)
+		return
+	cmd = 'c.topic("%s", "%s")' % (target, " ".join(argv))
+	safe_eval(source, cmd, c)
+
+def reload(c, source, target, argv):
+	"""reloads the event handlers"""
+	self.reload()
+
+def myeval(c, source, target, argv):
+	"""evaluates an expression"""
+	safe_eval(source, " ".join(data), c)
 
 def calc(c, source, target, data):
+	"""calculates the value of an experssion using bc"""
 	input = " ".join(data)
 	pout, pin = popen2.popen2("bc")
 	pin.write("scale=2;%s\n" % input)
@@ -119,6 +83,7 @@ def calc(c, source, target, data):
 		c.privmsg(target, "parse error")
 
 def google(c, source, target, data):
+	"""searchs the web using google"""
 	class myurlopener(urllib.FancyURLopener):
 		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
 
@@ -187,6 +152,7 @@ def google(c, source, target, data):
 	c.privmsg(target, parser.links[0])
 
 def fight(c, source, target, data):
+	"""compares the popularity of two words using googlefight"""
 	class HTMLParser(SGMLParser):
 		def reset(self):
 			SGMLParser.reset(self)
@@ -260,7 +226,8 @@ def xe(c, source, target, opts):
 	parser.close()
 	sock.close()
 
-def lc(c, source, target):
+def lc(c, source, target, data):
+	"""porget egyet a lamerszamlalon"""
 	class HTMLParser(SGMLParser):
 		def start_img(self, attrs):
 			for k, v in attrs:
@@ -277,6 +244,70 @@ def lc(c, source, target):
 	c.privmsg(target, "Gratulalunk, Te is porgettel egyet a LAMMERSZAMLALON! %s" % parser.state)
 	parser.close()
 	sock.close()
+class config:
+	server = "irc.freenode.net"
+	port = 6667
+	nick  = "mxw_"
+	password = password.password
+	realname = "yeah"
+	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#debian.hu']
+	authors = "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
+	# for reporting bugs
+	owner = "vmiklos"
+
+	feeds = [Rss("http://frugalware.org/rss/packages", "#frugalware", "packages"),
+			Rss("http://frugalware.org/rss/blogs", "#frugalware", "blogs"),
+			Rss("http://frugalware.org/rss/bugs", "#frugalware.dev", "bugs"),
+			Rss("http://frugalware.org/~vmiklos/ping2rss/ping2rss.py", "#frugalware.dev", "ping")]
+	duped_feeds = "feeds"
+	database = {
+			":)": ":D",
+			":D": "lol",
+			"bugs": "here we can help, but if you want a bug/feature to be fixed/implemented, then please file a bugreport/feature request at http://bugs.frugalware.org",
+			"rtfm": "if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs/, probably your question is answered there",
+			"flame": "Frugalware is best! All other distros suck! Oh, sure, we plan to take over the world any minute now ;)",
+			"dance": "0-<\n0-/\n0-\\"
+			}
+	commands = {
+			# operator commands
+			"opme": opme,
+			"voiceme": voiceme,
+			"devoiceme": devoiceme,
+			"voice": voice,
+			"devoice": devoice,
+			"kick": kick,
+			"topic": topic,
+			# web services
+			"google": google,
+			"fight": fight,
+			"lc": lc,
+			# misc
+			"calc": calc,
+			"reload": reload,
+			"eval": myeval
+			}
+
+todo = {}
+
+##
+# functions used by event handlers
+##
+def command(self, c, source, target, data):
+	argv = data.split(' ')
+	ret = []
+	# functions
+	if argv[0] in config.commands.keys():
+		config.commands[argv[0]](c, source, target, argv[1:])
+	# database commands
+	elif argv[0] in config.database.keys():
+		record = config.database[argv[0]]
+		if "\n" in record or " " not in record:
+			for i in record.split("\n"):
+				c.privmsg(target, "%s" % i)
+		else:
+			c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
+	else:
+		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
 
 def check_rss(self, c, e):
 	current = time.time()
