@@ -86,11 +86,6 @@ def command(self, c, source, target, data):
 	elif argv[0] == "calc":
 		calc(c, source, target, argv[1:])
 	# misc
-	elif argv[0] == "yepp!":
-		sock = open("akii-fun.lines")
-		lines = sock.readlines()
-		sock.close()
-		c.privmsg(target, "Yepp! %s" % random.choice(lines))
 	elif argv[0] == "reload":
 		self.reload()
 		c.privmsg(target, "%s: reload done" % source)
@@ -309,8 +304,13 @@ def on_pubmsg(self, c, e):
 	# trigger
 	elif " ... " in e.arguments()[0]:
 		c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)
-	elif e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0]):
+	elif e.target()[-3:] == ".hu" and re.match("^haszn..?l valaki", e.arguments()[0]):
 		c.privmsg(e.target(), "nem, viccbol van belole csomag")
+	elif e.target()[-3:] == ".hu" and e.arguments()[0] == "yepp!":
+		sock = open("akii-fun.lines")
+		lines = sock.readlines()
+		sock.close()
+		c.privmsg(e.target(), "Yepp! %s" % random.choice(lines))
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
