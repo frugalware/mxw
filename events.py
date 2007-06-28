@@ -375,8 +375,6 @@ def check_rss(self, c, e):
 				time.sleep(2)
 		if len(i.feed.entries):
 			i.updated = time.mktime(i.feed.entries[0].updated_parsed)
-		else:
-			c.privmsg(config.owner, "the '%s' feed is empty" % (i.title))
 
 def inxml(nick):
 	xmldoc = minidom.parse(config.authors)
