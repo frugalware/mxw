@@ -299,6 +299,22 @@ def db(c, source, target, argv):
 	else:
 		return False
 
+def db_search(c, source, target, argv):
+	"""searches the database. if no parameter given then all records will be listed. regexs supported"""
+	ret = []
+	if len(argv):
+		pattern = ".*%s.*" % argv[0]
+	else:
+		pattern = "."
+	for k, v in config.database.items():
+		if re.match(pattern, k) or re.match(pattern, v):
+			ret.append(k)
+	if len(ret):
+		ret.sort()
+		c.privmsg(target, "%s: the following records match: %s" % (source, ", ".join(ret)))
+	else:
+		c.privmsg(target, "%s: no matching records" % source)
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
@@ -342,7 +358,8 @@ class config:
 			"eval": myeval,
 			"reload": myreload,
 			"uptime": uptime,
-			"db": db
+			"db": db,
+			"search": db_search
 			}
 
 todo = {}
