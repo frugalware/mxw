@@ -283,6 +283,22 @@ def uptime(c, source, target, argv):
 	seconds = int(diff % min)
 	c.privmsg(target, "%s uptime: %dd %dh %dm %ds" % (c.get_nickname(), days, hours, minutes, seconds))
 
+def db(c, source, target, argv):
+	"""gets a record from the database. if a second optional parameter is given, then it'll be sent as a notice to the specified nick"""
+	if argv[0] in config.database.keys():
+		record = config.database[argv[0]]
+		if "\n" in record or " " not in record:
+			for i in record.split("\n"):
+				c.privmsg(target, "%s" % i)
+		else:
+			if len(argv) > 1:
+				c.notice(argv[1], "%s => %s" % (argv[0], config.database[argv[0]]))
+			else:
+				c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
+		return True
+	else:
+		return False
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
@@ -325,7 +341,8 @@ class config:
 			"calc": calc,
 			"eval": myeval,
 			"reload": myreload,
-			"uptime": uptime
+			"uptime": uptime,
+			"db": db
 			}
 
 todo = {}
@@ -340,17 +357,7 @@ def command(self, c, source, target, data):
 	if argv[0] in config.commands.keys():
 		config.commands[argv[0]](c, source, target, argv[1:])
 	# database commands
-	elif argv[0] in config.database.keys():
-		record = config.database[argv[0]]
-		if "\n" in record or " " not in record:
-			for i in record.split("\n"):
-				c.privmsg(target, "%s" % i)
-		else:
-			if len(argv) > 1:
-				c.notice(argv[1], "%s => %s" % (argv[0], config.database[argv[0]]))
-			else:
-				c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
-	else:
+	elif not config.commands['db'](c, source, target, argv):
 		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
 
 def check_rss(self, c, e):
