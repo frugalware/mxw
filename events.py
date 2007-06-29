@@ -346,7 +346,10 @@ def command(self, c, source, target, data):
 			for i in record.split("\n"):
 				c.privmsg(target, "%s" % i)
 		else:
-			c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
+			if len(argv) > 1:
+				c.notice(argv[1], "%s => %s" % (argv[0], config.database[argv[0]]))
+			else:
+				c.privmsg(target, "%s: %s => %s" % (source, argv[0], config.database[argv[0]]))
 	else:
 		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
 
