@@ -285,6 +285,9 @@ def uptime(c, source, target, argv):
 
 def db(c, source, target, argv):
 	"""gets a record from the database. if a second optional parameter is given, then it'll be sent as a notice to the specified nick"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'db' requires a parameter" % source)
+		return
 	if argv[0] in config.database.keys():
 		record = config.database[argv[0]]
 		if "\n" in record or " " not in record:
