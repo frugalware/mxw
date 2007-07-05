@@ -83,7 +83,7 @@ def calc(c, source, target, data):
 		c.privmsg(target, "parse error")
 
 def google(c, source, target, data):
-	"""searchs the web using google"""
+	"""searches the web using google"""
 	class myurlopener(urllib.FancyURLopener):
 		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
 
