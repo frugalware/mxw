@@ -460,7 +460,7 @@ def on_pubmsg(self, c, e):
 		lines = "".join(sock.readlines()).split("\000\n")
 		sock.close()
 		c.privmsg(e.target(), "Yepp! %s" % random.choice(lines).replace("\n", ' ').strip())
-	elif e.arguments()[0] == "yow!":
+	elif e.arguments()[0].lower() == "yow!":
 		sock = open("yow.lines")
 		lines = "".join(sock.readlines()).split("\000\n")
 		sock.close()
