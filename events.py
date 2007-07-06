@@ -463,7 +463,7 @@ def on_pubmsg(self, c, e):
 		c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)
 	elif e.target()[-3:] == ".hu" and re.match("^haszn..?l valaki", e.arguments()[0]):
 		c.privmsg(e.target(), "nem, viccbol van belole csomag")
-	elif e.arguments()[0] == "yepp!":
+	elif e.arguments()[0].lower() == "yepp!":
 		sock = open("akii-fun.lines")
 		lines = "".join(sock.readlines()).split("\000\n")
 		sock.close()
