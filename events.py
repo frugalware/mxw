@@ -20,19 +20,27 @@ def opme(c, source, target, argv):
 	safe_eval(source, 'c.mode("%s", "+o %s")' % (target, source), c)
 
 def voiceme(c, source, target, argv):
-	"""gives voice to you on the current channel"""
-	safe_eval(source, 'c.mode("%s", "+v %s")' % (target, source), c)
+	"""gives voice to you on the a channel. optional parameter: channel (defaults to current)"""
+	if len(argv) < 1:
+		chan = target
+	else:
+		chan = argv[0]
+	safe_eval(source, 'c.mode("%s", "+v %s")' % (chan, source), c)
 
 def devoiceme(c, source, target, argv):
 	"""takes voice from you on the current channel"""
 	safe_eval(source, 'c.mode("%s", "-v %s")' % (target, source), c)
 
 def voice(c, source, target, argv):
-	"""gives voice to somebody on the current channel"""
+	"""gives voice to somebody on a channel. optional second parameter: channel (defaults to current)"""
 	if len(argv) < 1:
 		c.privmsg(target, "%s: 'voice' requires a parameter (nick)" % source)
 		return
-	cmd = 'c.mode("%s", "+v %s")' % (target, argv[0])
+	if len(argv) < 2:
+		chan = target
+	else:
+		chan = argv[1]
+	cmd = 'c.mode("%s", "+v %s")' % (chan, argv[0])
 	safe_eval(source, cmd, c)
 
 def devoice(c, source, target, argv):
