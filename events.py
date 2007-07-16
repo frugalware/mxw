@@ -345,6 +345,24 @@ def git(c, source, target, argv):
 		path = os.path.abspath(os.path.join(repodir, os.readlink(os.path.join(repodir, repo))))
 		c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s" % (source, source, path))
 
+def anongit(c, source, target, argv):
+	"""gives you a deepcmdline to clone a given repo anonymously"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'anongit' requires a parameter" % source)
+		return
+	repo = argv[0]
+	repodir = "/home/ftp/pub/other/homepage-ng/git/repos"
+	found = False
+	for root, dirs, files in os.walk(repodir):
+		for dir in dirs:
+			if dir == repo:
+				found = True
+	if not found:
+		c.privmsg(target, "%s: no such repo" % source)
+		return
+	else:
+		c.privmsg(target, "%s: git clone http://git.frugalware.org/repos/%s/.git" % (source, repo))
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
@@ -391,7 +409,8 @@ class config:
 			"uptime": uptime,
 			"db": db,
 			"search": db_search,
-			"git": git
+			"git": git,
+			"anongit": anongit
 			}
 
 todo = {}
