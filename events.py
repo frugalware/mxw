@@ -372,19 +372,12 @@ def imdb(c, source, target, data):
 		def reset(self):
 			SGMLParser.reset(self)
 			self.link = None
-			self.title = None
-			self.year = None
 
 		def start_a(self, attrs):
 			for k, v in attrs:
 				if k == "href" and v.startswith("/title/"):
 					if not self.link:
 						self.link = "http://www.imdb.com%s" % v
-		def handle_data(self, text):
-			if self.link and not self.title:
-				self.title = text
-			elif self.link and self.title and not self.year:
-				self.year = text.strip()
 
 	class FHTMLParser(SGMLParser):
 		def reset(self):
@@ -393,10 +386,15 @@ def imdb(c, source, target, data):
 			self.inruntime = False
 			self.inplot = False
 			self.invote = False
+			self.intitle = False
 			self.genre = []
 			self.runtime = None
 			self.plot = None
 			self.vote = []
+			self.title = None
+
+		def start_title(self, attrs):
+			self.intitle = True
 
 		def handle_data(self, text):
 			if self.ingenre:
@@ -416,6 +414,9 @@ def imdb(c, source, target, data):
 				if text == ")":
 					self.vote = re.sub(r"(.*)/10\((.*) votes\)", r"\1/\2", "".join(self.vote))
 					self.invote = False
+			elif self.intitle:
+				self.title = text.strip()
+				self.intitle = False
 			if text == "Genre:":
 				self.ingenre = True
 			elif text == "Runtime:":
@@ -436,8 +437,6 @@ def imdb(c, source, target, data):
 	parser.feed(page)
 	parser.close()
 	link = parser.link
-	title = parser.title
-	year = parser.year
 	try:
 		sock = sock = urllib.urlopen(link)
 	except AttributeError:
@@ -449,7 +448,7 @@ def imdb(c, source, target, data):
 	parser.reset()
 	parser.feed(page)
 	parser.close()
-	c.privmsg(target, "%s %s || genre: %s || score: %s || %s || runtime: %s || %s" % (title, year, parser.genre, parser.vote, parser.plot, parser.runtime, link))
+	c.privmsg(target, "%s || genre: %s || score: %s || %s || runtime: %s || %s" % (parser.title, parser.genre, parser.vote, parser.plot, parser.runtime, link))
 
 class config:
 	server = "irc.freenode.net"
