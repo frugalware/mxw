@@ -429,14 +429,22 @@ def imdb(c, source, target, data):
 	if len(data) < 1:
 		c.privmsg(target, "%s: 'imdb' requires a parameter (search term)" % source)
 		return
-	sock = sock = urllib.urlopen("http://www.imdb.com/find?" + urllib.urlencode({'s':'all', 'q':" ".join(data)}))
-	page = sock.read()
-	sock.close()
-	parser = SHTMLParser()
-	parser.reset()
-	parser.feed(page)
-	parser.close()
-	link = parser.link
+	try:
+		int(data[0])
+		id = data[0]
+	except ValueError:
+		id = None
+	if not id:
+		sock = sock = urllib.urlopen("http://www.imdb.com/find?" + urllib.urlencode({'s':'all', 'q':" ".join(data)}))
+		page = sock.read()
+		sock.close()
+		parser = SHTMLParser()
+		parser.reset()
+		parser.feed(page)
+		parser.close()
+		link = parser.link
+	else:
+		link = "http://www.imdb.com/title/tt%s/" % id
 	try:
 		sock = sock = urllib.urlopen(link)
 	except AttributeError:
