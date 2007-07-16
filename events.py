@@ -456,7 +456,11 @@ def imdb(c, source, target, data):
 	parser.reset()
 	parser.feed(page)
 	parser.close()
-	c.privmsg(target, "%s || genre: %s || score: %s || %s || runtime: %s || %s" % (parser.title, parser.genre, parser.vote, parser.plot, parser.runtime, link))
+	if parser.title.startswith("IMDb:"):
+		c.privmsg(target, "no matches")
+		return
+	else:
+		c.privmsg(target, "%s || genre: %s || score: %s || %s || runtime: %s || %s" % (parser.title, parser.genre, parser.vote, parser.plot, parser.runtime, link))
 
 class config:
 	server = "irc.freenode.net"
