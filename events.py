@@ -327,9 +327,9 @@ def db_search(c, source, target, argv):
 		c.privmsg(target, "%s: no matching records" % source)
 
 def git(c, source, target, argv):
-	"""gives you deepcmdline to clone a given repo"""
+	"""gives you a deepcmdline to clone a given repo"""
 	if len(argv) < 1:
-		c.privmsg(target, "%s: 'db' requires a parameter" % source)
+		c.privmsg(target, "%s: 'git' requires a parameter" % source)
 		return
 	repo = argv[0]
 	repodir = "/home/ftp/pub/other/homepage-ng/git/repos"
