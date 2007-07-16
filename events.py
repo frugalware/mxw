@@ -366,6 +366,91 @@ def anongit(c, source, target, argv):
 	else:
 		c.privmsg(target, "%s: git clone http://git.frugalware.org/repos/%s/.git" % (source, repo))
 
+def imdb(c, source, target, data):
+	"""searches movies using imdb"""
+	class SHTMLParser(SGMLParser):
+		def reset(self):
+			SGMLParser.reset(self)
+			self.link = None
+			self.title = None
+			self.year = None
+
+		def start_a(self, attrs):
+			for k, v in attrs:
+				if k == "href" and v.startswith("/title/"):
+					if not self.link:
+						self.link = "http://www.imdb.com%s" % v
+		def handle_data(self, text):
+			if self.link and not self.title:
+				self.title = text
+			elif self.link and self.title and not self.year:
+				self.year = text.strip()
+
+	class FHTMLParser(SGMLParser):
+		def reset(self):
+			SGMLParser.reset(self)
+			self.ingenre = False
+			self.inruntime = False
+			self.inplot = False
+			self.invote = False
+			self.genre = []
+			self.runtime = None
+			self.plot = None
+			self.vote = []
+
+		def handle_data(self, text):
+			if self.ingenre:
+				if text == "more":
+					self.genre = "".join(self.genre[1:len(self.genre)-1])
+					self.ingenre = False
+				else:
+					self.genre.append(text)
+			elif self.inruntime:
+				self.runtime = text.strip()
+				self.inruntime = False
+			elif self.inplot:
+				self.plot = text.strip()
+				self.inplot = False
+			elif self.invote:
+				self.vote.append(text.strip())
+				if text == ")":
+					self.vote = re.sub(r"(.*)/10\((.*) votes\)", r"\1/\2", "".join(self.vote))
+					self.invote = False
+			if text == "Genre:":
+				self.ingenre = True
+			elif text == "Runtime:":
+				self.inruntime = True
+			elif text == "Plot Outline:":
+				self.inplot = True
+			elif text == "User Rating:":
+				self.invote = True
+
+	if len(data) < 1:
+		c.privmsg(target, "%s: 'imdb' requires a parameter (search term)" % source)
+		return
+	sock = sock = urllib.urlopen("http://www.imdb.com/find?" + urllib.urlencode({'s':'all', 'q':" ".join(data)}))
+	page = sock.read()
+	sock.close()
+	parser = SHTMLParser()
+	parser.reset()
+	parser.feed(page)
+	parser.close()
+	link = parser.link
+	title = parser.title
+	year = parser.year
+	try:
+		sock = sock = urllib.urlopen(link)
+	except AttributeError:
+		c.privmsg(target, "no matches")
+		return
+	page = sock.read()
+	sock.close()
+	parser = FHTMLParser()
+	parser.reset()
+	parser.feed(page)
+	parser.close()
+	c.privmsg(target, "%s %s || genre: %s || score: %s || %s || runtime: %s || %s" % (title, year, parser.genre, parser.vote, parser.plot, parser.runtime, link))
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
@@ -413,7 +498,8 @@ class config:
 			"db": db,
 			"search": db_search,
 			"git": git,
-			"anongit": anongit
+			"anongit": anongit,
+			"imdb": imdb
 			}
 
 todo = {}
