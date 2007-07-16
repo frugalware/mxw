@@ -326,6 +326,25 @@ def db_search(c, source, target, argv):
 	else:
 		c.privmsg(target, "%s: no matching records" % source)
 
+def git(c, source, target, argv):
+	"""gives you deepcmdline to clone a given repo"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'db' requires a parameter" % source)
+		return
+	repo = argv[0]
+	repodir = "/home/ftp/pub/other/homepage-ng/git/repos"
+	found = False
+	for root, dirs, files in os.walk(repodir):
+		for dir in dirs:
+			if dir == repo:
+				found = True
+	if not found:
+		c.privmsg(target, "%s: no such repo" % source)
+		return
+	else:
+		path = os.path.abspath(os.path.join(repodir, os.readlink(os.path.join(repodir, repo))))
+		c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s" % (source, source, path))
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
@@ -371,7 +390,8 @@ class config:
 			"reload": myreload,
 			"uptime": uptime,
 			"db": db,
-			"search": db_search
+			"search": db_search,
+			"git": git
 			}
 
 todo = {}
