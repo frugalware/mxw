@@ -403,7 +403,6 @@ def imdb(c, source, target, data):
 			if self.ingenre:
 				if text == "more":
 					self.genre = "".join(self.genre[1:len(self.genre)-1])
-					print "self.genre = '%s'" % self.genre
 					self.ingenre = False
 				else:
 					self.genre.append(text)
