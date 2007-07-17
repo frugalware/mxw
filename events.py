@@ -417,6 +417,9 @@ def imdb(c, source, target, data):
 				if text == ")":
 					self.vote = re.sub(r"(.*)/10\((.*) votes\)", r"\1/\2", "".join(self.vote))
 					self.invote = False
+				elif text == "(awaiting 5 votes)":
+					self.vote = "dunno"
+					self.invote = False
 			elif self.intitle:
 				self.title.append(text.strip())
 			if text == "Genre:":
