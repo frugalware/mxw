@@ -391,15 +391,19 @@ def imdb(c, source, target, data):
 			self.runtime = None
 			self.plot = None
 			self.vote = []
-			self.title = None
+			self.title = []
 
 		def start_title(self, attrs):
 			self.intitle = True
+		def end_title(self):
+			self.title = "".join(self.title)
+			self.intitle = False
 
 		def handle_data(self, text):
 			if self.ingenre:
 				if text == "more":
 					self.genre = "".join(self.genre[1:len(self.genre)-1])
+					print "self.genre = '%s'" % self.genre
 					self.ingenre = False
 				else:
 					self.genre.append(text)
@@ -415,8 +419,7 @@ def imdb(c, source, target, data):
 					self.vote = re.sub(r"(.*)/10\((.*) votes\)", r"\1/\2", "".join(self.vote))
 					self.invote = False
 			elif self.intitle:
-				self.title = text.strip()
-				self.intitle = False
+				self.title.append(text.strip())
 			if text == "Genre:":
 				self.ingenre = True
 			elif text == "Runtime:":
