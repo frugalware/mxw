@@ -401,8 +401,8 @@ def imdb(c, source, target, data):
 
 		def handle_data(self, text):
 			if self.ingenre:
-				if text == "more":
-					self.genre = "".join(self.genre[1:len(self.genre)-1])
+				if text == "more" or (len(self.genre) and text == "\n"):
+					self.genre = "".join(self.genre[1:])
 					self.ingenre = False
 				else:
 					self.genre.append(text)
