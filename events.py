@@ -351,7 +351,7 @@ def git(c, source, target, argv):
 def anongit(c, source, target, argv):
 	"""gives you a deepcmdline to clone a given repo anonymously"""
 	if len(argv) < 1:
-		c.privmsg(target, "%s: 'anongit' requires a parameter" % source)
+		c.privmsg(target, "%s: 'anongit' requires a parameter. use the 'git' command to list available repos" % source)
 		return
 	repo = argv[0]
 	repodir = "/home/ftp/pub/other/homepage-ng/git/repos"
