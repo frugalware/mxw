@@ -451,7 +451,7 @@ def imdb(c, source, target, data):
 	else:
 		link = "http://www.imdb.com/title/tt%s/" % id
 	try:
-		sock = sock = urllib.urlopen(link)
+		sock = urllib.urlopen(link)
 	except AttributeError:
 		c.privmsg(target, "no matches")
 		return
