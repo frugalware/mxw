@@ -645,8 +645,8 @@ def on_pubmsg(self, c, e):
 		if command(self, c, source, e.target(), data.strip()):
 			return
 		# trigger
-		# hack. tweak what arguments() will return
-		e._arguments[0] = data.strip()
+		# hack. create an event sutable for triggers
+		e = Event(e.eventtype(), e.source(), e.target(), [data.strip()])
 		if handle_triggers(e, argv, c, source):
 			return
 	# trigger
