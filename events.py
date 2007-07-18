@@ -210,9 +210,12 @@ def xe(c, source, target, opts):
 				self.ret = text
 
 	urllib._urlopener = myurlopener()
-	amount = opts[0]
-	fro = opts[1].upper()
-	to = opts[3].upper()
+	try:
+		amount = opts[0]
+		fro = opts[1].upper()
+		to = opts[3].upper()
+	except IndexError:
+		return
 
 	if amount[-1] == "K":
 		amount = float(amount[:-1])*1000
