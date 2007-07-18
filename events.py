@@ -1,6 +1,6 @@
 import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
 sys.path.append("/usr/lib")
-import feedparser, htmlentitydefs, random, os
+import feedparser, htmlentitydefs, random, os, threading
 from xml.dom import minidom
 from sgmllib import SGMLParser
 from irclib import Event
@@ -546,11 +546,21 @@ todo = {}
 # functions used by event handlers
 ##
 def command(self, c, source, target, data):
+	class thread (threading.Thread):
+		def __init__(self, cmd, argv, c, source, target):
+			threading.Thread.__init__(self)
+			self.cmd = cmd
+			self.argv = argv
+			self.c = c
+			self.source = source
+			self.target = target
+		def run (self):
+			eval(self.cmd)
 	argv = data.split(' ')
 	ret = []
 	# functions
 	if argv[0] in config.commands.keys():
-		config.commands[argv[0]](c, source, target, argv[1:])
+		thread("""config.commands[self.argv[0]](self.c, self.source, self.target, self.argv[1:])""", argv, c, source, target).start()
 		return True
 	# database commands
 	if config.commands['db'](c, source, target, argv):
