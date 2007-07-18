@@ -473,6 +473,12 @@ def imdb(c, source, target, data):
 		except TypeError:
 			c.privmsg(target, "mailformed query")
 
+def fortune(c, e, source, file, prefix):
+	sock = open(file)
+	lines = "".join(sock.readlines()).split("\000\n")
+	sock.close()
+	c.privmsg(e.target(), "%s %s" % (prefix, random.choice(lines).replace("\n", ' ').strip()))
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
