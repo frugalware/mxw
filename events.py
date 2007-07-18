@@ -3,6 +3,7 @@ sys.path.append("/usr/lib")
 import feedparser, htmlentitydefs, random, os
 from xml.dom import minidom
 from sgmllib import SGMLParser
+from irclib import Event
 
 class Rss:
 	def __init__(self, url, target, title):
@@ -620,8 +621,16 @@ def on_welcome(self, c, e):
 
 def on_privmsg(self, c, e):
 	nick = e.source().split("!")[0]
+	source = e.source().split("!")[0]
+	argv = e.arguments()[0].split(" ")
 	if command(self, c, nick, nick, e.arguments()[0]):
 		return
+	# trigger
+	# hack. create an event sutable for triggers
+	tre = Event(e.eventtype(), e.source(), nick, e.arguments())
+	if handle_triggers(tre, argv, c, source):
+		return
+	c.privmsg(nick, "'%s' is not a valid command" % (argv[0]))
 
 def on_pubmsg(self, c, e):
 	highlight = False
