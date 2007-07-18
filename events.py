@@ -494,7 +494,8 @@ class config:
 			"rtfm": "if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs/, probably your question is answered there",
 			"flame": "Frugalware is best! All other distros suck! Oh, sure, we plan to take over the world any minute now ;)",
 			"dance": "0-<\n0-/\n0-\\",
-			"kde4": "http://frugalware.org/~crazy/other/kde4/ <- here you can reach some shots/videos from the upcoming KDE4 for Frugalware. at the moment uploading snapshot fpms would be just a waste of bandwidth, so please don't request them, we'll make them available when it worth to do so. thanks"
+			"kde4": "http://frugalware.org/~crazy/other/kde4/ <- here you can reach some shots/videos from the upcoming KDE4 for Frugalware. at the moment uploading snapshot fpms would be just a waste of bandwidth, so please don't request them, we'll make them available when it worth to do so. thanks",
+			"paste": "if you have a few lines of an error message to others in the channel, please use our Pastebin: http://frugalware.org/paste/. this is because 1) IRC is slow and 2) it breaks other conversations. thanks"
 			}
 	commands = {
 			# operator commands
