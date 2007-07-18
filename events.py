@@ -617,22 +617,17 @@ def on_pubmsg(self, c, e):
 			data = data[1:]
 		command(self, c, source, e.target(), data.strip())
 	# trigger
-	elif e.target() == "#frugalware" and " ... " in e.arguments()[0]:
-		c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)
-	elif e.target()[-3:] == ".hu" and re.match("^haszn..?l valaki", e.arguments()[0]):
-		c.privmsg(e.target(), "nem, viccbol van belole csomag")
-	elif e.arguments()[0].lower() == "yepp!":
-		sock = open("akii-fun.lines")
-		lines = "".join(sock.readlines()).split("\000\n")
-		sock.close()
-		c.privmsg(e.target(), "Yepp! %s" % random.choice(lines).replace("\n", ' ').strip())
-	elif e.arguments()[0].lower() == "yow!":
-		sock = open("yow.lines")
-		lines = "".join(sock.readlines()).split("\000\n")
-		sock.close()
-		c.privmsg(e.target(), "Yow! %s" % random.choice(lines).replace("\n", ' ').strip())
-	elif len(argv) > 3 and re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4])):
-		xe(c, source, e.target(), argv)
+	triggers = {
+			(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
+			(lambda e, argv: e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0])): (lambda c, e, source, argv: c.privmsg(e.target(), "nem, viccbol van belole csomag")),
+			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
+			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
+			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4]))): (lambda c, e, source, argv: xe(c, source, e.target(), argv))
+			}
+	for k, v in triggers.items():
+		if k(e, argv):
+			v(c, e, source, argv)
+			break
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
