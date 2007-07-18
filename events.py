@@ -647,13 +647,14 @@ def on_pubmsg(self, c, e):
 		# trigger
 		# hack. create an event sutable for triggers
 		e = Event(e.eventtype(), e.source(), e.target(), [data.strip()])
+		argv = e.arguments()[0].split(" ")
 		if handle_triggers(e, argv, c, source):
 			return
 	# trigger
 	if handle_triggers(e, argv, c, source):
 		return
 	if highlight:
-		c.privmsg(e.target(), "%s: '%s' is not a valid command" % (source, argv[1]))
+		c.privmsg(e.target(), "%s: '%s' is not a valid command" % (source, argv[0]))
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
