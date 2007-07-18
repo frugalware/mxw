@@ -465,7 +465,10 @@ def imdb(c, source, target, data):
 		c.privmsg(target, "no matches")
 		return
 	else:
-		c.privmsg(target, " || ".join(filter((lambda x: x is not None), [parser.title, parser.genre, parser.vote, parser.plot, parser.runtime, link])))
+		try:
+			c.privmsg(target, " || ".join(filter((lambda x: x is not None), [parser.title, parser.genre, parser.vote, parser.plot, parser.runtime, link])))
+		except TypeError:
+			c.privmsg(target, "mailformed query")
 
 class config:
 	server = "irc.freenode.net"
