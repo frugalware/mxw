@@ -531,6 +531,13 @@ class config:
 			"anongit": anongit,
 			"imdb": imdb
 			}
+	triggers = {
+			(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
+			(lambda e, argv: e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0])): (lambda c, e, source, argv: c.privmsg(e.target(), "nem, viccbol van belole csomag")),
+			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
+			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
+			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4]))): (lambda c, e, source, argv: xe(c, source, e.target(), argv))
+			}
 
 todo = {}
 
@@ -617,14 +624,7 @@ def on_pubmsg(self, c, e):
 			data = data[1:]
 		command(self, c, source, e.target(), data.strip())
 	# trigger
-	triggers = {
-			(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
-			(lambda e, argv: e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0])): (lambda c, e, source, argv: c.privmsg(e.target(), "nem, viccbol van belole csomag")),
-			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
-			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
-			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4]))): (lambda c, e, source, argv: xe(c, source, e.target(), argv))
-			}
-	for k, v in triggers.items():
+	for k, v in config.triggers.items():
 		if k(e, argv):
 			v(c, e, source, argv)
 			break
