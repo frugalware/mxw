@@ -550,9 +550,11 @@ def command(self, c, source, target, data):
 	# functions
 	if argv[0] in config.commands.keys():
 		config.commands[argv[0]](c, source, target, argv[1:])
+		return True
 	# database commands
-	elif not config.commands['db'](c, source, target, argv):
-		c.privmsg(target, "%s: '%s' is not a valid command" % (source, argv[0]))
+	if config.commands['db'](c, source, target, argv):
+		return True
+	return False
 
 def check_rss(self, c, e):
 	current = time.time()
@@ -598,6 +600,12 @@ def safe_eval(nick, cmd, c):
 		todo[nick] = [cmd]
 	c.whois([nick])
 
+def handle_triggers(e, argv, c, source):
+	for k, v in config.triggers.items():
+		if k(e, argv):
+			v(c, e, source, argv)
+			return True
+	return False
 ##
 # the event handlers
 ##
@@ -612,7 +620,8 @@ def on_welcome(self, c, e):
 
 def on_privmsg(self, c, e):
 	nick = e.source().split("!")[0]
-	command(self, c, nick, nick, e.arguments()[0])
+	if command(self, c, nick, nick, e.arguments()[0]):
+		return
 
 def on_pubmsg(self, c, e):
 	source = e.source().split("!")[0]
@@ -622,12 +631,12 @@ def on_pubmsg(self, c, e):
 		data = e.arguments()[0][len(c.get_nickname()):]
 		if data[:1] == "," or data[:1] == ":":
 			data = data[1:]
-		command(self, c, source, e.target(), data.strip())
+		if command(self, c, source, e.target(), data.strip()):
+			return
 	# trigger
-	for k, v in config.triggers.items():
-		if k(e, argv):
-			v(c, e, source, argv)
-			break
+	if handle_triggers(e, argv, c, source):
+		return
+	c.privmsg(e.target(), "%s: '%s' is not a valid command" % (source, argv[0]))
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
