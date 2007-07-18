@@ -402,12 +402,12 @@ def imdb(c, source, target, data):
 		def handle_data(self, text):
 			if self.ingenre:
 				if text == "more" or (len(self.genre) and text == "\n"):
-					self.genre = "".join(self.genre[1:])
+					self.genre = "genre: " + "".join(self.genre[1:])
 					self.ingenre = False
 				else:
 					self.genre.append(text)
 			elif self.inruntime:
-				self.runtime = text.strip()
+				self.runtime = "runtime: " + text.strip()
 				self.inruntime = False
 			elif self.inplot:
 				self.plot = text.strip()
@@ -415,10 +415,10 @@ def imdb(c, source, target, data):
 			elif self.invote:
 				self.vote.append(text.strip())
 				if text == ")":
-					self.vote = re.sub(r"(.*)/10\((.*) votes\)", r"\1/\2", "".join(self.vote))
+					self.vote = re.sub(r"(.*)/10\((.*) votes\)", r"score: \1/\2", "".join(self.vote))
 					self.invote = False
 				elif text == "(awaiting 5 votes)":
-					self.vote = "dunno"
+					self.vote = None
 					self.invote = False
 			elif self.intitle:
 				self.title.append(text.strip())
@@ -465,7 +465,7 @@ def imdb(c, source, target, data):
 		c.privmsg(target, "no matches")
 		return
 	else:
-		c.privmsg(target, "%s || genre: %s || score: %s || %s || runtime: %s || %s" % (parser.title, parser.genre, parser.vote, parser.plot, parser.runtime, link))
+		c.privmsg(target, " || ".join(filter((lambda x: x is not None), [parser.title, parser.genre, parser.vote, parser.plot, parser.runtime, link])))
 
 class config:
 	server = "irc.freenode.net"
