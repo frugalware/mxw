@@ -779,6 +779,8 @@ class ServerConnection(Connection):
 		"""
 		if self.socket is None:
 			raise ServerNotConnectedError, "Not connected."
+		if len(string) > 510:
+			string = string[:510]
 		try:
 			self.socket.send(string + "\r\n")
 			if DEBUG:
