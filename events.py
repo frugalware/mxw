@@ -624,19 +624,27 @@ def on_privmsg(self, c, e):
 		return
 
 def on_pubmsg(self, c, e):
+	highlight = False
 	source = e.source().split("!")[0]
 	argv = e.arguments()[0].split(" ")
+	data = e.arguments()[0][len(c.get_nickname()):]
+	if data[:1] == "," or data[:1] == ":":
+		data = data[1:]
 	# highlight
 	if e.arguments()[0].startswith(c.get_nickname()):
-		data = e.arguments()[0][len(c.get_nickname()):]
-		if data[:1] == "," or data[:1] == ":":
-			data = data[1:]
+		highlight = True
 		if command(self, c, source, e.target(), data.strip()):
+			return
+		# trigger
+		# hack. tweak what arguments() will return
+		e._arguments[0] = data.strip()
+		if handle_triggers(e, argv, c, source):
 			return
 	# trigger
 	if handle_triggers(e, argv, c, source):
 		return
-	c.privmsg(e.target(), "%s: '%s' is not a valid command" % (source, argv[0]))
+	if highlight:
+		c.privmsg(e.target(), "%s: '%s' is not a valid command" % (source, argv[1]))
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
