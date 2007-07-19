@@ -355,7 +355,7 @@ class Thread(threading.Thread):
 		while(True):
 			if self.dieplz:
 				break
-			if time.time() - self.c.lastping > 240:
+			if time.time() - self.c.lastping > 360:
 				self.c.disconnect("Connection timed out")
 				break
 
