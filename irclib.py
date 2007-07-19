@@ -67,6 +67,7 @@ import string
 import sys
 import time
 import types
+import threading
 
 VERSION = 0, 4, 6
 DEBUG = 1
@@ -345,6 +346,18 @@ class ServerConnectionError(IRCError):
 class ServerNotConnectedError(ServerConnectionError):
 	pass
 
+class Thread(threading.Thread):
+	def __init__(self, c):
+		threading.Thread.__init__(self)
+		self.c = c
+		self.dieplz = False
+	def run(self):
+		while(True):
+			if self.dieplz:
+				break
+			if time.time() - self.c.lastping > 240:
+				self.c.disconnect("Connection timed out")
+				break
 
 # Huh!?  Crrrrazy EFNet doesn't follow the RFC: their ircd seems to
 # use \n as message separator!  :P
@@ -361,6 +374,7 @@ class ServerConnection(Connection):
 		Connection.__init__(self, irclibobj)
 		self.connected = 0  # Not connected yet.
 		self.socket = None
+		self.lastping = 0
 
 	def connect(self, server, port, nickname, password=None, username=None,
 				ircname=None, localaddress="", localport=0):
@@ -413,6 +427,9 @@ class ServerConnection(Connection):
 			self.socket = None
 			raise ServerConnectionError, "Couldn't connect to socket: %s" % x
 		self.connected = 1
+		self.lastping = time.time()
+		self.lagcounter = Thread(self)
+		self.lagcounter.start()
 		if self.irclibobj.fn_to_add_socket:
 			self.irclibobj.fn_to_add_socket(self.socket)
 
@@ -430,6 +447,7 @@ class ServerConnection(Connection):
 		been called, the object is unusable.
 		"""
 
+		self.lagcounter.dieplz = True
 		self.disconnect("Closing object")
 		self.irclibobj._remove_connection(self)
 
@@ -1148,6 +1166,7 @@ def _parse_modes(mode_string, unary_modes=""):
 
 def _ping_ponger(connection, event):
 	"""[Internal]"""
+	connection.lastping = time.time()
 	connection.pong(event.target())
 
 # Numeric table mostly stolen from the Perl IRC module (Net::IRC).
