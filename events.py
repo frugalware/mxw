@@ -620,10 +620,15 @@ def handle_triggers(e, argv, c, source):
 ##
 # the event handlers
 ##
-def on_welcome(self, c, e):
+def on_nicknameinuse(self, c, e):
+	c.nick(config.nick + "_")
 	c.privmsg("nickserv", "ghost %s %s" % (config.nick, config.password))
 	time.sleep(2)
 	c.nick(config.nick)
+	c.privmsg("nickserv", "identify %s" % config.password)
+	time.sleep(2)
+
+def on_welcome(self, c, e):
 	c.privmsg("nickserv", "identify %s" % config.password)
 	time.sleep(2)
 	for i in config.channels:
