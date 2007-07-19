@@ -25,6 +25,7 @@ write simpler bots.
 """
 
 import sys
+import time
 from UserDict import UserDict
 
 from irclib import SimpleIRCClient
@@ -72,7 +73,7 @@ class SingleServerIRCBot(SimpleIRCClient):
 		self._nickname = nickname
 		self._realname = realname
 		for i in ["disconnect", "join", "kick", "mode",
-				  "namreply", "nick", "part", "quit"]:
+				  "namreply", "nick", "part", "quit", "pong"]:
 			self.connection.add_global_handler(i,
 											   getattr(self, "_on_" + i),
 											   -10)
@@ -177,6 +178,8 @@ class SingleServerIRCBot(SimpleIRCClient):
 		for ch in self.channels.values():
 			if ch.has_user(nick):
 				ch.remove_user(nick)
+	def _on_pong(self, c, e):
+		c.lastpong = time.time()
 
 	def die(self, msg="Bye, cruel world!"):
 		"""Let the bot die.

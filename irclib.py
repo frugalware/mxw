@@ -355,9 +355,14 @@ class Thread(threading.Thread):
 		while(True):
 			if self.dieplz:
 				break
-			if time.time() - self.c.lastping > 360:
+			lag = time.time() - self.c.lastpong
+			if lag > 300:
 				self.c.disconnect("Connection timed out")
 				break
+			if lag > 30 and DEBUG:
+				print "Lag: %d" % lag
+			self.c.ping(self.c.get_nickname())
+			time.sleep(10)
 
 # Huh!?  Crrrrazy EFNet doesn't follow the RFC: their ircd seems to
 # use \n as message separator!  :P
@@ -427,9 +432,9 @@ class ServerConnection(Connection):
 			self.socket = None
 			raise ServerConnectionError, "Couldn't connect to socket: %s" % x
 		self.connected = 1
-		self.lastping = time.time()
-		self.lagcounter = Thread(self)
-		self.lagcounter.start()
+		self.lastpong = time.time()
+		self.ctcppinger = Thread(self)
+		self.ctcppinger.start()
 		if self.irclibobj.fn_to_add_socket:
 			self.irclibobj.fn_to_add_socket(self.socket)
 
@@ -447,7 +452,7 @@ class ServerConnection(Connection):
 		been called, the object is unusable.
 		"""
 
-		self.lagcounter.dieplz = True
+		self.ctcppinger.dieplz = True
 		self.disconnect("Closing object")
 		self.irclibobj._remove_connection(self)
 
