@@ -20,12 +20,14 @@ class RssThread(threading.Thread):
 		self.c = c
 		self.e = e
 		self.dieplz = False
+		self.lastcheck = 0
 	def run(self):
 		while(True):
 			if self.dieplz:
 				break
 			time.sleep(180)
 			check_rss(self.s, self.c, self.e)
+			self.lastcheck = time.time()
 
 ##
 # functions used by commands
