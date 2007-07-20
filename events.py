@@ -643,8 +643,6 @@ def on_nicknameinuse(self, c, e):
 	time.sleep(2)
 
 def on_welcome(self, c, e):
-	self.rssthread = RssThread(self, c, e)
-	self.rssthread.start()
 	c.privmsg("nickserv", "identify %s" % config.password)
 	time.sleep(2)
 	for i in config.channels:
@@ -715,3 +713,8 @@ def on_identified(self, c, e):
 
 def on_quit(self, c, e):
 	self.rssthread.dieplz = True
+
+def on_pong(self, c, e):
+	if not hasattr(self, "rssthread") or not self.rssthread.isAlive():
+		self.rssthread = RssThread(self, c, e)
+		self.rssthread.start()
