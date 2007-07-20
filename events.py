@@ -24,8 +24,8 @@ class RssThread(threading.Thread):
 		while(True):
 			if self.dieplz:
 				break
-			check_rss(self.s, self.c, self.e)
 			time.sleep(180)
+			check_rss(self.s, self.c, self.e)
 
 ##
 # functions used by commands
