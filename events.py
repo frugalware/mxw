@@ -366,7 +366,11 @@ def git(c, source, target, argv):
 		return
 	else:
 		path = os.path.abspath(os.path.join(repodir, os.readlink(os.path.join(repodir, repo))))
-		c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s" % (source, source, path))
+		if repo.startswith("frugalware-"):
+			local = repo[len("frugalware-"):]
+		else:
+			local = ""
+		c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source, path, local))
 
 def anongit(c, source, target, argv):
 	"""gives you a deepcmdline to clone a given repo anonymously"""
