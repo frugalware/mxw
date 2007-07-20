@@ -13,6 +13,20 @@ class Rss:
 		self.feed = None
 		self.updated = time.time()
 
+class RssThread(threading.Thread):
+	def __init__(self, s, c, e):
+		threading.Thread.__init__(self)
+		self.s = s
+		self.c = c
+		self.e = e
+		self.dieplz = False
+	def run(self):
+		while(True):
+			if self.dieplz:
+				break
+			check_rss(self.s, self.c, self.e)
+			time.sleep(180)
+
 ##
 # functions used by commands
 ##
@@ -629,6 +643,8 @@ def on_nicknameinuse(self, c, e):
 	time.sleep(2)
 
 def on_welcome(self, c, e):
+	self.rssthread = RssThread(self, c, e)
+	self.rssthread.start()
 	c.privmsg("nickserv", "identify %s" % config.password)
 	time.sleep(2)
 	for i in config.channels:
@@ -697,5 +713,5 @@ def on_identified(self, c, e):
 	if nick in todo.keys():
 		del todo[nick]
 
-def on_ping(self, c, e):
-	check_rss(self, c, e)
+def on_quit(self, c, e):
+	self.rssthread.dieplz = True
