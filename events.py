@@ -545,7 +545,10 @@ def mojodb(c, source, target, argv):
 			for i in records.keys():
 				if re.match(argv[1], i):
 					ret.append(i)
-			c.privmsg(target, "%s: mojodb search results: %s" % (source, ", ".join(ret)))
+			if len(ret):
+				c.privmsg(target, "%s: mojodb search results: %s" % (source, ", ".join(ret)))
+			else:
+				c.privmsg(target, "%s: no mojodb search results" % source)
 		else:
 			c.privmsg(target, "%s: '%s' is not a valid mojodb subcommand" % (source, argv[0]))
 
