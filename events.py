@@ -521,22 +521,33 @@ def imdb(c, source, target, data):
 			c.privmsg(target, "mailformed query")
 
 def mojodb(c, source, target, argv):
-	"""mirror of Mojojojo's database"""
+	"""mirror of Mojojojo's database. one parameter needed. valid subcommands: h[elp]|s[earch]. they require a parameter, too"""
 	if len(argv) < 1:
 		c.privmsg(target, "%s: 'mojodb' requires a parameter (record name)" % source)
 		return
-	key = argv[0]
 	sock = open("mojodb")
 	records = pickle.load(sock)
 	sock.close()
-	if key in records.keys():
-		c.privmsg(target, "%s: %s => %s" % (source, key, records[key]))
-	else:
-		for k, v in records.items():
-			if re.match(key.replace("-", ".*-"), k):
-				c.privmsg(target, "%s: %s => %s" % (source, k, v))
-				return
-		c.privmsg(target, "%s: no such key" % source)
+	if len(argv) == 1:
+		key = argv[0]
+		if key in records.keys():
+			c.privmsg(target, "%s: %s => %s" % (source, key, records[key]))
+		else:
+			for k, v in records.items():
+				if re.match(key.replace("-", ".*-"), k):
+					c.privmsg(target, "%s: %s => %s" % (source, k, v))
+					return
+			c.privmsg(target, "%s: no such key" % source)
+		return
+	elif len(argv) == 2:
+		if argv[0][0] == 's':
+			ret = []
+			for i in records.keys():
+				if re.match(argv[1], i):
+					ret.append(i)
+			c.privmsg(target, "%s: mojodb search resulsts: %s" % (source, ", ".join(ret)))
+		else:
+			c.privmsg(target, "%s: '%s' is not a valid mojodb subcommand" % (source, argv[0]))
 
 def fortune(c, e, source, file, prefix):
 	sock = open(file)
