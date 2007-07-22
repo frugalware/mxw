@@ -532,6 +532,10 @@ def mojodb(c, source, target, argv):
 	if key in records.keys():
 		c.privmsg(target, "%s: %s => %s" % (source, key, records[key]))
 	else:
+		for k, v in records.items():
+			if re.match(key.replace("-", ".*-"), k):
+				c.privmsg(target, "%s: %s => %s" % (source, k, v))
+				return
 		c.privmsg(target, "%s: no such key" % source)
 
 def fortune(c, e, source, file, prefix):
