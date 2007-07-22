@@ -520,6 +520,20 @@ def imdb(c, source, target, data):
 		except TypeError:
 			c.privmsg(target, "mailformed query")
 
+def mojodb(c, source, target, argv):
+	"""mirror of Mojojojo's database"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'mojodb' requires a parameter (record name)" % source)
+		return
+	key = argv[0]
+	sock = open("mojodb")
+	records = pickle.load(sock)
+	sock.close()
+	if key in records.keys():
+		c.privmsg(target, "%s: %s => %s" % (source, key, records[key]))
+	else:
+		c.privmsg(target, "%s: no such key" % source)
+
 def fortune(c, e, source, file, prefix):
 	sock = open(file)
 	lines = "".join(sock.readlines()).split("\000\n")
@@ -577,7 +591,8 @@ class config:
 			"darcs": darcs,
 			"git": git,
 			"anongit": anongit,
-			"imdb": imdb
+			"imdb": imdb,
+			"mojodb": mojodb
 			}
 	triggers = {
 			(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
