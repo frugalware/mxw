@@ -36,6 +36,26 @@ def opme(c, source, target, argv):
 	"""gives operator status to you on the current channel"""
 	safe_eval(source, 'c.mode("%s", "+o %s")' % (target, source), c)
 
+def op(c, source, target, argv):
+	"""gives operator status to somebody on a channel. optional second parameter: channel (defaults to current)"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'op' requires a parameter (nick)" % source)
+		return
+	if len(argv) < 2:
+		chan = target
+	else:
+		chan = argv[1]
+	cmd = 'c.mode("%s", "+o %s")' % (chan, argv[0])
+	safe_eval(source, cmd, c)
+
+def deop(c, source, target, argv):
+	"""takes operator status from somebody on the current channel"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'deop' requires a parameter (nick)" % source)
+		return
+	cmd = 'c.mode("%s", "-o %s")' % (target, argv[0])
+	safe_eval(source, cmd, c)
+
 def voiceme(c, source, target, argv):
 	"""gives voice to you on the a channel. optional parameter: channel (defaults to current)"""
 	if len(argv) < 1:
@@ -588,6 +608,8 @@ class config:
 	commands = {
 			# operator commands
 			"opme": opme,
+			"op": op,
+			"deop": deop,
 			"voiceme": voiceme,
 			"devoiceme": devoiceme,
 			"voice": voice,
