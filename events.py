@@ -604,7 +604,7 @@ class config:
 			"dance": "0-<\n0-/\n0-\\",
 			"kde4": "http://frugalware.org/~crazy/other/kde4/ <- here you can reach some shots/videos from the upcoming KDE4 for Frugalware. at the moment uploading snapshot fpms would be just a waste of bandwidth, so please don't request them, we'll make them available when it worth to do so. thanks",
 			"paste": "if you have a few lines of an error message to others in the channel, please use our Pastebin: http://frugalware.org/paste/. this is because 1) IRC is slow and 2) it breaks other conversations. thanks",
-			"persze": "http://frugalware.org/~voroskoi/csokolom_persze.mp3"
+			"persze": "http://www.kancso.hu/zenek/repeta050906.mp3"
 			}
 	commands = {
 			# operator commands
