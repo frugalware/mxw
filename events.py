@@ -603,7 +603,8 @@ class config:
 			"flame": "Frugalware is best! All other distros suck! Oh, sure, we plan to take over the world any minute now ;)",
 			"dance": "0-<\n0-/\n0-\\",
 			"kde4": "http://frugalware.org/~crazy/other/kde4/ <- here you can reach some shots/videos from the upcoming KDE4 for Frugalware. at the moment uploading snapshot fpms would be just a waste of bandwidth, so please don't request them, we'll make them available when it worth to do so. thanks",
-			"paste": "if you have a few lines of an error message to others in the channel, please use our Pastebin: http://frugalware.org/paste/. this is because 1) IRC is slow and 2) it breaks other conversations. thanks"
+			"paste": "if you have a few lines of an error message to others in the channel, please use our Pastebin: http://frugalware.org/paste/. this is because 1) IRC is slow and 2) it breaks other conversations. thanks",
+			"persze": "http://frugalware.org/~voroskoi/csokolom_persze.mp3"
 			}
 	commands = {
 			# operator commands
@@ -640,6 +641,9 @@ class config:
 			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
 			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
 			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-z]+ in [a-z]+$", " ".join(argv[:4]))): (lambda c, e, source, argv: xe(c, source, e.target(), argv))
+			}
+	highlight_triggers = {
+			(lambda e, argv: re.match(r".*\?$", argv[-1])): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: persze""" % source))
 			}
 
 todo = {}
@@ -713,11 +717,16 @@ def safe_eval(nick, cmd, c):
 		todo[nick] = [cmd]
 	c.whois([nick])
 
-def handle_triggers(e, argv, c, source):
+def handle_triggers(e, argv, c, source, highlight=False):
 	for k, v in config.triggers.items():
 		if k(e, argv):
 			v(c, e, source, argv)
 			return True
+	if highlight:
+		for k, v in config.highlight_triggers.items():
+			if k(e, argv):
+				v(c, e, source, argv)
+				return True
 	return False
 ##
 # the event handlers
@@ -745,7 +754,7 @@ def on_privmsg(self, c, e):
 	# trigger
 	# hack. create an event sutable for triggers
 	tre = Event(e.eventtype(), e.source(), nick, e.arguments())
-	if handle_triggers(tre, argv, c, source):
+	if handle_triggers(tre, argv, c, source, highlight=True):
 		return
 	c.privmsg(nick, "'%s' is not a valid command" % (argv[0]))
 
@@ -765,7 +774,7 @@ def on_pubmsg(self, c, e):
 		# hack. create an event sutable for triggers
 		e = Event(e.eventtype(), e.source(), e.target(), [data.strip()])
 		argv = e.arguments()[0].split(" ")
-		if handle_triggers(e, argv, c, source):
+		if handle_triggers(e, argv, c, source, highlight=True):
 			return
 	# trigger
 	if handle_triggers(e, argv, c, source):
