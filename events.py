@@ -393,30 +393,53 @@ def darcs(c, source, target, argv):
 		c.privmsg(target, "%s: darcs get --partial %s@darcs.frugalware.org:%s %s" % (source, source, path, local))
 
 def git(c, source, target, argv):
-	"""gives you a deepcmdline to clone a given repo"""
+	"""gives you a deepcmdline to clone a given repo. use 'git foo' to get a deepcmdline. use 'git info foo' to get info about a repo"""
 	repodir = "/home/ftp/pub/other/homepage-ng/git/repos"
 	if len(argv) < 1:
 		for root, dirs, files in os.walk(repodir):
 			repos = dirs
 		repos.sort()
-		c.privmsg(target, "%s: the following git repos are available: %s. use 'git foo' to get a deepcmdline" % (source, ", ".join(repos)))
+		c.privmsg(target, "%s: the following git repos are available: %s. see 'help git' for more info" % (source, ", ".join(repos)))
 		return
-	repo = argv[0]
-	found = False
-	for root, dirs, files in os.walk(repodir):
-		for dir in dirs:
-			if dir == repo:
-				found = True
-	if not found:
-		c.privmsg(target, "%s: no such repo" % source)
-		return
-	else:
-		path = os.path.abspath(os.path.join(repodir, os.readlink(os.path.join(repodir, repo))))
-		if repo.startswith("frugalware-"):
-			local = repo[len("frugalware-"):]
+	elif len(argv) < 2:
+		repo = argv[0]
+		found = False
+		for root, dirs, files in os.walk(repodir):
+			for dir in dirs:
+				if dir == repo:
+					found = True
+		if not found:
+			c.privmsg(target, "%s: no such repo" % source)
+			return
 		else:
-			local = ""
-		c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source, path, local))
+			path = os.path.abspath(os.path.join(repodir, os.readlink(os.path.join(repodir, repo))))
+			if repo.startswith("frugalware-"):
+				local = repo[len("frugalware-"):]
+			else:
+				local = ""
+			c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source, path, local))
+	else:
+		cmd = argv[0]
+		repo = argv[1]
+		found = False
+		for root, dirs, files in os.walk(repodir):
+			for dir in dirs:
+				if dir == repo:
+					found = True
+		if not found:
+			c.privmsg(target, "%s: no such repo" % source)
+			return
+		else:
+			if cmd == "info":
+				sock = open("%s/%s/.git/description" % (repodir, repo))
+				desc = sock.read().strip()
+				sock.close()
+				sock = open("%s/%s/.git/owner" % (repodir, repo))
+				owner = sock.read().strip()
+				sock.close()
+				c.privmsg(target, "%s: desc: '%s', owner: '%s'" % (source, desc, owner))
+			else:
+				c.privmsg(target, "%s: no such subcommand" % source)
 
 def anongit(c, source, target, argv):
 	"""gives you a deepcmdline to clone a given repo anonymously"""
