@@ -561,7 +561,7 @@ def imdb(c, source, target, data):
 		try:
 			c.privmsg(target, " || ".join(filter((lambda x: x is not None), [parser.title, parser.genre, parser.vote, parser.plot, parser.runtime, link])))
 		except TypeError:
-			c.privmsg(target, "mailformed query")
+			c.privmsg(target, "malformed query")
 
 def mojodb(c, source, target, argv):
 	"""mirror of Mojojojo's database. one parameter needed. valid subcommands: h[elp]|s[earch]. they require a parameter, too"""
