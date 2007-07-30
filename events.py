@@ -192,7 +192,10 @@ def google(c, source, target, data):
 	parser.feed(page)
 	parser.close()
 
-	c.privmsg(target, parser.titles[0])
+	if len(parser.titles):
+		c.privmsg(target, parser.titles[0])
+	else:
+		c.privmsg(target, "your search did not match any documents")
 	if len(parser.descs) and parser.descs[0]:
 		c.privmsg(target, parser.descs[0])
 	if len(parser.links) and parser.links[0]:
