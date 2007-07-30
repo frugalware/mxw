@@ -193,8 +193,10 @@ def google(c, source, target, data):
 	parser.close()
 
 	c.privmsg(target, parser.titles[0])
-	c.privmsg(target, parser.descs[0])
-	c.privmsg(target, parser.links[0])
+	if len(parser.descs) and parser.descs[0]:
+		c.privmsg(target, parser.descs[0])
+	if len(parser.links) and parser.links[0]:
+		c.privmsg(target, parser.links[0])
 
 def fight(c, source, target, data):
 	"""compares the popularity of two words using googlefight"""
@@ -232,47 +234,6 @@ def fight(c, source, target, data):
 	else:
 		win = word2
 	c.privmsg(target, "googlefight: %s wins! %s vs %s" % (win, parser.results[0], parser.results[1]))
-
-def xe(c, source, target, opts):
-	class myurlopener(urllib.FancyURLopener):
-		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
-
-	class HTMLParser(SGMLParser):
-		def reset(self):
-			SGMLParser.reset(self)
-			self.ret = None
-
-		def handle_data(self, text):
-			if text.startswith("1 %s = " % self.fro):
-				self.ret = text
-
-	urllib._urlopener = myurlopener()
-	try:
-		amount = opts[0]
-		fro = opts[1].upper()
-		to = opts[3].upper()
-	except IndexError:
-		return
-
-	if amount[-1] == "K":
-		amount = float(amount[:-1])*1000
-	elif amount[-1] == "M":
-		amount = float(amount[:-1])*1000000
-
-	# wtf this is always 1
-	data = urllib.urlencode({'Amount':1, 'From':fro,'To':to})
-	sock = urllib.urlopen('http://www.xe.com/ucc/convert.cgi', data)
-
-	parser = HTMLParser()
-	parser.fro = fro
-	parser.reset()
-	parser.feed(sock.read())
-	if not parser.ret:
-		return
-	ret = re.sub('.* = ', '', parser.ret).lower().split(' ')
-	c.privmsg(target, "%.3lf %s" % (float(ret[0])*float(amount), ret[1]))
-	parser.close()
-	sock.close()
 
 def lc(c, source, target, data):
 	"""porget egyet a lamerszamlalon"""
@@ -663,7 +624,7 @@ class config:
 			(lambda e, argv: e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0])): (lambda c, e, source, argv: c.privmsg(e.target(), "nem, viccbol van belole csomag")),
 			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
 			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
-			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4]))): (lambda c, e, source, argv: xe(c, source, e.target(), argv))
+			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4]))): (lambda c, e, source, argv: google(c, source, e.target(), argv))
 			}
 	highlight_triggers = {
 			(lambda e, argv: re.match(r".*\?$", argv[-1])): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: persze""" % source))
