@@ -606,6 +606,7 @@ class config:
 			"topic": topic,
 			# web services
 			"google": google,
+			"btssearch": (lambda c, source, target, argv: google(c, source, target, ("site:bugs.frugalware.org %s" % " ".join(argv)).split(' '))),
 			"fight": fight,
 			"lc": lc,
 			# misc
