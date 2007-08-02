@@ -203,40 +203,43 @@ def google(c, source, target, data):
 
 def fight(c, source, target, data):
 	"""compares the popularity of two words using googlefight"""
+	class myurlopener(urllib.FancyURLopener):
+		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
+
 	class HTMLParser(SGMLParser):
 		def reset(self):
 			SGMLParser.reset(self)
-			self.results = []
-			self.inspan = False
-
-		def start_span(self, attrs):
-			self.inspan = True
-
-		def end_span(self):
-			self.inspan = False
+			self.inabout = False
+			self.resnum = 0
 
 		def handle_data(self, text):
-			if self.inspan:
-				self.results.append(text.strip().split(' ')[0])
+			if text == " of about ":
+				self.inabout = True
+			elif self.inabout:
+				self.resnum = int(text.replace(',', ''))
+				self.inabout = False
 
-	if len(data) < 1:
+	if len(data) < 2:
 		c.privmsg(target, "%s: 'fight' requires two parameters" % source)
 		return
-	word1, word2 = data[:2]
-	sock = urllib.urlopen("http://www.googlefight.com/query.php?lang=en_GB&word1=%s&word2=%s" % (word1, word2))
-	page = sock.read()
-	sock.close()
+	urllib._urlopener = myurlopener()
+	res = []
+	for i in data:
+		sock = urllib.urlopen("http://www.google.com/search?hl=en&q=%s" % i)
+		page = sock.read()
+		sock.close()
 
-	parser = HTMLParser()
-	parser.reset()
-	parser.feed(page)
-	parser.close()
+		parser = HTMLParser()
+		parser.reset()
+		parser.feed(page)
+		parser.close()
+		res.append(parser.resnum)
 
-	if int(parser.results[0].replace(',', '')) > int(parser.results[1].replace(',', '')):
-		win = word1
+	if res[0] > res[1]:
+		win = data[0]
 	else:
-		win = word2
-	c.privmsg(target, "googlefight: %s wins! %s vs %s" % (win, parser.results[0], parser.results[1]))
+		win = data[1]
+	c.privmsg(target, "googlefight: %s wins! %s vs %s" % (win, res[0], res[1]))
 
 def lc(c, source, target, data):
 	"""porget egyet a lamerszamlalon"""
