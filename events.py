@@ -457,7 +457,11 @@ def dict(c, source, target, argv):
 		d = ud
 	if d not in ods.keys():
 		return
-	url = "http://szotar.sztaki.hu/dict_search.php?S=W&L=%s&W=%s" % (ods[d], argv[1])
+	try:
+		w = unicode(argv[1], "utf8").encode("latin2")
+	except UnicodeDecodeError:
+		w = argv[1]
+	url = "http://szotar.sztaki.hu/dict_search.php?S=W&L=%s&W=%s" % (ods[d], w)
 	try:
 		socket = urllib.urlopen(url)
 	except IOError, s:
