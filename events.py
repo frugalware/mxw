@@ -1,6 +1,6 @@
 import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
 sys.path.append("/usr/lib")
-import feedparser, htmlentitydefs, random, os, threading
+import feedparser, htmlentitydefs, random, os, threading, string
 from xml.dom import minidom
 from sgmllib import SGMLParser
 from irclib import Event
@@ -426,6 +426,59 @@ def anongit(c, source, target, argv):
 	else:
 		c.privmsg(target, "%s: git clone http://git.frugalware.org/repos/%s/.git" % (source, repo))
 
+def dict(c, source, target, argv):
+	"""dictionary using dict.sztaki.hu. supported dicts: en,de,fr,it,nl,pl <-> hu"""
+	def rec(match):
+		return(chr(string.atoi(match.group()[2:-1])))
+	# original dicts
+	ods = {
+			"hu2en": "HUN%3AENG%3AEngHunDic",
+			"hu2de": "HUN%3AGER%3AGerHunDict",
+			"hu2fr": "HUN%3AFRA%3AFraHunDict",
+			"hu2it": "HUN%3AITA%3AItaHunDict",
+			"hu2nl": "HUN%3AHOL%3AHolHunDict",
+			"hu2pl": "HUN%3APOL%3APolHunDict",
+			"en2hu": "ENG%3AHUN%3AEngHunDic",
+			"de2hu": "GER%3AHUN%3AGerHunDict",
+			"fr2hu": "FRA%3AHUN%3AFraHunDict",
+			"it2hu": "ITA%3AHUN%3AItaHunDict",
+			"nl2hu": "HOL%3AHUN%3AHolHunDict",
+			"pl2hu": "POL%3AHUN%3APolHunDict"
+			}
+	if len(argv) < 2:
+		c.privmsg(target, "%s: 'dict' requires two parameters" % source)
+		return
+	ud = argv[0]
+	if ud == "hu":
+		d = "hu2en"
+	elif "2" not in ud:
+		d = ud + "2hu"
+	else:
+		d = ud
+	if d not in ods.keys():
+		return
+	url = "http://szotar.sztaki.hu/dict_search.php?S=W&L=%s&W=%s" % (ods[d], argv[1])
+	try:
+		socket = urllib.urlopen(url)
+	except IOError, s:
+		c.privmsg(target, "problem: %s" % s)
+		return
+	raw = []
+	while True:
+		line = socket.readline()
+		if not line:
+			break
+		if line.find("nbsp") > 0:
+			raw.append(re.sub(r'.*&nbsp;(.*)<br/>\n', r'\1', line))
+	final = []
+	if len(raw):
+		for i in raw:
+			final.append(re.sub(r'\&\#([0-9]+);', rec, i))
+		c.privmsg(target, "%s: %s" % (source, ", ".join(final)))
+	else:
+		c.privmsg(target, "not found")
+	socket.close()
+
 def imdb(c, source, target, data):
 	"""searches movies using imdb"""
 	class SHTMLParser(SGMLParser):
@@ -624,7 +677,8 @@ class config:
 			"git": git,
 			"anongit": anongit,
 			"imdb": imdb,
-			"mojodb": mojodb
+			"mojodb": mojodb,
+			"dict": dict
 			}
 	triggers = {
 			(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
@@ -632,7 +686,8 @@ class config:
 			(lambda e, argv: e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0])): (lambda c, e, source, argv: c.privmsg(e.target(), "nem, viccbol van belole csomag")),
 			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
 			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
-			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4]))): (lambda c, e, source, argv: google(c, source, e.target(), argv))
+			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4]))): (lambda c, e, source, argv: google(c, source, e.target(), argv)),
+			(lambda e, argv: re.match("^[a-z]{2} [a-z]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv))
 			}
 	highlight_triggers = {
 			(lambda e, argv: re.match(r".*\?$", argv[-1])): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: persze""" % source))
