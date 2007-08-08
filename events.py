@@ -687,7 +687,7 @@ class config:
 			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
 			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
 			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4]))): (lambda c, e, source, argv: google(c, source, e.target(), argv)),
-			(lambda e, argv: re.match("^[a-z]{2} [a-z]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv))
+			(lambda e, argv: re.match("^[a-z]{2} [a-z\xdf]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv))
 			}
 	highlight_triggers = {
 			(lambda e, argv: re.match(r".*\?$", argv[-1])): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: persze""" % source))
