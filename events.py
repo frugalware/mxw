@@ -265,7 +265,7 @@ def help(c, source, target, argv):
 	if len(argv) < 1:
 		cmds = config.commands.keys()
 		cmds.sort()
-		c.privmsg(target, "%s: available commands: %s" % (source, ", ".join(cmds)))
+		c.privmsg(target, "%s: %d available commands: %s" % (source, len(cmds), ", ".join(cmds)))
 	else:
 		try:
 			c.privmsg(target, "%s: %s" % (source, config.commands[argv[0]].__doc__))
