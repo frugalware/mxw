@@ -742,7 +742,7 @@ def check_rss(self, c, e):
 					brown = j.author
 					green = j.title
 				else: # blogs and bugs
-					brown = j.title
+					brown = j.title.encode('latin2') # FIXME: hardwired charset
 					green = j.link
 				c.privmsg(target, "14%s7 %s3 %s" % (gray, brown, green))
 				# to avoid floods
