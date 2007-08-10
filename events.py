@@ -321,11 +321,11 @@ def db_search(c, source, target, argv):
 	"""searches the database. if no parameter given then all records will be listed. regexs supported"""
 	ret = []
 	if len(argv):
-		pattern = ".*%s.*" % argv[0]
+		pattern = argv[0]
 	else:
 		pattern = "."
 	for k, v in config.database.items():
-		if re.match(pattern, k) or re.match(pattern, v):
+		if re.search(pattern, k) or re.search(pattern, v):
 			ret.append(k)
 	if len(ret):
 		ret.sort()
