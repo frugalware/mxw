@@ -601,7 +601,7 @@ def mojodb(c, source, target, argv):
 			c.privmsg(target, "%s: %s => %s" % (source, key, records[key]))
 		else:
 			for k, v in records.items():
-				if re.match(key.replace("-", ".*-"), k):
+				if re.search(key.replace("-", ".*-"), k):
 					c.privmsg(target, "%s: %s => %s" % (source, k, v))
 					return
 			c.privmsg(target, "%s: no such key" % source)
@@ -609,9 +609,9 @@ def mojodb(c, source, target, argv):
 	elif len(argv) == 2:
 		if argv[0][0] == 's':
 			ret = []
-			for i in records.keys():
-				if re.match(argv[1], i):
-					ret.append(i)
+			for k, v in records.items():
+				if re.search(argv[1], k) or re.search(argv[1], v):
+					ret.append(k)
 			if len(ret):
 				c.privmsg(target, "%s: mojodb search results: %s" % (source, ", ".join(ret)))
 			else:
