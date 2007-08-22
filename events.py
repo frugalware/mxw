@@ -695,7 +695,7 @@ class config:
 			(lambda e, argv: (not e.target().startswith("#") or e.target() == "#debian.hu") and re.match("^[a-z]{2} [a-zA-Z\xdf]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv))
 			}
 	highlight_triggers = {
-			(lambda e, argv: re.match(r".*\?$", argv[-1])): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: persze""" % source))
+			(lambda e, argv: re.match(r".*\?$", argv[-1]) and e.target() not in ["#frugalware.dev", "#frugalware"]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: persze""" % source))
 			}
 
 todo = {}
