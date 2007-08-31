@@ -8,4 +8,4 @@ eval c.privmsg("#channel", config.feeds[4].url)
 
 Remove a feed:
 
-eval c.privmsg("#channel", config.feeds.remove(config.feeds[4]))
+eval config.feeds.remove(config.feeds[4])
