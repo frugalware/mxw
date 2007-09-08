@@ -591,7 +591,7 @@ def xorg73(c, source, target, argv):
 	"""compares the amount of fpms in the xorg73 repo to current's x11 group"""
 	old = os.getcwd()
 	os.chdir("/home/vmiklos/git")
-	percent = int(float(len(glob.glob("xorg73/frugalware-x86_64/*")))/len(glob.glob("current/source/x11/*"))*100)
+	percent = int(float(len(glob.glob("xorg73/frugalware-x86_64/*")))/len(glob.glob("xorg73/source/x11/*"))*100)
 	c.privmsg(target, "%s: xorg73: %d%% completed" % (source, percent))
 	os.chdir(old)
 
