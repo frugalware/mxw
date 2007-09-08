@@ -1,6 +1,6 @@
 import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
 sys.path.append("/usr/lib")
-import feedparser, htmlentitydefs, random, os, threading, string
+import feedparser, htmlentitydefs, random, os, threading, string, glob
 from xml.dom import minidom
 from sgmllib import SGMLParser
 from irclib import Event
@@ -587,6 +587,14 @@ def imdb(c, source, target, data):
 		except TypeError:
 			c.privmsg(target, "malformed query")
 
+def xorg73(c, source, target, argv):
+	"""compares the amount of fpms in the xorg73 repo to current's x11 group"""
+	old = os.getcwd()
+	os.chdir("/home/vmiklos/git")
+	percent = int(float(len(glob.glob("xorg73/frugalware-x86_64/*")))/len(glob.glob("current/source/x11/*"))*100)
+	c.privmsg(target, "%s: xorg73: %d%% completed" % (source, percent))
+	os.chdir(old)
+
 def mojodb(c, source, target, argv):
 	"""mirror of Mojojojo's database. one parameter needed. valid subcommands: h[elp]|s[earch]. they require a parameter, too"""
 	if len(argv) < 1:
@@ -682,7 +690,8 @@ class config:
 			"anongit": anongit,
 			"imdb": imdb,
 			"mojodb": mojodb,
-			"dict": dict
+			"dict": dict,
+			"xorg73": xorg73
 			}
 	triggers = {
 			(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
