@@ -1,6 +1,7 @@
 import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
 sys.path.append("/usr/lib")
 import feedparser, htmlentitydefs, random, os, threading, string, glob
+import anydatetime
 from xml.dom import minidom
 from sgmllib import SGMLParser
 from irclib import Event
@@ -28,6 +29,19 @@ class RssThread(threading.Thread):
 			time.sleep(180)
 			check_rss(self.s, self.c, self.e)
 			self.lastcheck = time.time()
+
+class NotifyThread(threading.Thread):
+	def __init__(self, c):
+		threading.Thread.__init__(self)
+		self.c = c
+	def run(self):
+		while(True):
+			time.sleep(10) # FIXME: this should be 60 later
+			for i in self.todo:
+				nick, t, text = i
+				if time.time() > time.mktime(t):
+					self.c.privmsg(nick, text)
+					self.todo.remove(i)
 
 ##
 # functions used by commands
@@ -595,6 +609,28 @@ def xorg73(c, source, target, argv):
 	c.privmsg(target, "%s: xorg73: %d%% completed" % (source, percent))
 	os.chdir(old)
 
+def notify(c, source, target, argv):
+	"""notifies somebody about something at a given time in the future"""
+	if len(argv) < 4:
+		c.privmsg(target, "%s: 'notify' usage: 'notify <nick> <date> about <text>'" % source)
+		c.privmsg(target, "%s: example: 'notify janny tomorrow about you need to buy beer'" % source)
+		return
+	params = " ".join(argv)
+	nick = params.split(' about ')[0].split(' ')[0]
+	when = " ".join(params.split(' about ')[0].split(' ')[1:])
+	text = ' about '.join(params.split(' about ')[1:])
+	bad, t = anydatetime.anydatetime(when)
+	if bad:
+		c.privmsg(target, "%s: unparsable date items: %s" % (source, ", ".join(bad)))
+		return
+	c.privmsg(target, "%s: ok, i'll notify %s about '%s' @ '%s'" % (source, nick, text, time.strftime(anydatetime.ISO_DATETIME_FORMAT, t)))
+	if not hasattr(config, "notifythread") or not config.notifythread.isAlive():
+		config.notifythread = NotifyThread(c)
+		config.notifythread.start()
+		config.notifythread.todo = [(nick, t, text)]
+	else:
+		config.notifythread.todo.append((nick, t, text))
+
 def mojodb(c, source, target, argv):
 	"""mirror of Mojojojo's database. one parameter needed. valid subcommands: h[elp]|s[earch]. they require a parameter, too"""
 	if len(argv) < 1:
@@ -691,7 +727,8 @@ class config:
 			"imdb": imdb,
 			"mojodb": mojodb,
 			"dict": dict,
-			"xorg73": xorg73
+			"xorg73": xorg73,
+			"notify": notify
 			}
 	triggers = {
 			(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
