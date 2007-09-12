@@ -38,9 +38,9 @@ class NotifyThread(threading.Thread):
 		while(True):
 			time.sleep(10) # FIXME: this should be 60 later
 			for i in self.todo:
-				nick, t, text = i
+				nick, t, text, target = i
 				if time.time() > time.mktime(t):
-					self.c.privmsg(nick, text)
+					self.c.privmsg(target, "%s: %s" % (nick, text))
 					self.todo.remove(i)
 
 ##
@@ -627,9 +627,9 @@ def notify(c, source, target, argv):
 	if not hasattr(config, "notifythread") or not config.notifythread.isAlive():
 		config.notifythread = NotifyThread(c)
 		config.notifythread.start()
-		config.notifythread.todo = [(nick, t, text)]
+		config.notifythread.todo = [(nick, t, text, target)]
 	else:
-		config.notifythread.todo.append((nick, t, text))
+		config.notifythread.todo.append((nick, t, text, target))
 
 def mojodb(c, source, target, argv):
 	"""mirror of Mojojojo's database. one parameter needed. valid subcommands: h[elp]|s[earch]. they require a parameter, too"""
