@@ -9,3 +9,7 @@ eval c.privmsg("#channel", config.feeds[4].url)
 Remove a feed:
 
 eval config.feeds.remove(config.feeds[4])
+
+View the notify list:
+
+eval c.privmsg("#channel", config.notifythread.todo)
