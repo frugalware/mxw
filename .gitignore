@@ -1,0 +1,4 @@
+*.pyc
+password.py
+mojodb
+*.log
