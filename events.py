@@ -36,7 +36,7 @@ class NotifyThread(threading.Thread):
 		self.c = c
 	def run(self):
 		while(True):
-			time.sleep(10) # FIXME: this should be 60 later
+			time.sleep(60)
 			for i in self.todo:
 				nick, t, text, target = i
 				if time.time() > time.mktime(t):
