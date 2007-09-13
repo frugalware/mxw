@@ -609,6 +609,17 @@ def xorg73(c, source, target, argv):
 	c.privmsg(target, "%s: xorg73: %d%% completed" % (source, percent))
 	os.chdir(old)
 
+def parsedate(c, source, target, argv):
+	"""parses a date. it can be handy before using the notify command"""
+	if not len(argv):
+		c.privmsg(target, "%s: parsedate requires at least one parameter" % source)
+		return
+	bad, t, = anydatetime.anydatetime(" ".join(argv))
+	if bad:
+		c.privmsg(target, "%s: unparsable date items: %s" % (source, ", ".join(bad)))
+		return
+	c.privmsg(target, "%s: i think this means exactly '%s'" % (source, time.strftime(anydatetime.ISO_DATETIME_FORMAT, t)))
+
 def notify(c, source, target, argv):
 	"""notifies somebody about something at a given time in the future"""
 	if len(argv) < 4:
@@ -728,7 +739,8 @@ class config:
 			"mojodb": mojodb,
 			"dict": dict,
 			"xorg73": xorg73,
-			"notify": notify
+			"notify": notify,
+			"parsedate": parsedate
 			}
 	triggers = {
 			(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
