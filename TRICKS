@@ -13,3 +13,11 @@ eval config.feeds.remove(config.feeds[4])
 View the notify list:
 
 eval c.privmsg("#channel", config.notifythread.todo)
+
+Reloading an external module:
+
+By default only the events module is reloaded (not recursively) which is enough
+in most cases. If a change has been made for example to the anydatetime module,
+you need:
+
+eval reload(anydatetime)
