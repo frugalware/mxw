@@ -601,14 +601,6 @@ def imdb(c, source, target, data):
 		except TypeError:
 			c.privmsg(target, "malformed query")
 
-def xorg73(c, source, target, argv):
-	"""compares the amount of fpms in the xorg73 repo to current's x11 group"""
-	old = os.getcwd()
-	os.chdir("/home/vmiklos/git")
-	percent = int(float(len(glob.glob("xorg73/frugalware-x86_64/*")))/len(glob.glob("xorg73/source/x11/*"))*100)
-	c.privmsg(target, "%s: xorg73: %d%% completed" % (source, percent))
-	os.chdir(old)
-
 def parsedate(c, source, target, argv):
 	"""parses a date. it can be handy before using the notify command"""
 	if not len(argv):
@@ -738,7 +730,6 @@ class config:
 			"imdb": imdb,
 			"mojodb": mojodb,
 			"dict": dict,
-			"xorg73": xorg73,
 			"notify": notify,
 			"parsedate": parsedate
 			}
