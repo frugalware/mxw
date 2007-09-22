@@ -1,7 +1,7 @@
 import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
 sys.path.append("/usr/lib")
 import feedparser, htmlentitydefs, random, os, threading, string, glob
-import anydatetime
+import anydatetime, socket
 from xml.dom import minidom
 from sgmllib import SGMLParser
 from irclib import Event
@@ -42,6 +42,21 @@ class NotifyThread(threading.Thread):
 				if time.time() > time.mktime(t):
 					self.c.privmsg(target, "%s: %s" % (nick, text))
 					self.todo.remove(i)
+
+class SockThread(threading.Thread):
+	def __init__(self, c):
+		threading.Thread.__init__(self)
+		self.c = c
+	def run(self):
+		server = socket.socket ( socket.AF_UNIX, socket.SOCK_DGRAM )
+		if os.path.exists("mxw2.sock"):
+			os.remove("mxw2.sock")
+		server.bind ("mxw2.sock")
+		while True:
+			buf = server.recv(1024)
+			if not buf:
+				continue
+			safe_eval(config.owner, buf, self.c)
 
 ##
 # functions used by commands
@@ -916,3 +931,6 @@ def on_pong(self, c, e):
 	if not hasattr(self, "rssthread") or not self.rssthread.isAlive():
 		self.rssthread = RssThread(self, c, e)
 		self.rssthread.start()
+	if not hasattr(self, "sockthread") or not self.sockthread.isAlive():
+		self.sockthread = SockThread(c)
+		self.sockthread.start()
