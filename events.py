@@ -801,7 +801,7 @@ def check_rss(self, c, e):
 				if i.title == "packages":
 					brown = j.author.split('@')[0]
 					green = j.title
-					if brown == "syncpkgd":
+					if brown[:8] == "syncpkgd":
 						target = "#frugalware.dev"
 				elif i.title == "ping":
 					brown = j.author
