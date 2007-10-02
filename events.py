@@ -706,6 +706,7 @@ class config:
 	database = {
 			":)": ":D",
 			":D": "lol",
+			"re": "stfu",
 			"ping": "pong",
 			"bugs": "here we can help, but if you want a bug/feature to be fixed/implemented, then please file a bugreport/feature request at http://bugs.frugalware.org",
 			"rtfm": "if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs/, probably your question is answered there",
