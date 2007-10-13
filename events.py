@@ -388,7 +388,7 @@ def darcs(c, source, target, argv):
 			local = ""
 		c.privmsg(target, "%s: darcs get --partial %s@darcs.frugalware.org:%s %s" % (source, source, path, local))
 
-def git(c, source, target, argv):
+def git(c, source, target, argv, anon=False):
 	"""gives you a deepcmdline to clone a given repo. use 'git foo' to get a deepcmdline. use 'git info foo' to get info about a repo"""
 	repodir = "/home/ftp/pub/other/homepage-ng/git/repos"
 	if len(argv) < 1:
@@ -413,7 +413,10 @@ def git(c, source, target, argv):
 				local = repo[len("frugalware-"):]
 			else:
 				local = ""
-			c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source, path, local))
+			if not anon:
+				c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source, path, local))
+			else:
+				c.privmsg(target, "%s: git clone git://git.frugalware.org%s %s" % (source, path[9:], local))
 	else:
 		cmd = argv[0]
 		repo = argv[1]
@@ -442,18 +445,7 @@ def anongit(c, source, target, argv):
 	if len(argv) < 1:
 		c.privmsg(target, "%s: 'anongit' requires a parameter. use the 'git' command to list available repos" % source)
 		return
-	repo = argv[0]
-	repodir = "/home/ftp/pub/other/homepage-ng/git/repos"
-	found = False
-	for root, dirs, files in os.walk(repodir):
-		for dir in dirs:
-			if dir == repo:
-				found = True
-	if not found:
-		c.privmsg(target, "%s: no such repo" % source)
-		return
-	else:
-		c.privmsg(target, "%s: git clone http://git.frugalware.org/repos/%s/.git" % (source, repo))
+	git(c, source, target, argv, True)
 
 def dict(c, source, target, argv):
 	"""dictionary using dict.sztaki.hu. supported dicts: en,de,fr,it,nl,pl <-> hu"""
