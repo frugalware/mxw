@@ -890,7 +890,11 @@ def on_pubmsg(self, c, e):
 	if handle_triggers(e, argv, c, source):
 		return
 	if highlight:
-		c.privmsg(e.target(), "%s: '%s' is not a valid command" % (source, argv[0]))
+		cmdline = " ".join(argv)
+		if "mastah" in cmdline:
+			c.privmsg(e.target(), "%s: sorry, sir" % source)
+		else:
+			c.privmsg(e.target(), "%s: '%s' is not a valid command" % (source, argv[0]))
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
