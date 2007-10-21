@@ -122,7 +122,7 @@ def kick(c, source, target, argv):
 	if len(argv) < 2:
 		c.privmsg(target, "%s: 'kick' requires two parameter (nick, reason)" % source)
 		return
-	cmd = 'c.kick("%s", "%s", "%s")' % (target, argv[0], argv[1])
+	cmd = 'c.kick("%s", "%s", "%s")' % (target, argv[0], " ".join(argv[1:]))
 	safe_eval(source, cmd, c)
 
 def topic(c, source, target, argv):
