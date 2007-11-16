@@ -52,6 +52,7 @@ class SockThread(threading.Thread):
 		if os.path.exists("mxw2.sock"):
 			os.remove("mxw2.sock")
 		server.bind ("mxw2.sock")
+		os.chmod("mxw2.sock", 0775)
 		while True:
 			buf = server.recv(1024)
 			if not buf:
