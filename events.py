@@ -919,7 +919,8 @@ def on_identified(self, c, e):
 	nick = e.arguments()[0]
 	if nick not in todo.keys():
 		return
-	eval(todo[nick][-1])
+	for i in todo[nick][-1].split("\n"):
+		eval(i)
 	if nick in todo.keys():
 		del todo[nick]
 
