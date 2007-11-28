@@ -110,6 +110,9 @@ def anydatetime(s, in_US=True):
 				date['d'] = str(int(date['d']) - 1).zfill(2)
 			elif token == 'tomorrow':
 				date['d'] = str(int(date['d']) + 1).zfill(2)
+				date['H'] = time.strftime("%H")
+				date['M'] = time.strftime("%M")
+				date['S'] = time.strftime("%S")
 			elif (len(token) == 4) and token.isdigit():
 				date['Y'] = token
 			elif re.match('(\d{1,2}\:){1,2}\d{1,2}', token):
