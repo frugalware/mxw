@@ -744,7 +744,7 @@ class config:
 			"parsedate": parsedate
 			}
 	triggers = {
-			(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
+			#(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
 			(lambda e, argv: e.target().startswith("#frugalware") and "egyenlore" in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: s/egyenlore/egyelore/""" % source)),
 			(lambda e, argv: e.target().startswith("#frugalware") and "huje" in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: hulye""" % source)),
 			(lambda e, argv: e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0])): (lambda c, e, source, argv: c.privmsg(e.target(), "nem, viccbol van belole csomag")),
