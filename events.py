@@ -909,10 +909,19 @@ def on_bug(self, c, e):
 	c.privmsg(config.owner, "%s at file %s line %d" % (stype, badline[1], badline[2]))
 
 def on_join(self, c, e):
+	def hex2ip(s):
+		return ".".join(["%d"%int(n, 16) for n in (s[0:2],s[2:4],s[4:6],s[6:8])])
+	nick = e.source().split("!")[0]
 	if e.target() == "#frugalware.dev":
-		nick = e.source().split("!")[0]
 		cmd = 'c.mode("%s", "+v %s")' % (e.target(), nick)
 		safe_eval(nick, cmd, c)
+	elif e.source().split("@")[1] == "frugalware.elte.hu":
+		ip = hex2ip(re.sub(r".*([0-9a-f]{8})@frugalware\.elte\.hu", r"\1", e.source()))
+		try:
+			host = socket.gethostbyaddr(ip)[0]
+			c.privmsg(e.target(), "%s is from %s (%s)" % (nick, host, ip))
+		except socket.error:
+			c.privmsg(e.target(), "Could not resolve: %s" % ip)
 
 def on_identified(self, c, e):
 	global todo
