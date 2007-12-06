@@ -916,12 +916,15 @@ def on_join(self, c, e):
 		cmd = 'c.mode("%s", "+v %s")' % (e.target(), nick)
 		safe_eval(nick, cmd, c)
 	elif e.source().split("@")[1] == "frugalware.elte.hu":
-		ip = hex2ip(re.sub(r".*([0-9a-f]{8})@frugalware\.elte\.hu", r"\1", e.source()))
 		try:
-			host = socket.gethostbyaddr(ip)[0]
-			c.privmsg(e.target(), "%s is from %s (%s)" % (nick, host, ip))
-		except socket.error:
-			c.privmsg(e.target(), "Could not resolve: %s" % ip)
+			ip = hex2ip(re.sub(r".*([0-9a-f]{8})@frugalware\.elte\.hu", r"\1", e.source()))
+			try:
+				host = socket.gethostbyaddr(ip)[0]
+				c.privmsg(e.target(), "%s is from %s (%s)" % (nick, host, ip))
+			except socket.error:
+				c.privmsg(e.target(), "Could not resolve: %s" % ip)
+		except ValueError:
+			pass
 
 def on_identified(self, c, e):
 	global todo
