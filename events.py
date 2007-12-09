@@ -7,9 +7,9 @@ from sgmllib import SGMLParser
 from irclib import Event
 
 class Rss:
-	def __init__(self, url, target, title):
+	def __init__(self, url, targets, title):
 		self.url = url
-		self.target = target
+		self.targets = targets
 		self.title = title
 		self.feed = None
 		self.updated = time.time()
@@ -691,10 +691,10 @@ class config:
 	# for reporting bugs
 	owner = "vmiklos"
 
-	feeds = [Rss("http://frugalware.org/rss/packages", "#frugalware", "packages"),
-			Rss("http://frugalware.org/rss/blogs", "#frugalware", "blogs"),
-			Rss("http://frugalware.org/rss/bugs", "#frugalware.dev", "bugs"),
-			Rss("http://frugalware.org/~vmiklos/ping2rss/ping2rss.py", "#frugalware.dev", "ping")]
+	feeds = [Rss("http://frugalware.org/rss/packages", ["#frugalware", "#frugalware.fr"], "packages"),
+			Rss("http://frugalware.org/rss/blogs", ["#frugalware", "#frugalware.fr"], "blogs"),
+			Rss("http://frugalware.org/rss/bugs", ["#frugalware.dev"], "bugs"),
+			Rss("http://frugalware.org/~vmiklos/ping2rss/ping2rss.py", ["#frugalware.dev"], "ping")]
 	duped_feeds = "feeds"
 	database = {
 			":)": ":D",
@@ -791,23 +791,23 @@ def check_rss(self, c, e):
 		gray = i.title
 		i.feed = feedparser.parse(i.url)
 		for j in i.feed.entries:
-			target = i.target
-			if time.mktime(j.updated_parsed) > i.updated:
-				#c.privmsg("#fdb", "new rss entry!")
-				if i.title == "packages":
-					brown = j.author.split('@')[0]
-					green = j.title
-					if brown[:8] == "syncpkgd":
-						target = "#frugalware.dev"
-				elif i.title == "ping":
-					brown = j.author
-					green = j.title
-				else: # blogs and bugs
-					brown = j.title.encode('latin2') # FIXME: hardwired charset
-					green = j.link
-				c.privmsg(target, "14%s7 %s3 %s" % (gray, brown, green))
-				# to avoid floods
-				time.sleep(2)
+			for k in i.targets:
+				if time.mktime(j.updated_parsed) > i.updated:
+					#c.privmsg("#fdb", "new rss entry!")
+					if i.title == "packages":
+						brown = j.author.split('@')[0]
+						green = j.title
+						if brown[:8] == "syncpkgd":
+							k = "#frugalware.dev"
+					elif i.title == "ping":
+						brown = j.author
+						green = j.title
+					else: # blogs and bugs
+						brown = j.title.encode('latin2') # FIXME: hardwired charset
+						green = j.link
+					c.privmsg(k, "14%s7 %s3 %s" % (gray, brown, green))
+					# to avoid floods
+					time.sleep(2)
 		if len(i.feed.entries):
 			i.updated = time.mktime(i.feed.entries[0].updated_parsed)
 
