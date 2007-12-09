@@ -686,7 +686,7 @@ class config:
 	nick  = "mxw_"
 	password = password.password
 	realname = "yeah"
-	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#debian.hu']
+	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#frugalware.es', '#debian.hu']
 	authors = "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 	# for reporting bugs
 	owner = "vmiklos"
