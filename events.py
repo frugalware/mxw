@@ -797,7 +797,7 @@ def check_rss(self, c, e):
 					if i.title == "packages":
 						brown = j.author.split('@')[0]
 						green = j.title
-						if brown[:8] == "syncpkgd" and k = "#frugalware":
+						if brown[:8] == "syncpkgd" and k == "#frugalware":
 							k = "#frugalware.dev"
 					elif i.title == "ping":
 						brown = j.author
