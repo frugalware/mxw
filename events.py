@@ -489,20 +489,22 @@ def dict(c, source, target, argv):
 	except IOError, s:
 		c.privmsg(target, "problem: %s" % s)
 		return
-	raw = []
-	while True:
-		line = socket.readline()
-		if not line:
-			break
-		if line.find("nbsp") > 0:
-			raw.append(re.sub(r'.*&nbsp;(.*)<br/>\n', r'\1', line))
+
+	buf = socket.read()
+	xml = minidom.parseString(buf)
 	final = []
-	if len(raw):
-		for i in raw:
-			final.append(re.sub(r'\&\#([0-9]+);', rec, i))
-		c.privmsg(target, "%s: %s" % (source, ", ".join(final)))
-	else:
+	for i in xml.getElementsByTagName("p")[0].childNodes:
+		if hasattr(i, "data"):
+			word = i.data.strip()
+			if len(word):
+				final.append(word)
+	ret = ", ".join(final[2:])
+	try:
+		ret = unicode(eval(ret.__repr__()[1:]), "latin2").encode('utf-8')
+	except SyntaxError:
 		c.privmsg(target, "not found")
+		return
+	c.privmsg(target, "%s: %s" % (source, ret))
 	socket.close()
 
 def imdb(c, source, target, data):
