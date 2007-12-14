@@ -449,7 +449,7 @@ def anongit(c, source, target, argv):
 	git(c, source, target, argv, True)
 
 def dict(c, source, target, argv):
-	"""dictionary using dict.sztaki.hu. supported dicts: en,de,fr,it,nl,pl <-> hu"""
+	"""dictionary using dict.sztaki.hu. supported dicts: en,de,fr,it,nl,pl <-> hu. syntax: dict <from>2<to> <word>. example: dict en2hu table (the '2hu' suffix is autocompleted if necessary)"""
 	def rec(match):
 		return(chr(string.atoi(match.group()[2:-1])))
 	# original dicts
