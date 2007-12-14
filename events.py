@@ -693,8 +693,7 @@ class config:
 	# for reporting bugs
 	owner = "vmiklos"
 
-	feeds = [Rss("http://frugalware.org/rss/packages", ["#frugalware", "#frugalware.fr"], "packages"),
-			Rss("http://frugalware.org/rss/blogs", ["#frugalware", "#frugalware.fr"], "blogs"),
+	feeds = [Rss("http://frugalware.org/rss/blogs", ["#frugalware", "#frugalware.fr"], "blogs"),
 			Rss("http://frugalware.org/rss/bugs", ["#frugalware.dev"], "bugs"),
 			Rss("http://frugalware.org/~vmiklos/ping2rss/ping2rss.py", ["#frugalware.dev"], "ping")]
 	duped_feeds = "feeds"
@@ -795,13 +794,7 @@ def check_rss(self, c, e):
 		for j in i.feed.entries:
 			for k in i.targets:
 				if time.mktime(j.updated_parsed) > i.updated:
-					#c.privmsg("#fdb", "new rss entry!")
-					if i.title == "packages":
-						brown = j.author.split('@')[0]
-						green = j.title
-						if brown[:8] == "syncpkgd" and k == "#frugalware":
-							k = "#frugalware.dev"
-					elif i.title == "ping":
+					if i.title == "ping":
 						brown = j.author
 						green = j.title
 					else: # blogs and bugs
