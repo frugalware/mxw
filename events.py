@@ -480,7 +480,7 @@ def dict(c, source, target, argv):
 	if d not in ods.keys():
 		return
 	try:
-		w = unicode(argv[1], "utf8").encode("latin2")
+		w = unicode("+".join(argv[1:]), "utf8").encode("latin2")
 	except UnicodeDecodeError:
 		w = argv[1]
 	url = "http://szotar.sztaki.hu/dict_search.php?S=W&L=%s&W=%s" % (ods[d], w)
