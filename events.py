@@ -151,21 +151,6 @@ def myreload(c, source, target, argv):
 	"""reloads the event handlers"""
 	safe_eval(source, 'self.reload()', c)
 
-def calc(c, source, target, data):
-	"""calculates the value of an experssion using bc"""
-	input = " ".join(data)
-	pout, pin = popen2.popen2("bc")
-	pin.write("scale=2;%s\n" % input)
-	pin.close()
-	ret = "".join(pout.readlines()).strip()
-	pout.close()
-	if len(ret):
-		if ret[0] == ".":
-			ret = "0" + ret
-		c.privmsg(target, "%s=%s" % (input, ret))
-	else:
-		c.privmsg(target, "parse error")
-
 def google(c, source, target, data):
 	"""searches the web using google"""
 	class myurlopener(urllib.FancyURLopener):
@@ -738,7 +723,7 @@ class config:
 			"lc": lc,
 			# misc
 			"help": help,
-			"calc": calc,
+			"calc": google,
 			"eval": myeval,
 			"reload": myreload,
 			"uptime": uptime,
