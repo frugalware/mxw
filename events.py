@@ -44,15 +44,6 @@ class NotifyThread(threading.Thread):
 					self.todo.remove(i)
 
 class SockThread(threading.Thread):
-	class SockClientThread(threading.Thread):
-		def __init__(self, o, b, c):
-			self.o = o
-			self.b = b
-			self.c = c
-			threading.Thread.__init__(self)
-		def run(self):
-			print "DEBUG: %s" % self.b
-			safe_eval(self.o, self.b, self.c, nocheck=True)
 	def __init__(self, c):
 		threading.Thread.__init__(self)
 		self.c = c
@@ -66,7 +57,7 @@ class SockThread(threading.Thread):
 			buf = server.recv(1024)
 			if not buf:
 				continue
-			self.SockClientThread(config.owner, buf, self.c).run()
+			safe_eval(config.owner, buf, self.c)
 
 ##
 # functions used by commands
@@ -807,13 +798,8 @@ def inxml(nick):
 			return True
 	return False
 
-def safe_eval(nick, cmd, c, nocheck=False):
+def safe_eval(nick, cmd, c):
 	global todo
-
-	if nocheck:
-		eval(cmd)
-		time.sleep(1)
-		return
 
 	if not inxml(nick):
 		return
