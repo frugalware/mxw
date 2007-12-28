@@ -63,7 +63,7 @@ class SockThread(threading.Thread):
 # functions used by commands
 ##
 def sendsms(c, source, target, number, message):
-	ret = os.system("~/bin/baratikor-sms %s %s" % (number, message))
+	ret = os.system("~/bin/baratikor-sms -a vmiklos@vmiklos.hu %s %s" % (number, message))
 	if ret == 0:
 		c.privmsg(target, "%s: sent!" % source)
 	else:
