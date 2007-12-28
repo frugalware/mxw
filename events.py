@@ -62,6 +62,20 @@ class SockThread(threading.Thread):
 ##
 # functions used by commands
 ##
+def sendsms(c, source, target, number, message):
+	ret = os.system("~/bin/baratikor-sms %s %s" % (number, message))
+	if ret == 0:
+		c.privmsg(target, "%s: sent!" % source)
+	else:
+		c.privmsg(target, "%s: sth went wrong ;/" % source)
+
+def sms(c, source, target, argv):
+	"""sends sms. example: 'sms 30301234567 foo bar'"""
+	if len(argv)<2:
+		c.privmsg(target, "%s: 'sms' requires two parameters (number, message)" % source)
+		return
+	safe_eval(source, 'sendsms(c, "%s", "%s", "%s", "%s")' % (source, target, argv[0], " ".join(argv[1:])), c)
+
 def opme(c, source, target, argv):
 	"""gives operator status to you on the current channel"""
 	safe_eval(source, 'c.mode("%s", "+o %s")' % (target, source), c)
@@ -727,7 +741,8 @@ class config:
 			"mojodb": mojodb,
 			"dict": dict,
 			"notify": notify,
-			"parsedate": parsedate
+			"parsedate": parsedate,
+			"sms": sms
 			}
 	triggers = {
 			#(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
