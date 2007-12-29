@@ -72,7 +72,11 @@ def sendsms(c, source, target, number, message):
 def sms(c, source, target, argv):
 	"""sends sms. example: 'sms 30301234567 foo bar'"""
 	if len(argv)<2:
-		c.privmsg(target, "%s: 'sms' requires two parameters (number, message)" % source)
+		sock = os.popen("~/bin/baratikor-sms -a vmiklos@vmiklos.hu -b 2>/dev/null")
+		buf = sock.read()
+		sock.close()
+		b = re.sub(r".*: (.*),.*", r"\1", buf)
+		c.privmsg(target, "%s: 'sms' requires two parameters (number, message). current balance: %s" % (source, b))
 		return
 	safe_eval(source, 'sendsms(c, "%s", "%s", "%s", "%s")' % (source, target, argv[0], " ".join(argv[1:])), c)
 
