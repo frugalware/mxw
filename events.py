@@ -754,6 +754,7 @@ class config:
 			(lambda e, argv: e.target().startswith("#frugalware") and "huje" in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: hulye""" % source)),
 			(lambda e, argv: e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0])): (lambda c, e, source, argv: c.privmsg(e.target(), "nem, viccbol van belole csomag")),
 			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
+			(lambda e, argv: e.arguments()[0].lower() == "argh!"): (lambda c, e, source, argv: fortune(c, e, source, "murphy-hu.lines", "Argh!")),
 			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
 			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4])) and len(argv)==4): (lambda c, e, source, argv: google(c, source, e.target(), argv)),
 			(lambda e, argv: (not e.target().startswith("#") or e.target() == "#debian.hu") and re.match("^[a-z]{2} [a-zA-Z\xdf\xfc]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv)),
