@@ -917,7 +917,7 @@ def on_join(self, c, e):
 		safe_eval(nick, cmd, c)
 	elif e.source().split("@")[1] == "frugalware.elte.hu":
 		try:
-			ip = hex2ip(re.sub(r".*([0-9a-f]{8})@frugalware\.elte\.hu", r"\1", e.source()))
+			ip = hex2ip(re.sub(r".*([0-9a-f]{8})@.*", r"\1", e.source()))
 			try:
 				host = socket.gethostbyaddr(ip)[0]
 				c.privmsg(e.target(), "%s is from %s (%s)" % (nick, host, ip))
