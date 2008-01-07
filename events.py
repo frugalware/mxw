@@ -505,7 +505,10 @@ def dict(c, source, target, argv):
 	try:
 		ret = unicode(eval(ret.__repr__()[1:]), "latin2").encode('utf-8')
 	except SyntaxError:
-		c.privmsg(target, "not found")
+		if target == "#debian.hu":
+			c.privmsg(target, "%s, Te itt nem szotarazol bazmeg!!!" % source)
+		else:
+			c.privmsg(target, "not found")
 		return
 	c.privmsg(target, "%s: %s" % (source, ret))
 	socket.close()
