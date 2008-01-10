@@ -149,7 +149,7 @@ def topic(c, source, target, argv):
 	if len(argv) < 1:
 		c.privmsg(target, "%s: 'topic' requires a parameter (new topic)" % source)
 		return
-	cmd = 'c.topic("%s", "%s")' % (target, " ".join(argv))
+	cmd = 'c.topic("%s", "%s")' % (target, " ".join(argv).replace('"', r'\"'))
 	safe_eval(source, cmd, c)
 
 def myeval(c, source, target, argv):
