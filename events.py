@@ -937,6 +937,7 @@ def on_identified(self, c, e):
 		return
 	for i in todo[nick][-1].split("\n"):
 		eval(compile(i, "eval", "single"))
+		time.sleep(1)
 	if nick in todo.keys():
 		del todo[nick]
 
