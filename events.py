@@ -467,6 +467,15 @@ def dict(c, source, target, argv):
 	"""dictionary using dict.sztaki.hu. supported dicts: en,de,fr,it,nl,pl <-> hu. syntax: dict <from>2<to> <word>. example: dict en2hu table (the '2hu' suffix is autocompleted if necessary)"""
 	def rec(match):
 		return(chr(string.atoi(match.group()[2:-1])))
+	def ret(target, reason = None):
+		if target == "#debian.hu":
+			c.privmsg(target, "%s, Te itt nem szotarazol bazmeg!!!" % source)
+		else:
+			if reason:
+				c.privmsg(target, "problem: %s" % reason)
+			else:
+				c.privmsg(target, "not found")
+		return True
 	# original dicts
 	ods = {
 			"hu2en": "HUN%3AENG%3AEngHunDic",
@@ -501,12 +510,16 @@ def dict(c, source, target, argv):
 	url = "http://szotar.sztaki.hu/dict_search.php?S=W&L=%s&W=%s" % (ods[d], w)
 	try:
 		socket = urllib.urlopen(url)
-	except IOError, s:
-		c.privmsg(target, "problem: %s" % s)
+	except IOError:
+		ret(target, "IOError")
 		return
 
 	buf = socket.read()
-	xml = minidom.parseString(buf)
+	try:
+		xml = minidom.parseString(buf)
+	except Exception, s:
+		ret(target, "%s; %s" % (s, url))
+		return
 	final = []
 	for i in xml.getElementsByTagName("p")[0].childNodes:
 		if hasattr(i, "data"):
@@ -517,11 +530,7 @@ def dict(c, source, target, argv):
 	try:
 		ret = unicode(eval(ret.__repr__()[1:]), "latin2").encode('utf-8')
 	except SyntaxError:
-		if target == "#debian.hu":
-			c.privmsg(target, "%s, Te itt nem szotarazol bazmeg!!!" % source)
-		else:
-			c.privmsg(target, "not found")
-		return
+		return ret(target, "not found")
 	c.privmsg(target, "%s: %s" % (source, ret))
 	socket.close()
 
