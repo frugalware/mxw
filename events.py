@@ -348,6 +348,8 @@ def db(c, source, target, argv):
 		return
 	if argv[0] in config.database.keys():
 		record = config.database[argv[0]]
+		if type(record) == list:
+			record = random.choice(record)
 		if "\n" in record or " " not in record:
 			for i in record.split("\n"):
 				c.privmsg(target, "%s" % i)
