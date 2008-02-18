@@ -831,8 +831,6 @@ def check_rss(self, c, e):
 						brown = j.title.encode('latin2') # FIXME: hardwired charset
 						green = j.link
 					c.privmsg(k, "14%s7 %s3 %s" % (gray, brown, green))
-					# to avoid floods
-					time.sleep(2)
 		if len(i.feed.entries):
 			i.updated = time.mktime(i.feed.entries[0].updated_parsed)
 
