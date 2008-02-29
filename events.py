@@ -514,7 +514,7 @@ def dict(c, source, target, argv):
 		ret_err(target, "IOError")
 		return
 
-	buf = socket.read()
+	buf = socket.read().replace('utf8', 'utf-8')
 	try:
 		xml = minidom.parseString(buf)
 	except Exception, s:
