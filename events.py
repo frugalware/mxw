@@ -736,7 +736,8 @@ class config:
 			"kde4": "http://frugalware.org/~crazy/other/kde4/ <- here you can reach some shots/videos from the upcoming KDE4 for Frugalware. at the moment uploading snapshot fpms would be just a waste of bandwidth, so please don't request them, we'll make them available when it worth to do so. thanks",
 			"paste": "if you have a few lines of an error message to others in the channel, please use our Pastebin: http://frugalware.org/paste/. this is because 1) IRC is slow and 2) it breaks other conversations. thanks",
 			"persze": "http://www.kancso.hu/zenek/repeta050906.mp3",
-			"branches": "Frugalware has two branches. -current is about new features and new functionality is pushed there daily. -stable has major updates twice a year with an upgrade howto and between the major updates there are only security-, bug- and documentations fixes."
+			"branches": "Frugalware has two branches. -current is about new features and new functionality is pushed there daily. -stable has major updates twice a year with an upgrade howto and between the major updates there are only security-, bug- and documentations fixes.",
+			"ty": "np"
 			}
 	commands = {
 			# operator commands
