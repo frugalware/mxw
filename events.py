@@ -48,6 +48,7 @@ class SockThread(threading.Thread):
 		threading.Thread.__init__(self)
 		self.c = c
 	def run(self):
+		c = self.c
 		server = socket.socket ( socket.AF_UNIX, socket.SOCK_DGRAM )
 		if os.path.exists("mxw2.sock"):
 			os.remove("mxw2.sock")
@@ -57,7 +58,8 @@ class SockThread(threading.Thread):
 			buf = server.recv(1024)
 			if not buf:
 				continue
-			safe_eval(config.owner, buf, self.c)
+			for i in buf.split("\n"):
+				eval(compile(i, "eval", "single"))
 
 ##
 # functions used by commands
