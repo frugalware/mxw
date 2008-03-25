@@ -739,7 +739,8 @@ class config:
 			"paste": "if you have a few lines of an error message to others in the channel, please use our Pastebin: http://frugalware.org/paste/. this is because 1) IRC is slow and 2) it breaks other conversations. thanks",
 			"persze": "http://www.kancso.hu/zenek/repeta050906.mp3",
 			"branches": "Frugalware has two branches. -current is about new features and new functionality is pushed there daily. -stable has major updates twice a year with an upgrade howto and between the major updates there are only security-, bug- and documentations fixes.",
-			"ty": "np"
+			"ty": "np",
+			"rebase": "git config branch.master.rebase true"
 			}
 	commands = {
 			# operator commands
