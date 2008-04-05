@@ -6,6 +6,9 @@ from xml.dom import minidom
 from sgmllib import SGMLParser
 from irclib import Event
 
+sys = reload(sys)
+sys.setdefaultencoding("utf-8")
+
 class Rss:
 	def __init__(self, url, targets, title):
 		self.url = url
