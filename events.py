@@ -88,12 +88,19 @@ def sms(c, source, target, argv):
 def wtf(c, source, target, argv):
 	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve"""
 	if len(argv)<1:
-		c.privmsg(target, "%s: 'wtf' requires a parameters" % source)
+		c.privmsg(target, "%s: 'wtf' requires a parameter" % source)
 		return
 	sock = os.popen("wtf %s" % argv[0])
 	buf = sock.readline().strip()
 	sock.close()
 	c.privmsg(target, "%s: %s" % (source, buf))
+
+def choose(c, source, target, argv):
+	"""chooses a random value from a list. example: choose foo bar"""
+	if len(argv)<2:
+		c.privmsg(target, "%s: 'choice' requires multiple parameters" % source)
+		return
+	c.privmsg(target, "%s: %s" % (source, random.choice(argv)))
 
 def opme(c, source, target, argv):
 	"""gives operator status to you on the current channel"""
@@ -778,7 +785,8 @@ class config:
 			"notify": notify,
 			"parsedate": parsedate,
 			"sms": sms,
-			"wtf": wtf
+			"wtf": wtf,
+			"choose": choose
 			}
 	triggers = {
 			#(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
