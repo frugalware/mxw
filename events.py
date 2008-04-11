@@ -650,6 +650,22 @@ def imdb(c, source, target, data):
 		except TypeError:
 			c.privmsg(target, "malformed query")
 
+def wipstatus(c, source, target, argv):
+	"""compares the amount of fpms in a wip repo, compared to current. example: 'wipstatus gnome22 x86_64 gnome gnome-extra'"""
+	if len(argv)<3:
+		c.privmsg(target, "%s: too few params, see help" % source)
+		return
+	old = os.getcwd()
+	os.chdir("/home/vmiklos/git")
+	repo = argv[0]
+	arch = argv[1]
+	pkglist = []
+	for i in argv[2:]:
+		pkglist += glob.glob("%s/source/%s/*" % (repo, i))
+	percent = int(float(len(glob.glob("%s/frugalware-%s/*" % (repo, arch))))/len(pkglist)*100)
+	c.privmsg(target, "%s: %s: %d%% completed" % (source, repo, percent))
+	os.chdir(old)
+
 def parsedate(c, source, target, argv):
 	"""parses a date. it can be handy before using the notify command"""
 	if not len(argv):
@@ -782,6 +798,7 @@ class config:
 			"imdb": imdb,
 			"mojodb": mojodb,
 			"dict": dict,
+			"wipstatus": wipstatus,
 			"notify": notify,
 			"parsedate": parsedate,
 			"sms": sms,
