@@ -651,12 +651,12 @@ def imdb(c, source, target, data):
 			c.privmsg(target, "malformed query")
 
 def wipstatus(c, source, target, argv):
-	"""compares the amount of fpms in a wip repo, compared to current. example: 'wipstatus gnome22 x86_64 gnome gnome-extra'"""
+	"""compares the amount of fpms in a wip repo, compared to current. example: 'wipstatus krix/gnome22 x86_64 gnome gnome-extra'"""
 	if len(argv)<3:
 		c.privmsg(target, "%s: too few params, see help" % source)
 		return
 	old = os.getcwd()
-	os.chdir("/home/vmiklos/git")
+	os.chdir("/home/ftp/pub/other/people")
 	repo = argv[0]
 	arch = argv[1]
 	pkglist = []
