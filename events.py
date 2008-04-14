@@ -213,6 +213,19 @@ def google(c, source, target, data):
 				self.title = []
 				self.intitle = False
 
+		def start_h2(self, attrs):
+			for k, v in attrs:
+				if k == "class" and v == "r":
+					self.intitle = True
+
+		def end_h2(self):
+			if self.intitle:
+				self.titles.append("".join(self.title))
+				self.title = []
+				self.intitle = False
+				self.descs.append(None)
+				self.links.append(None)
+
 		def start_div(self, attrs):
 			for k, v in attrs:
 				if k == "class" and v == "std":
