@@ -210,7 +210,9 @@ def google(c, source, target, data):
 					self.indesc = True
 
 		def end_h2(self):
-			self.titles.append("".join(self.title))
+			title = "".join(self.title)
+			if len(title):
+				self.titles.append(title)
 			self.title = []
 			self.links.append(self.link)
 			self.link = None
