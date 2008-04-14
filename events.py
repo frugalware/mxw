@@ -192,18 +192,20 @@ def google(c, source, target, data):
 			SGMLParser.reset(self)
 			self.intitle = False
 			self.indesc = False
-			self.inlink = False
 			self.titles = []
 			self.title = []
 			self.descs = []
 			self.desc = []
 			self.links = []
-			self.link = []
+			self.link = None
 
 		def start_a(self, attrs):
 			for k, v in attrs:
 				if k == "class" and v == "l":
 					self.intitle = True
+					self.links.append(self.link)
+				elif k == "href":
+					self.link = v
 
 		def end_a(self):
 			if self.intitle:
@@ -222,25 +224,11 @@ def google(c, source, target, data):
 				self.desc = []
 				self.indesc = False
 
-		def start_span(self, attrs):
-			for k, v in attrs:
-				if k == "class" and v == "a":
-					self.inlink = True
-
-		def end_span(self):
-			if self.inlink:
-				if len(self.titles):
-					self.links.append("".join(self.link))
-				self.link = []
-				self.inlink = False
-
 		def handle_data(self, text):
 			if self.intitle:
 				self.title.append(text)
 			elif self.indesc:
 				self.desc.append(text)
-			elif self.inlink:
-				self.link.append(text)
 
 	if len(data) < 1:
 		c.privmsg(target, "%s: 'google' requires a parameter (search term)" % source)
