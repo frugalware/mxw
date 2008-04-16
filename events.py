@@ -927,6 +927,7 @@ def log(e):
 	else:
 		sock = open(logpath, "w")
 		sock.write("""<html><head>
+				<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 				<style type="text/css">
 				body { font: 8px Verdana, sans-serif; }
 				</style>
