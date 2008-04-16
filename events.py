@@ -913,7 +913,7 @@ def log(e):
 		for k, v in {'<':'&lt;', '>':'&gt;'}.items():
 			s = s.replace(k, v)
 		return s
-	if not re.match("#frugalware\..{2}$", e.target()):
+	if not re.match("#frugalware(|\..{2})$", e.target()):
 		return
 	nick = e.source().split("!")[0]
 	host = e.source().split("!")[1]
