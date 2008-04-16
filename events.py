@@ -754,6 +754,7 @@ class config:
 	realname = "yeah"
 	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#frugalware.es', '#debian.hu']
 	authors = "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
+	logpath = "/home/ftp/pub/other/irclogs"
 	# for reporting bugs
 	owner = "vmiklos"
 
@@ -829,6 +830,7 @@ class config:
 	highlight_triggers = {
 			(lambda e, argv: re.match(r".*\?$", argv[-1]) and e.target() not in ["#frugalware.dev", "#frugalware"]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: persze""" % source))
 			}
+	lastlog = {}
 
 todo = {}
 
@@ -904,6 +906,76 @@ def handle_triggers(e, argv, c, source, highlight=False):
 				v(c, e, source, argv)
 				return True
 	return False
+
+def log(e):
+	def makehtml(s):
+		# TODO: make html links and colors
+		for k, v in {'<':'&lt;', '>':'&gt;'}.items():
+			s = s.replace(k, v)
+		return s
+	if not re.match("#frugalware\..{2}$", e.target()):
+		return
+	nick = e.source().split("!")[0]
+	host = e.source().split("!")[1]
+	logdir = "%s/%s" % (config.logpath, e.target())
+	if not os.path.exists(logdir):
+		os.makedirs(logdir)
+	datestr = time.strftime("%d-%m-%Y", time.localtime())
+	logpath = "%s/%s/%s.html" % (config.logpath, e.target(), datestr)
+	if os.path.exists(logpath):
+		sock = open(logpath, "a")
+	else:
+		sock = open(logpath, "w")
+		sock.write("""<html><head>
+				<style type="text/css">
+				body { font: 8px Verdana, sans-serif; }
+				</style>
+				<title>%s @ %s</title>
+				</head>
+				<body>
+				<h1 align="center">Log of the %s channel on %s<br>
+				<center>%s</center></h1>
+				<table width="90%%" align="center">""" % \
+					(e.target(), config.server, e.target(), config.server, datestr))
+	# group by nick / time
+	nickstr = "&lt;%s&gt;" % nick
+	timestr = time.strftime("%H:%M", time.localtime())
+	if e.target() in config.lastlog.keys():
+		prevnick, prevtime = config.lastlog[e.target()]
+		if prevnick == nickstr:
+			nickstr = ""
+		else:
+			config.lastlog[e.target()][0] = nickstr
+		if prevtime == timestr:
+			timestr = ""
+		else:
+			config.lastlog[e.target()][1] = timestr
+	else:
+		config.lastlog[e.target()] = [nickstr, timestr]
+
+	# even and odd lines
+	if "linenum" in config.lastlog.keys():
+		linenum = config.lastlog['linenum']
+		linenum += 1
+	else:
+		linenum = 0
+	colors = ['#EEEEEE', '#DDDDDD']
+	color = colors[linenum % 2]
+	config.lastlog['linenum'] = linenum
+	
+	if e.eventtype() != "pubmsg":
+		config.lastlog[e.target()][0] = ""
+	if e.eventtype() == "pubmsg":
+		sock.write("""<tr><td bgcolor="%s">%s</td><td bgcolor="%s">%s</td><td bgcolor="%s">%s</td></tr>\n""" % (color, nickstr, color, makehtml(e.arguments()[0]), color, timestr))
+	elif e.eventtype() == "ctcp" and e.arguments()[0] == "ACTION":
+		sock.write("""<tr><td bgcolor="#FFFFFF" colspan="2"><font size="-1">* %s %s</font></td><td bgcolor="%s">%s</td></tr>\n""" % (nick, makehtml(e.arguments()[1]), color, timestr))
+	elif e.eventtype() == "join":
+		sock.write("""<tr><td bgcolor="#FFFFFF" colspan="2"><font size="-1">* %s(%s) has joined %s</font></td><td bgcolor="%s">%s</td></tr>\n""" % (nick, host, e.target(), color, timestr))
+	elif e.eventtype() == "part":
+		sock.write("""<tr><td bgcolor="#FFFFFF" colspan="2"><font size="-1">* %s has left %s (%s)</font></td><td bgcolor="%s">%s</td></tr>\n""" % (nick, e.target(), e.arguments()[0], color, timestr))
+	# TODO: quit
+	sock.close()
+
 ##
 # the event handlers
 ##
@@ -961,6 +1033,7 @@ def on_pubmsg(self, c, e):
 			c.privmsg(e.target(), "%s: sorry, sir" % source)
 		else:
 			c.privmsg(e.target(), "%s: '%s' is not a valid command" % (source, argv[0]))
+	log(e)
 
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
@@ -989,6 +1062,7 @@ def on_join(self, c, e):
 				c.privmsg(e.target(), "Could not resolve: %s" % ip)
 		except ValueError:
 			pass
+	log(e)
 
 def on_identified(self, c, e):
 	global todo
@@ -1012,3 +1086,9 @@ def on_pong(self, c, e):
 	if not hasattr(self, "sockthread") or not self.sockthread.isAlive():
 		self.sockthread = SockThread(c)
 		self.sockthread.start()
+
+def on_ctcp(self, c, e):
+	log(e)
+
+def on_part(self, c, e):
+	log(e)
