@@ -765,6 +765,7 @@ class config:
 	database = {
 			":)": ":D",
 			":D": "lol",
+			"lol": "what's so funny, dude?",
 			"re": "stfu",
 			"ping": "pong",
 			"bugs": "here we can help, but if you want a bug/feature to be fixed/implemented, then please file a bugreport/feature request at http://bugs.frugalware.org",
