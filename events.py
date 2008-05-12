@@ -182,6 +182,20 @@ def myreload(c, source, target, argv):
 	"""reloads the event handlers"""
 	safe_eval(source, 'self.reload()', c)
 
+def bugs(c, source, target, argv):
+	sock = urllib.urlopen("http://bugs.frugalware.org/getinfo/%s" % argv[0][1:])
+	doc = minidom.parseString(sock.read())
+	sock.close()
+	id = doc.getElementsByTagName("id")[0].firstChild.toxml()
+	title = ': '.join(doc.getElementsByTagName("title")[0].firstChild.toxml().split(': ')[1:])
+	type = doc.getElementsByTagName("type")[0].firstChild.toxml()
+	status = doc.getElementsByTagName("status")[0].firstChild.toxml()
+	opener = doc.getElementsByTagName("opener")[0].firstChild.toxml()
+	omail = doc.getElementsByTagName("omail")[0].firstChild.toxml()
+	odate = doc.getElementsByTagName("odate")[0].firstChild.toxml()
+	link = doc.getElementsByTagName("link")[0].firstChild.toxml().replace('task/', '')
+	c.privmsg(target, "14#%s7 %s3 %s7 %s (%s)3 %s" % (id, type, status, title, opener, link))
+
 def google(c, source, target, data):
 	"""searches the web using google"""
 	class myurlopener(urllib.FancyURLopener):
@@ -826,7 +840,7 @@ class config:
 			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
 			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4])) and len(argv)==4): (lambda c, e, source, argv: google(c, source, e.target(), argv)),
 			(lambda e, argv: (not e.target().startswith("#") or e.target() == "#debian.hu") and re.match("^[a-z]{2} [a-zA-Z\xdf\xfc]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv)),
-			(lambda e, argv: re.match("^#[0-9]+$", " ".join(argv))): (lambda c, e, source, argv: c.privmsg(e.target(), "http://bugs.frugalware.org/%s" % argv[0][1:]))
+			(lambda e, argv: re.match("^#[0-9]+$", " ".join(argv))): (lambda c, e, source, argv: bugs(c, source, e.target(), argv))
 			}
 	highlight_triggers = {
 			(lambda e, argv: re.match(r".*\?$", argv[-1]) and e.target() not in ["#frugalware.dev", "#frugalware"]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: persze""" % source))
