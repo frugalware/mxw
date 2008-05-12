@@ -186,8 +186,12 @@ def bugs(c, source, target, argv):
 	sock = urllib.urlopen("http://bugs.frugalware.org/getinfo/%s" % argv[0][1:])
 	doc = minidom.parseString(sock.read())
 	sock.close()
-	id = doc.getElementsByTagName("id")[0].firstChild.toxml()
-	title = ': '.join(doc.getElementsByTagName("title")[0].firstChild.toxml().split(': ')[1:])
+	try:
+		id = doc.getElementsByTagName("id")[0].firstChild.toxml()
+		title = ': '.join(doc.getElementsByTagName("title")[0].firstChild.toxml().split(': ')[1:])
+	except IndexError:
+		c.privmsg(target, "no such bug")
+		return
 	type = doc.getElementsByTagName("type")[0].firstChild.toxml()
 	status = doc.getElementsByTagName("status")[0].firstChild.toxml()
 	opener = "Opened by %s" % doc.getElementsByTagName("opener")[0].firstChild.toxml()
