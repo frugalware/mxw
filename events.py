@@ -190,11 +190,15 @@ def bugs(c, source, target, argv):
 	title = ': '.join(doc.getElementsByTagName("title")[0].firstChild.toxml().split(': ')[1:])
 	type = doc.getElementsByTagName("type")[0].firstChild.toxml()
 	status = doc.getElementsByTagName("status")[0].firstChild.toxml()
-	opener = doc.getElementsByTagName("opener")[0].firstChild.toxml()
+	opener = "Opened by %s" % doc.getElementsByTagName("opener")[0].firstChild.toxml()
 	omail = doc.getElementsByTagName("omail")[0].firstChild.toxml()
 	odate = doc.getElementsByTagName("odate")[0].firstChild.toxml()
 	link = doc.getElementsByTagName("link")[0].firstChild.toxml().replace('task/', '')
-	c.privmsg(target, "14#%s7 %s3 %s7 %s (%s)3 %s" % (id, type, status, title, opener, link))
+	try:
+		aname = " (Assigned to %s)" % doc.getElementsByTagName("aname")[0].firstChild.toxml()
+	except IndexError:
+		aname = ""
+	c.privmsg(target, "14#%s7 %s3 %s%s7 %s (%s)3 %s" % (id, type, status, aname, title, opener, link))
 
 def google(c, source, target, data):
 	"""searches the web using google"""
