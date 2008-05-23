@@ -799,7 +799,8 @@ class config:
 			"persze": "http://www.kancso.hu/zenek/repeta050906.mp3",
 			"branches": "Frugalware has two branches. -current is about new features and new functionality is pushed there daily. -stable has major updates twice a year with an upgrade howto and between the major updates there are only security-, bug- and documentations fixes.",
 			"ty": "np",
-			"rebase": "git config branch.master.rebase true"
+			"rebase": "git config branch.master.rebase true",
+			"pic": "http://ftp.frugalware.org/pub/other/people/vmiklos/mxw/mxw.jpg"
 			}
 	commands = {
 			# operator commands
