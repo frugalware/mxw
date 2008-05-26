@@ -182,6 +182,13 @@ def myreload(c, source, target, argv):
 	"""reloads the event handlers"""
 	safe_eval(source, 'self.reload()', c)
 
+def integrate(c, source, target, argv):
+	"""integrates a math expression. example: (cos(x))^2"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'integrate' requires a parameter (expression)" % source)
+		return
+	c.privmsg(target, "http://integrals.wolfram.com/index.jsp?expr=%s" % argv[0])
+
 def bugs(c, source, target, argv):
 	sock = urllib.urlopen("http://bugs.frugalware.org/getinfo/%s" % argv[0][1:])
 	doc = minidom.parseString(sock.read())
@@ -837,7 +844,8 @@ class config:
 			"parsedate": parsedate,
 			"sms": sms,
 			"wtf": wtf,
-			"choose": choose
+			"choose": choose,
+			"integrate": integrate
 			}
 	triggers = {
 			#(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
