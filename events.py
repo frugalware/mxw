@@ -187,7 +187,7 @@ def integrate(c, source, target, argv):
 	if len(argv) < 1:
 		c.privmsg(target, "%s: 'integrate' requires a parameter (expression)" % source)
 		return
-	c.privmsg(target, "http://integrals.wolfram.com/index.jsp?expr=%s" % argv[0])
+	c.privmsg(target, "http://integrals.wolfram.com/index.jsp?%s" % urllib.urlencode({'expr':argv[0]}))
 
 def bugs(c, source, target, argv):
 	sock = urllib.urlopen("http://bugs.frugalware.org/getinfo/%s" % argv[0][1:])
