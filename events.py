@@ -513,6 +513,9 @@ def anongit(c, source, target, argv):
 		return
 	git(c, source, target, argv, True)
 
+def unicode_unescape(match):
+	return match.group().decode('unicode_escape')
+
 def dict(c, source, target, argv):
 	"""dictionary using dict.sztaki.hu. supported dicts: en,de,fr,it,nl,pl <-> hu. syntax: dict <from>2<to> <word>. example: dict en2hu table (the '2hu' suffix is autocompleted if necessary)"""
 	def rec(match):
@@ -579,6 +582,7 @@ def dict(c, source, target, argv):
 	ret = ", ".join(final[2:])
 	try:
 		ret = unicode(eval(ret.__repr__()[1:]), "latin2").encode('utf-8')
+		ret = re.sub(r"\\u[0-9]{4}", unicode_unescape, ret)
 	except SyntaxError:
 		return ret_err(target, "not found")
 	c.privmsg(target, "%s: %s" % (source, ret))
