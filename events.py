@@ -294,6 +294,74 @@ def google(c, source, target, data):
 	if len(parser.links) and parser.links[0]:
 		c.privmsg(target, parser.links[0])
 
+def isbn(c, source, target, data):
+	"""searches for isbn numbers using google"""
+	class myurlopener(urllib.FancyURLopener):
+		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
+
+	class HTMLParser(SGMLParser):
+		def reset(self):
+			SGMLParser.reset(self)
+			self.intitle = False
+			self.title = []
+			self.indesc = False
+			self.desc = []
+			self.link = None
+
+		def start_a(self, attrs):
+			if self.intitle:
+				for k, v in attrs:
+					if k == "href":
+						self.link = v
+
+		def end_a(self):
+			if self.intitle:
+				self.title = ["".join(self.title)]
+				self.intitle = False
+
+		def end_span(self):
+			if self.indesc:
+				self.desc = ["".join(self.desc)]
+				self.indesc = False
+
+		def start_div(self, attrs):
+			for k, v in attrs:
+				if k == "class" and v == "resbdy":
+					self.intitle = True
+
+		def start_span(self, attrs):
+			for k, v in attrs:
+				if k == "class" and v == "ln2":
+					self.indesc = True
+
+		def handle_data(self, text):
+			if self.intitle:
+				self.title.append(text)
+			elif self.indesc:
+				self.desc.append(text)
+
+	if len(data) < 1:
+		c.privmsg(target, "%s: 'isbn' requires a parameter (search term)" % source)
+		return
+	urllib._urlopener = myurlopener()
+	sock = urllib.urlopen("http://books.google.com/books?" + urllib.urlencode({'as_isbn':" ".join(data)}))
+	page = sock.read()
+	sock.close()
+
+	parser = HTMLParser()
+	parser.reset()
+	parser.feed(page)
+	parser.close()
+
+	if len(parser.title):
+		c.privmsg(target, parser.title[0])
+	else:
+		c.privmsg(target, "your search did not match any documents")
+	if len(parser.desc):
+		c.privmsg(target, parser.desc[0])
+	if parser.link:
+		c.privmsg(target, parser.link)
+
 def fight(c, source, target, data):
 	"""compares the popularity of two words using googlefight"""
 	class myurlopener(urllib.FancyURLopener):
