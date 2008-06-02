@@ -917,7 +917,8 @@ class config:
 			"sms": sms,
 			"wtf": wtf,
 			"choose": choose,
-			"integrate": integrate
+			"integrate": integrate,
+			"isbn": isbn
 			}
 	triggers = {
 			#(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
