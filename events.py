@@ -294,6 +294,70 @@ def google(c, source, target, data):
 	if len(parser.links) and parser.links[0]:
 		c.privmsg(target, parser.links[0])
 
+def tv(c, source, target, data):
+	"""spams the channel with television info"""
+	class myurlopener(urllib.FancyURLopener):
+		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
+
+	class ChanListParser(SGMLParser):
+		def reset(self):
+			SGMLParser.reset(self)
+			self.channels = {}
+			self.lastchan = None
+			self.intable = False
+			self.inspan = False
+			self.span = []
+
+		def start_table(self, attrs):
+			for k, v in attrs:
+				if k == "id" and v == "ctl00_C_G":
+					self.intable = True
+
+		def end_table(self):
+			self.intable = False
+
+		def start_img(self, attrs):
+			if self.intable:
+				for k, v in attrs:
+					if k == "src":
+						self.lastchan = v.split('/')[-1].split('.')[0]
+
+		def start_span(self, attrs):
+			if self.intable:
+				self.inspan = True
+
+		def end_span(self):
+			if self.intable:
+				self.inspan = False
+				if self.lastchan:
+					self.channels["".join(self.span).lower()] = self.lastchan
+					self.span = []
+					self.lastchan = None
+
+		def handle_data(self, text):
+			if self.inspan:
+				self.span.append(text)
+
+	if len(data) < 1:
+		c.privmsg(target, "%s: 'tv' requires at least one parameter (channel name)" % source)
+		return
+	url = "http://tv.animare.hu/rss.aspx"
+	urllib._urlopener = myurlopener()
+	sock = urllib.urlopen(url)
+	page = sock.read()
+	sock.close()
+
+	clp = ChanListParser()
+	clp.reset()
+	clp.feed(page)
+	clp.close()
+
+	channel = " ".join(data)
+	if channel.lower() in clp.channels.keys():
+		c.privmsg(target, clp.channels[channel])
+	else:
+		c.privmsg(target, "no such channel. see %s for available channels" % url)
+
 def isbn(c, source, target, data):
 	"""searches for isbn numbers using google"""
 	class myurlopener(urllib.FancyURLopener):
@@ -918,7 +982,8 @@ class config:
 			"wtf": wtf,
 			"choose": choose,
 			"integrate": integrate,
-			"isbn": isbn
+			"isbn": isbn,
+			"tv": tv
 			}
 	triggers = {
 			#(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),

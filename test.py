@@ -1,4 +1,4 @@
-from events import isbn
+from events import tv
 
 class C:
 	def privmsg(self, target, text):
@@ -6,4 +6,4 @@ class C:
 
 c = C()
 
-isbn(c, "source", "target", ["9639429767"])
+tv(c, "source", "target", ["rtl"])
