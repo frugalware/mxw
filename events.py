@@ -342,6 +342,7 @@ def tv(c, source, target, data):
 		c.privmsg(target, "%s: 'tv' requires at least one parameter (channel name)" % source)
 		return
 	url = "http://tv.animare.hu/rss.aspx"
+	url2 = "http://tv.animare.hu/rssfeed.aspx?tartalom=aktualistvmusor&tvcsatorna="
 	urllib._urlopener = myurlopener()
 	sock = urllib.urlopen(url)
 	page = sock.read()
@@ -353,10 +354,23 @@ def tv(c, source, target, data):
 	clp.close()
 
 	channel = " ".join(data)
-	if channel.lower() in clp.channels.keys():
-		c.privmsg(target, clp.channels[channel.lower()])
-	else:
+	if channel.lower() not in clp.channels.keys():
 		c.privmsg(target, "no such channel. see %s for available channels" % url)
+		return
+	id = clp.channels[channel.lower()]
+	try:
+		sock = urllib.urlopen(url2 + id)
+	except IOError, s:
+		c.privmsg(target, "problem: %s" % s)
+		return
+	buf = sock.read()
+	try:
+		doc = minidom.parseString(buf)
+	except Exception, s:
+		c.privmsg(target, "problem: %s; %s" % (s, url))
+		return
+	for i in doc.getElementsByTagName("item"):
+		c.privmsg(target, i.getElementsByTagName("title")[0].firstChild.toxml().replace("\n", ""))
 
 def isbn(c, source, target, data):
 	"""searches for isbn numbers using google"""

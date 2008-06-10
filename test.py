@@ -6,4 +6,4 @@ class C:
 
 c = C()
 
-tv(c, "source", "target", ["rtl"])
+tv(c, "source", "target", ["Discovery Travel"])
