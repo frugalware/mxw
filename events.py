@@ -354,7 +354,7 @@ def tv(c, source, target, data):
 
 	channel = " ".join(data)
 	if channel.lower() in clp.channels.keys():
-		c.privmsg(target, clp.channels[channel])
+		c.privmsg(target, clp.channels[channel.lower()])
 	else:
 		c.privmsg(target, "no such channel. see %s for available channels" % url)
 
