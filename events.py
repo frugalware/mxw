@@ -370,7 +370,7 @@ def tv(c, source, target, data):
 		c.privmsg(target, "problem: %s; %s" % (s, url))
 		return
 	for i in doc.getElementsByTagName("item"):
-		c.privmsg(target, i.getElementsByTagName("title")[0].firstChild.toxml().replace("\n", ""))
+		c.notice(source, i.getElementsByTagName("title")[0].firstChild.toxml().replace("\n", ""))
 
 def isbn(c, source, target, data):
 	"""searches for isbn numbers using google"""
