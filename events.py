@@ -166,6 +166,14 @@ def kick(c, source, target, argv):
 	cmd = 'c.kick("%s", "%s", "%s")' % (target, argv[0], " ".join(argv[1:]))
 	safe_eval(source, cmd, c)
 
+def ban(c, source, target, argv):
+	"""bans somebody from the current channel"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'ban' requires a parameter (mask)" % source)
+		return
+	cmd = 'c.mode("%s", "+b %s")' % (target, argv[0])
+	safe_eval(source, cmd, c)
+
 def topic(c, source, target, argv):
 	"""change the topic of a channel"""
 	if len(argv) < 1:
@@ -969,6 +977,7 @@ class config:
 			"voice": voice,
 			"devoice": devoice,
 			"kick": kick,
+			"ban": ban,
 			"topic": topic,
 			# web services
 			"google": google,
