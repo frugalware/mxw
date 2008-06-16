@@ -1,0 +1,28 @@
+#!/bin/sh
+
+passed=0
+failed=0
+
+check()
+{
+	echo -n "test $(($passed+$failed+1)): $1..."
+	eval $2
+	if [ $? == 0 ]; then
+		echo " passed."
+		passed=$(($passed+1))
+	else
+		echo " failed."
+		failed=$(($failed+1))
+	fi
+}
+
+check "good tv channel -> notice" "python tv.py 'Discovery Travel'|grep -q ^notice"
+check "bad tv channel -> privmsg" "python tv.py 'Discovery Travell'|grep -q ^privmsg"
+
+echo "passed: $passed, failed $failed"
+
+if [ $failed -gt 0 ]; then
+	exit 1
+else
+	exit 0
+fi
