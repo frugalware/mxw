@@ -20,6 +20,7 @@ check()
 	else
 		echo -e " [\033[31mFAILED\033[0m]"
 		failed=$(($failed+1))
+		exit 1
 	fi
 }
 
@@ -36,9 +37,5 @@ done
 
 echo "passed: $passed, failed $failed"
 
-if [ $failed -gt 0 ]; then
-	exit 1
-else
-	rm -f $junk
-	exit 0
-fi
+rm -f $junk
+exit 0
