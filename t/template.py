@@ -2,7 +2,7 @@
 
 import sys
 sys.path.append("..")
-from events import tv
+from events import @FUNCTION@
 
 class C:
 	def privmsg(self, target, text):
@@ -12,4 +12,4 @@ class C:
 
 c = C()
 
-tv(c, "source", "target", sys.argv[1:])
+@FUNCTION@(c, "source", "target", sys.argv[1:])
