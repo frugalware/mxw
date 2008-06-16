@@ -2,3 +2,4 @@
 password.py
 mojodb
 *.log
+.*.swp
