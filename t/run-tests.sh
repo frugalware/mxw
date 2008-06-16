@@ -15,10 +15,10 @@ check()
 	echo -n "test $(($passed+$failed+1)): $1..."
 	eval $2
 	if [ $? == 0 ]; then
-		echo " passed."
+		echo -e " [\033[32mPASSED\033[0m]"
 		passed=$(($passed+1))
 	else
-		echo " failed."
+		echo -e " [\033[31mFAILED\033[0m]"
 		failed=$(($failed+1))
 	fi
 }
