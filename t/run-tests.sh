@@ -18,6 +18,8 @@ check()
 
 check "good tv channel -> notice" "python tv.py 'Discovery Travel'|grep -q ^notice"
 check "bad tv channel -> privmsg" "python tv.py 'Discovery Travell'|grep -q ^privmsg"
+check "resolve wtf" "[ \"\$(python wtf.py wtf)\" == \"privmsg: source: WTF: {what,where,who,why} the fuck\" ]"
+check "don't resolve wtff" "[ \"\$(python wtf.py wtff)\" == \"privmsg: source: wtff: nothing appropriate\" ]"
 
 echo "passed: $passed, failed $failed"
 
