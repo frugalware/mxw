@@ -1013,7 +1013,7 @@ class config:
 			(lambda e, argv: e.target().startswith("#frugalware") and "egyenlore" in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: s/egyenlore/egyelore/""" % source)),
 			(lambda e, argv: e.target().startswith("#frugalware") and "huje" in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: hulye""" % source)),
 			(lambda e, argv: e.target().startswith("#frugalware") and "ijen" in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: ilyen""" % source)),
-			(lambda e, argv: e.target().startswith("#frugalware") and "ojan" in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: olyab""" % source)),
+			(lambda e, argv: e.target().startswith("#frugalware") and "ojan" in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: olyan""" % source)),
 			(lambda e, argv: e.target() == "#frugalware.hu" and re.match("^haszn..?l valaki", e.arguments()[0])): (lambda c, e, source, argv: c.privmsg(e.target(), "nem, viccbol van belole csomag")),
 			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
 			(lambda e, argv: e.arguments()[0].lower() == "argh!"): (lambda c, e, source, argv: fortune(c, e, source, "murphy-hu.lines", "Argh!")),
