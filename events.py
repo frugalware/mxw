@@ -1075,7 +1075,7 @@ def check_rss(self, c, e):
 def inxml(nick):
 	xmldoc = minidom.parse(config.authors)
 	for i in xmldoc.getElementsByTagName('author'):
-		if unicode(nick) == i.getElementsByTagName("nick")[0].firstChild.toxml() and i.getElementsByTagName("status")[0].firstChild.toxml() in ["active", "former"]:
+		if unicode(nick) == i.getElementsByTagName("nick")[0].firstChild.toxml() and i.getElementsByTagName("status")[0].firstChild.toxml() in ["active", "former", "contributor"]:
 			return True
 	return False
 
