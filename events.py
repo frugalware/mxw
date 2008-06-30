@@ -867,7 +867,10 @@ def parsedate(c, source, target, argv):
 	if not len(argv):
 		c.privmsg(target, "%s: parsedate requires at least one parameter" % source)
 		return
-	bad, t, = anydatetime.anydatetime(" ".join(argv))
+	try:
+		bad, t, = anydatetime.anydatetime(" ".join(argv))
+	except KeyError:
+		c.privmsg(target, "%s: can't parse %s as a date string" % (source, ", ".join(argv)))
 	if bad:
 		c.privmsg(target, "%s: unparsable date items: %s" % (source, ", ".join(bad)))
 		return
