@@ -1027,7 +1027,7 @@ class config:
 			}
 	highlight_triggers = {
 			(lambda e, argv: re.match(r".*\?$", argv[-1]) and e.target() not in ["#frugalware.dev", "#frugalware"]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: persze""" % source)),
-			(lambda e, argv: re.match(r"sz..?pvagyok\?$", argv[-1]) and e.target() not in ["#frugalware.dev", "#frugalware"]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: nembazdmegolyanvagymintegylapitottbekaazorszaguton!""" % source))
+			(lambda e, argv: re.match(r"sz..?p.?vagyok\?$", " ".join(argv[-2:])) and e.target() not in ["#frugalware.dev", "#frugalware"]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: nembazdmegolyanvagymintegylapitottbekaazorszaguton!""" % source))
 			}
 	lastlog = {}
 
