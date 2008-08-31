@@ -949,8 +949,7 @@ class config:
 	owner = "vmiklos"
 
 	feeds = [Rss("http://frugalware.org/rss/blogs", ["#frugalware", "#frugalware.fr"], "blogs"),
-			Rss("http://frugalware.org/rss/bugs", ["#frugalware.dev"], "bugs"),
-			Rss("http://frugalware.org/~vmiklos/ping2rss/ping2rss.py", ["#frugalware.dev"], "ping")]
+			Rss("http://frugalware.org/rss/bugs", ["#frugalware.dev"], "bugs")]
 	duped_feeds = "feeds"
 	database = {
 			":)": ":D",
