@@ -265,7 +265,7 @@ def google(c, source, target, data):
 
 		def start_div(self, attrs):
 			for k, v in attrs:
-				if k == "class" and v == "std":
+				if k == "class" and v == "s":
 					self.indesc = True
 
 		def start_br(self, attrs):
