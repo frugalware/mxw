@@ -5,6 +5,7 @@ import anydatetime, socket
 from xml.dom import minidom
 from sgmllib import SGMLParser
 from irclib import Event
+import sztakidict
 
 sys = reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -672,75 +673,25 @@ def unicode_unescape(match):
 
 def dict(c, source, target, argv):
 	"""dictionary using dict.sztaki.hu. supported dicts: en,de,fr,it,nl,pl <-> hu. syntax: dict <from>2<to> <word>. example: dict en2hu table (the '2hu' suffix is autocompleted if necessary)"""
-	def rec(match):
-		return(chr(string.atoi(match.group()[2:-1])))
-	def ret_err(target, reason = None):
+	def ret_err(target, reason):
 		if target == "#debian.hu":
 			c.privmsg(target, "%s, Te itt nem szotarazol bazmeg!!!" % source)
 		else:
-			if reason:
-				c.privmsg(target, "problem: %s" % reason)
-			else:
-				c.privmsg(target, "not found")
+			c.privmsg(target, "problem: %s" % reason)
 		return False
-	# original dicts
-	ods = {
-			"hu2en": "HUN%3AENG%3AEngHunDic",
-			"hu2de": "HUN%3AGER%3AGerHunDict",
-			"hu2fr": "HUN%3AFRA%3AFraHunDict",
-			"hu2it": "HUN%3AITA%3AItaHunDict",
-			"hu2nl": "HUN%3AHOL%3AHolHunDict",
-			"hu2pl": "HUN%3APOL%3APolHunDict",
-			"en2hu": "ENG%3AHUN%3AEngHunDic",
-			"de2hu": "GER%3AHUN%3AGerHunDict",
-			"fr2hu": "FRA%3AHUN%3AFraHunDict",
-			"it2hu": "ITA%3AHUN%3AItaHunDict",
-			"nl2hu": "HOL%3AHUN%3AHolHunDict",
-			"pl2hu": "POL%3AHUN%3APolHunDict"
-			}
 	if len(argv) < 2:
 		c.privmsg(target, "%s: 'dict' requires two parameters" % source)
 		return
-	ud = argv[0]
-	if ud == "hu":
-		d = "hu2en"
-	elif "2" not in ud:
-		d = ud + "2hu"
-	else:
-		d = ud
-	if d not in ods.keys():
-		return
+	lang = argv[0]
+	word = " ".join(argv[1:])
 	try:
-		w = unicode("+".join(argv[1:]), "utf8").encode("latin2")
-	except UnicodeDecodeError:
-		w = argv[1]
-	url = "http://szotar.sztaki.hu/dict_search.php?S=W&L=%s&W=%s" % (ods[d], w)
-	try:
-		socket = urllib.urlopen(url)
+		ret = sztakidict.helper(lang, word)
 	except IOError:
 		ret_err(target, "IOError")
 		return
-
-	buf = socket.read().replace('utf8', 'utf-8')
-	try:
-		xml = minidom.parseString(buf)
-	except Exception, s:
-		ret_err(target, "%s; %s" % (s, url))
-		return
-	final = []
-	for i in xml.getElementsByTagName("p")[0].childNodes:
-		if hasattr(i, "data"):
-			word = i.data.strip()
-			if len(word):
-				final.append(word)
-	ret = ", ".join(final[2:])
-	try:
-		ret = unicode(eval(ret.__repr__()[1:]), "latin2").encode('utf-8')
-		ret = re.sub(r"\\u[0-9]{4}", unicode_unescape, ret)
-	except SyntaxError:
+	if ret == "%s: " % word:
 		return ret_err(target, "not found")
-	c.privmsg(target, "%s: %s" % (source, ret))
-	socket.close()
+	c.privmsg(target, ret)
 
 def imdb(c, source, target, data):
 	"""searches movies using imdb"""
