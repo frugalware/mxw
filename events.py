@@ -888,7 +888,7 @@ def fortune(c, e, source, file, prefix):
 	c.privmsg(e.target(), "%s %s" % (prefix, random.choice(lines).replace("\n", ' ').strip()))
 
 def bullshit(c, source, target, argv):
-	"""Bullshit Generator"""
+	"""Bullshit Generator (example: 'optimize next-generation e-business')"""
 	list1 = ["implement", "utilize", "integrate", "streamline",
 			"optimize", "evolve", "transform", "embrace",
 			"enable", "orchestrate", "leverage", "reinvent",
