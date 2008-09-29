@@ -942,7 +942,7 @@ def bullshit(c, source, target, argv):
 			"functionalities", "experiences", "web services",
 			"methodologies"]
 	lists = [list1, list2, list3]
-	c.privmsg(target, "%s: %s" % (source, map(random.choice, lists)))
+	c.privmsg(target, "%s: %s" % (source, " ".join(map(random.choice, lists))))
 
 class config:
 	server = "irc.freenode.net"
