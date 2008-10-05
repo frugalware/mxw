@@ -1296,6 +1296,11 @@ def on_pong(self, c, e):
 		self.sockthread.start()
 
 def on_ctcp(self, c, e):
+	if e.arguments()[0] == "VERSION":
+		sock = os.popen("git describe")
+		ver = sock.read().strip()
+		sock.close()
+		c.ctcp_reply(e.source().split('!')[0], "VERSION mxw %s - running on Frugalware Linux" % ver)
 	log(e)
 
 def on_part(self, c, e):
