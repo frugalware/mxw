@@ -1142,7 +1142,7 @@ def log(e):
 	if not os.path.exists(logdir):
 		os.makedirs(logdir)
 	datestr = time.strftime("%d-%m-%Y", time.localtime())
-	logpath = "%s/%s/%s.html" % (config.logpath, e.target(), datestr)
+	logpath = "%s/%s/%s.html" % (config.logpath, e.target().lower(), datestr)
 	if os.path.exists(logpath):
 		sock = open(logpath, "a")
 	else:
