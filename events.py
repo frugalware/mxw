@@ -6,6 +6,7 @@ from xml.dom import minidom
 from sgmllib import SGMLParser
 from irclib import Event
 import sztakidict
+import urllib2
 
 sys = reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -887,6 +888,18 @@ def fortune(c, e, source, file, prefix):
 	sock.close()
 	c.privmsg(e.target(), "%s %s" % (prefix, random.choice(lines).replace("\n", ' ').strip()))
 
+def mid(c, source, target, argv):
+	"Searches articles with a given Message-ID on GMane."
+	if not len(argv):
+		c.privmsg(target, "%s: mid requires at least one parameter" % source)
+		return
+	opener = urllib2.build_opener()
+	sock = opener.open("http://mid.gmane.org/%s" % argv[0])
+	if sock.url.startswith("http://mid"):
+		c.privmsg(target, "%s: mid '%s' not found" % (source, argv[0]))
+	else:
+		c.privmsg(target, "%s: %s" % (source, sock.url))
+
 def bullshit(c, source, target, argv):
 	"""Bullshit Generator (example: 'optimize next-generation e-business')"""
 	list1 = ["implement", "utilize", "integrate", "streamline",
@@ -1017,7 +1030,8 @@ class config:
 			"integrate": integrate,
 			"isbn": isbn,
 			"tv": tv,
-			"bullshit": bullshit
+			"bullshit": bullshit,
+			"mid": mid
 			}
 	triggers = {
 			#(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
