@@ -64,7 +64,10 @@ def helper(lang, word):
 		lang += "2en"
 	elif "2" not in lang:
 		lang += "2hu"
-	return "%s: %s" % (word, "; ".join(sztakidict(dicts[lang], word)))
+	try:
+		return "%s: %s" % (word, "; ".join(sztakidict(dicts[lang], word)))
+	except KeyError:
+		return "no such dict"
 
 if __name__ == "__main__":
 	import sys
