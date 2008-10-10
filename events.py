@@ -1044,7 +1044,7 @@ class config:
 			(lambda e, argv: e.arguments()[0].lower() == "argh!"): (lambda c, e, source, argv: fortune(c, e, source, "murphy-hu.lines", "Argh!")),
 			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
 			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4])) and len(argv)==4): (lambda c, e, source, argv: google(c, source, e.target(), argv)),
-			(lambda e, argv: (not e.target().startswith("#") or e.target() == "#debian.hu") and re.match("^[a-z]{2} [a-zA-Z\xdf\xfc]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv)),
+			(lambda e, argv: (not e.target().startswith("#") or e.target() == "#debian.hu") and re.match("^(en|de) [a-zA-Z\xdf\xfc]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv)),
 			(lambda e, argv: re.match("^#[0-9]+$", " ".join(argv))): (lambda c, e, source, argv: bugs(c, source, e.target(), argv))
 			}
 	highlight_triggers = {
