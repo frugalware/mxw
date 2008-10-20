@@ -88,7 +88,7 @@ def sms(c, source, target, argv):
 	safe_eval(source, 'sendsms(c, "%s", "%s", "%s", "%s")' % (source, target, argv[0], " ".join(argv[1:])), c)
 
 def wtf(c, source, target, argv):
-	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve"""
+	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve (you can improve the db at /pub/other/people/vmiklos/mxw/acronyms!)"""
 	if len(argv)<1:
 		c.privmsg(target, "%s: 'wtf' requires a parameter" % source)
 		return
