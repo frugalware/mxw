@@ -92,7 +92,7 @@ def wtf(c, source, target, argv):
 	if len(argv)<1:
 		c.privmsg(target, "%s: 'wtf' requires a parameter" % source)
 		return
-	sock = os.popen("wtf %s" % argv[0])
+	sock = os.popen("wtf -f acronyms %s" % argv[0])
 	buf = sock.readline().strip()
 	sock.close()
 	c.privmsg(target, "%s: %s" % (source, buf))
