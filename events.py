@@ -640,8 +640,14 @@ def git(c, source, target, argv, anon=False):
 			else:
 				c.privmsg(target, "%s: git clone git://git.frugalware.org%s %s" % (source, path[9:], local))
 	else:
-		cmd = argv[0]
-		repo = argv[1]
+		cmd = None
+		cmds = ['info']
+		if argv[0] in cmds:
+			cmd = argv[0]
+			repo = argv[1]
+		else:
+			repo = argv[0]
+			hash = argv[1]
 		found = False
 		for root, dirs, files in os.walk(repodir):
 			for dir in dirs:
@@ -660,7 +666,7 @@ def git(c, source, target, argv, anon=False):
 				sock.close()
 				c.privmsg(target, "%s: desc: '%s', owner: '%s'" % (source, desc, owner))
 			else:
-				c.privmsg(target, "%s: no such subcommand" % source)
+				c.privmsg(target, "%s: http://git.frugalware.org/gitweb/gitweb.cgi?p=%s.git;a=commitdiff;h=%s" % (source, argv[0], argv[1]))
 
 def anongit(c, source, target, argv):
 	"""gives you a deepcmdline to clone a given repo anonymously"""
