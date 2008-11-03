@@ -246,6 +246,11 @@ def google(c, source, target, data):
 				elif k == "href":
 					self.link = v
 
+		def start_ul(self, attrs):
+			for k, v in attrs:
+				if k == "type" and v == "disc":
+					self.intitle = True
+
 		def end_a(self):
 			if self.intitle:
 				self.titles.append("".join(self.title))
@@ -275,6 +280,12 @@ def google(c, source, target, data):
 				self.descs.append("".join(self.desc))
 				self.desc = []
 				self.indesc = False
+			elif self.intitle:
+				self.titles.append("".join(self.title))
+				self.title = []
+				self.intitle = False
+				self.descs.append(None)
+				self.links.append(None)
 
 		def handle_data(self, text):
 			if self.intitle:
