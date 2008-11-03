@@ -281,7 +281,10 @@ def google(c, source, target, data):
 				self.desc = []
 				self.indesc = False
 			elif self.intitle:
-				self.titles.append("".join(self.title))
+				s = "".join(self.title)
+				if s[-3:] == "...":
+					s = s[:-4]
+				self.titles.append(s)
 				self.title = []
 				self.intitle = False
 				self.descs.append(None)
