@@ -913,6 +913,13 @@ def fortune(c, e, source, file, prefix):
 	sock.close()
 	c.privmsg(e.target(), "%s %s" % (prefix, random.choice(lines).replace("\n", ' ').strip()))
 
+def define(c, source, target, argv):
+	"Defines a term using Google."
+	if not len(argv):
+		c.privmsg(target, "%s: deines requires a parameter" % source)
+		return
+	google(c, source, target, ["define:"+argv[0]] + argv[1:])
+
 def mid(c, source, target, argv):
 	"Searches articles with a given Message-ID on GMane."
 	if not len(argv):
@@ -1032,6 +1039,7 @@ class config:
 			"btssearch": (lambda c, source, target, argv: google(c, source, target, ("site:bugs.frugalware.org %s" % " ".join(argv)).split(' '))),
 			"fight": fight,
 			"lc": lc,
+			"define": define,
 			# misc
 			"help": help,
 			"calc": google,
