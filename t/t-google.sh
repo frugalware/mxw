@@ -8,8 +8,5 @@ check "google url" "python google.py frugalware|sed -n 3p \
 check "google define" "python google.py define:deadlock \
 |grep -q \"^privmsg: This is an inter-blocking that occurs when two processes want to access at shared \
 variables mutually locked\.\$\""
-check "google define" "python google.py define:deadlock \
-|grep -q \"^privmsg: This is an inter-blocking that occurs when two processes want to access at shared \
-variables mutually locked\.\$\""
 check "google not found" "python google.py define:deadlockkkk \
 |grep -q \"^privmsg: your search did not match any documents\$\""
