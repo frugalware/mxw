@@ -916,7 +916,7 @@ def fortune(c, e, source, file, prefix):
 def define(c, source, target, argv):
 	"Defines a term using Google."
 	if not len(argv):
-		c.privmsg(target, "%s: deines requires a parameter" % source)
+		c.privmsg(target, "%s: defines requires a parameter" % source)
 		return
 	google(c, source, target, ["define:"+argv[0]] + argv[1:])
 
