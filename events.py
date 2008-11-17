@@ -88,7 +88,7 @@ def sms(c, source, target, argv):
 	safe_eval(source, 'sendsms(c, "%s", "%s", "%s", "%s")' % (source, target, argv[0], " ".join(argv[1:])), c)
 
 def wtf(c, source, target, argv):
-	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve (you can improve the db at /pub/other/people/vmiklos/mxw/acronyms!)"""
+	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve. falls back to 'define' (you can improve the db at /pub/other/people/vmiklos/mxw/acronyms!)"""
 	if len(argv)<1:
 		c.privmsg(target, "%s: 'wtf' requires a parameter" % source)
 		return
@@ -100,7 +100,10 @@ def wtf(c, source, target, argv):
 	sock = os.popen("wtf -f %s %s" % (f, argv[0]))
 	buf = sock.readline().strip()
 	sock.close()
-	c.privmsg(target, "%s: %s" % (source, buf))
+	if buf != "%s: nothing appropriate" % argv[0]:
+		c.privmsg(target, "%s: %s" % (source, buf))
+	else:
+		define(c, source, target, argv)
 
 def choose(c, source, target, argv):
 	"""chooses a random value from a list. example: choose foo bar"""
