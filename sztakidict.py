@@ -34,7 +34,7 @@ def sztakidict(lang, word):
 					self.mes.append(s)
 
 	urllib._urlopener = myurlopener()
-	sock = urllib.urlopen("http://szotar.sztaki.hu/dict_search.php?" + urllib.urlencode({'L':lang, 'W':word}))
+	sock = urllib.urlopen("http://szotar.sztaki.hu/dict_search.php?" + urllib.urlencode({'L':lang, 'W':word, 'C':'1'}))
 	page = sock.read()
 	sock.close()
 
