@@ -464,7 +464,8 @@ def isbn(c, source, target, data):
 	parser.close()
 
 	if len(parser.title):
-		c.privmsg(target, parser.title[0])
+		# :-3 becase the end contains some unnecessary utf8 crap
+		c.privmsg(target, parser.title[0][:-3])
 	else:
 		c.privmsg(target, "your search did not match any documents")
 	if len(parser.desc):
