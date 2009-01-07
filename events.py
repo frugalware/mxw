@@ -318,7 +318,7 @@ def google(c, source, target, data):
 	parser.close()
 
 	if len(parser.titles):
-		c.privmsg(target, parser.titles[0])
+		c.privmsg(target, parser.titles[0].strip())
 	else:
 		c.privmsg(target, "your search did not match any documents")
 	if len(parser.descs) and parser.descs[0]:
