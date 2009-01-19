@@ -315,6 +315,9 @@ def google(c, source, target, data):
 	if len(data) < 1:
 		c.privmsg(target, "%s: 'google' requires a parameter (search term)" % source)
 		return
+	elif " ".join(data) == "ryuo's little secret":
+		c.privmsg(target, "pwned!")
+		return
 	urllib._urlopener = myurlopener()
 	sock = urllib.urlopen("http://www.google.com/search?" + urllib.urlencode({'q':" ".join(data)}))
 	page = sock.read()
