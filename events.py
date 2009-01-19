@@ -184,6 +184,14 @@ def ban(c, source, target, argv):
 	cmd = 'c.mode("%s", "+b %s")' % (target, argv[0])
 	safe_eval(source, cmd, c)
 
+def unban(c, source, target, argv):
+	"""unbans somebody from the current channel"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'unban' requires a parameter (mask)" % source)
+		return
+	cmd = 'c.mode("%s", "-b %s")' % (target, argv[0])
+	safe_eval(source, cmd, c)
+
 def topic(c, source, target, argv):
 	"""change the topic of a channel"""
 	if len(argv) < 1:
@@ -1037,6 +1045,7 @@ class config:
 			"devoice": devoice,
 			"kick": kick,
 			"ban": ban,
+			"unban": unban,
 			"topic": topic,
 			# web services
 			"google": google,
