@@ -948,7 +948,7 @@ def mid(c, source, target, argv):
 		c.privmsg(target, "%s: %s" % (source, sock.url))
 
 def bullshit(c, source, target, argv):
-	"""Bullshit Generator (example: 'optimize next-generation e-business')"""
+	"""Web Economy Bullshit Generator (example: 'optimize next-generation e-business')"""
 	list1 = ["implement", "utilize", "integrate", "streamline",
 			"optimize", "evolve", "transform", "embrace",
 			"enable", "orchestrate", "leverage", "reinvent",
@@ -1002,7 +1002,30 @@ def bullshit(c, source, target, argv):
 			"functionalities", "experiences", "web services",
 			"methodologies"]
 	lists = [list1, list2, list3]
-	c.privmsg(target, "Bullshit Generator: %s" % " ".join(map(random.choice, lists)))
+	c.privmsg(target, "Web Economy Bullshit Generator: %s" % " ".join(map(random.choice, lists)))
+
+def bullshit2(c, source, target, argv):
+	"""Web 2.0 Bullshit Generator (example: 'create podcasting communities')"""
+	list1 = ["aggregate", "beta-test", "integrate", "capture",
+			"create", "design", "disintermediate", "enable",
+			"integrate", "post", "remix", "reinvent",
+			"share", "syndicate", "tag", "incentivize",
+			"engage", "reinvent", "harness", "integrate"]
+	list2 = ["AJAX-enabled", "A-list", "authentic", "citizen-media",
+			"Cluetrain", "data-driven", "dynamic",
+			"embedded", "long-tail", "peer-to-peer",
+			"podcasting", "rss-capable", "semantic",
+			"social", "standards-compliant", "user-centred",
+			"user-contributed", "viral", "blogging",
+			"rich-client"]
+	list3 = ["APIs", "blogospheres", "communities", "ecologies",
+			"feeds", "folksonomies", "life-hacks",
+			"mashups", "network effects", "networking",
+			"platforms", "podcasts", "value",
+			"web services", "weblogs", "widgets", "wikis",
+			"synergies", "ad delivery", "tagclouds"]
+	lists = [list1, list2, list3]
+	c.privmsg(target, "Web 2.0 Bullshit Generator: %s" % " ".join(map(random.choice, lists)))
 
 class config:
 	server = "irc.freenode.net"
@@ -1080,6 +1103,7 @@ class config:
 			"isbn": isbn,
 			"tv": tv,
 			"bullshit": bullshit,
+			"bullshit2": bullshit2,
 			"mid": mid
 			}
 	triggers = {
