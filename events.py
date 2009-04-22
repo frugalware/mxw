@@ -1028,7 +1028,7 @@ def bullshit2(c, source, target, argv):
 	c.privmsg(target, "Web 2.0 Bullshit Generator: %s" % " ".join(map(random.choice, lists)))
 
 class config:
-	server = "irc.freenode.net"
+	server = "irc.ipv6.eu.freenode.net"
 	port = 6667
 	nick  = "mxw_"
 	password = password.password
