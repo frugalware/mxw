@@ -423,7 +423,7 @@ class ServerConnection(Connection):
 		self.localaddress = localaddress
 		self.localport = localport
 		self.localhost = socket.gethostname()
-		self.socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+		self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 		try:
 			self.socket.bind((self.localaddress, self.localport))
 			self.socket.connect((self.server, self.port))
