@@ -1,4 +1,4 @@
-import traceback, inspect, sys, password, time, urllib, re, pickle, popen2
+import traceback, inspect, sys, password, time, urllib, re, pickle
 sys.path.append("/usr/lib")
 import feedparser, htmlentitydefs, random, os, threading, string, glob
 import anydatetime, socket
