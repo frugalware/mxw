@@ -1034,7 +1034,11 @@ def m8r(c, source, target, argv):
 		return
 	ret = ""
 	pkgname = argv[0]
-	dir = glob.glob(os.path.split(config.authors)[0] + "/../../source/*/" + pkgname)[0]
+	dirs = glob.glob(os.path.split(config.authors)[0] + "/../../source/*/" + pkgname)
+	if not len(dirs):
+		c.privmsg(target, "%s: no such package, do you want to package it today?!" % source)
+		return
+	dir = dirs[0]
 	socket = open("%s/FrugalBuild" % dir)
 	while True:
 		line = socket.readline()
