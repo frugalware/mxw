@@ -1027,6 +1027,27 @@ def bullshit2(c, source, target, argv):
 	lists = [list1, list2, list3]
 	c.privmsg(target, "Web 2.0 Bullshit Generator: %s" % " ".join(map(random.choice, lists)))
 
+def m8r(c, source, target, argv):
+	"""Returns the maintainer of a pckage"""
+	if not len(argv):
+		c.privmsg(target, "%s: m8r requires a parameter" % source)
+		return
+	ret = ""
+	pkgname = argv[0]
+	dir = glob.glob(os.path.split(config.authors)[0] + "/../../source/*/" + pkgname)[0]
+	socket = open("%s/FrugalBuild" % dir)
+	while True:
+		line = socket.readline()
+		if not line:
+			break
+		if line[:14] != "# Maintainer: ":
+			continue
+		# FIXME: we here hardcore the encoding of the FBs
+		ret = line[14:].strip().decode('latin1')
+		break
+	socket.close()
+	c.privmsg(target, ret)
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
@@ -1104,7 +1125,8 @@ class config:
 			"tv": tv,
 			"bullshit": bullshit,
 			"bullshit2": bullshit2,
-			"mid": mid
+			"mid": mid,
+			"m8r": m8r
 			}
 	triggers = {
 			#(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
