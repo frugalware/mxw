@@ -1185,6 +1185,7 @@ def check_rss(self, c, e):
 		gray = i.title
 		i.feed = feedparser.parse(i.url)
 		for j in i.feed.entries:
+			i.updated = max(time.mktime(j.updated_parsed), i.updated)
 			for k in i.targets:
 				if time.mktime(j.updated_parsed) > i.updated:
 					if i.title == "ping":
@@ -1194,8 +1195,6 @@ def check_rss(self, c, e):
 						brown = j.title.encode('latin2') # FIXME: hardwired charset
 						green = j.link
 					c.privmsg(k, "14%s7 %s3 %s" % (gray, brown, green))
-		if len(i.feed.entries):
-			i.updated = time.mktime(i.feed.entries[0].updated_parsed)
 
 def inxml(nick):
 	xmldoc = minidom.parse(config.authors)
