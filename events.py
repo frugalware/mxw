@@ -656,15 +656,22 @@ def git(c, source, target, argv, anon=False):
 	elif len(argv) < 2:
 		repo = argv[0]
 		found = False
+		path = None
 		for root, dirs, files in os.walk(repodir):
 			for dir in dirs:
 				if dir == repo:
 					found = True
 		if not found:
+			matches = glob.glob("/pub/other/people/*/php52")
+			if len(matches):
+				found = True
+				path = matches[0]
+		if not found:
 			c.privmsg(target, "%s: no such repo" % source)
 			return
 		else:
-			path = os.path.abspath(os.path.join(repodir, os.readlink(os.path.join(repodir, repo))))
+			if not path:
+				path = os.path.abspath(os.path.join(repodir, os.readlink(os.path.join(repodir, repo))))
 			if repo.startswith("frugalware-"):
 				local = repo[len("frugalware-"):]
 			else:
