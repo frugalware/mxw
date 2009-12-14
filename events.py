@@ -620,7 +620,7 @@ def db_search(c, source, target, argv):
 
 def darcs(c, source, target, argv):
 	"""gives you a deepcmdline to get a given repo"""
-	repodir = "/home/ftp/pub/other/homepage-ng/darcs/repos"
+	repodir = "/pub/other/homepage-ng/darcs/repos"
 	if len(argv) < 1:
 		for root, dirs, files in os.walk(repodir):
 			repos = dirs
@@ -646,7 +646,7 @@ def darcs(c, source, target, argv):
 
 def git(c, source, target, argv, anon=False):
 	"""gives you a deepcmdline to clone a given repo. use 'git foo' to get a deepcmdline. use 'git info foo' to get info about a repo"""
-	repodir = "/home/ftp/pub/other/homepage-ng/git/repos"
+	repodir = "/pub/other/homepage-ng/git/repos"
 	if len(argv) < 1:
 		for root, dirs, files in os.walk(repodir):
 			repos = dirs
@@ -672,7 +672,7 @@ def git(c, source, target, argv, anon=False):
 			if not anon:
 				c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source, path, local))
 			else:
-				c.privmsg(target, "%s: git clone git://git.frugalware.org%s %s" % (source, path[9:], local))
+				c.privmsg(target, "%s: git clone git://git.frugalware.org%s %s" % (source, path, local))
 	else:
 		cmd = None
 		cmds = ['info']
@@ -844,7 +844,7 @@ def wipstatus(c, source, target, argv):
 		c.privmsg(target, "%s: too few params, see help" % source)
 		return
 	old = os.getcwd()
-	os.chdir("/home/ftp/pub/other/people")
+	os.chdir("/pub/other/people")
 	repo = argv[0]
 	arch = argv[1]
 	pkglist = []
@@ -1059,8 +1059,8 @@ class config:
 	password = password.password
 	realname = "yeah"
 	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#frugalware.es', '#debian.hu']
-	authors = "/home/ftp/pub/frugalware/frugalware-current/docs/xml/authors.xml"
-	logpath = "/home/ftp/pub/other/irclogs"
+	authors = "/pub/frugalware/frugalware-current/docs/xml/authors.xml"
+	logpath = "/pub/other/irclogs"
 	# for reporting bugs
 	owner = "vmiklos"
 
