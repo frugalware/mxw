@@ -789,16 +789,13 @@ def imdb(c, source, target, data):
 				self.inplot = False
 			elif self.invote:
 				if "/" in text:
-					self.vote = ["score: %s" % text.split("/")[0]]
+					self.vote = "score: %s" % text.split("/")[0]
 				elif text[-5:] == "votes":
-					self.vote.append(re.sub(r"(.*) votes", r"/\1", text))
-					self.vote = "".join(self.vote)
+					self.vote += re.sub(r"(.*) votes", r"/\1", text)
 					self.invote = False
 				elif text == "(awaiting 5 votes)":
 					self.vote = None
 					self.invote = False
-				else:
-					self.vote.append(text.strip())
 			elif self.intitle:
 				self.title.append(text.strip())
 			if text == "Genre:":
