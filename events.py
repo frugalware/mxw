@@ -782,7 +782,7 @@ def imdb(c, source, target, data):
 				elif text != "\n":
 					self.genre.append(text)
 			elif self.inruntime:
-				self.runtime = "runtime: " + text.strip().replace('|', '/')
+				self.runtime = "runtime: " + text.strip().replace('|', '/').replace('  ', ' ')
 				if self.runtime != "runtime: ":
 					self.inruntime = False
 			elif self.inplot:
