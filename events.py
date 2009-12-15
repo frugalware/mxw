@@ -776,10 +776,10 @@ def imdb(c, source, target, data):
 
 		def handle_data(self, text):
 			if self.ingenre:
-				if text == "more" or (len(self.genre) and text == "\n"):
-					self.genre = "genre: " + "".join(self.genre[1:])
+				if text == "more":
+					self.genre = "genre: " + "".join(self.genre).strip().replace('|', '/')
 					self.ingenre = False
-				else:
+				elif text != "\n":
 					self.genre.append(text)
 			elif self.inruntime:
 				self.runtime = "runtime: " + text.strip()
