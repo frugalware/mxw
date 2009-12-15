@@ -786,7 +786,8 @@ def imdb(c, source, target, data):
 				self.inruntime = False
 			elif self.inplot:
 				self.plot = text.strip()
-				self.inplot = False
+				if len(self.plot):
+					self.inplot = False
 			elif self.invote:
 				if "/" in text:
 					self.vote = "score: %s" % text.split("/")[0]
@@ -802,7 +803,7 @@ def imdb(c, source, target, data):
 				self.ingenre = True
 			elif text == "Runtime:":
 				self.inruntime = True
-			elif text == "Plot Outline:":
+			elif text == "Plot:":
 				self.inplot = True
 			elif text == "User Rating:":
 				self.invote = True
