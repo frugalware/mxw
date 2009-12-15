@@ -433,7 +433,7 @@ def isbn(c, source, target, data):
 			if self.intitle:
 				for k, v in attrs:
 					if k == "href":
-						self.link = v
+						self.link = v.replace('&cd=1', '')
 
 		def end_a(self):
 			if self.intitle:
@@ -442,7 +442,7 @@ def isbn(c, source, target, data):
 
 		def end_span(self):
 			if self.indesc:
-				self.desc = ["".join(self.desc)]
+				self.desc = ["by " + "".join(self.desc)]
 				self.indesc = False
 
 		def start_div(self, attrs):
