@@ -662,7 +662,7 @@ def git(c, source, target, argv, anon=False):
 				if dir == repo:
 					found = True
 		if not found:
-			matches = glob.glob("/pub/other/people/*/php52")
+			matches = glob.glob("/pub/other/people/*/%s" % repo)
 			if len(matches):
 				found = True
 				path = matches[0]
