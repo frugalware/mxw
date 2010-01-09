@@ -216,12 +216,14 @@ def integrate(c, source, target, argv):
 	c.privmsg(target, "http://integrals.wolfram.com/index.jsp?%s" % urllib.urlencode({'expr':argv[0]}))
 
 def bugs(c, source, target, argv):
+	from xml.sax.saxutils import unescape
 	sock = urllib.urlopen("http://bugs.frugalware.org/getinfo/%s" % argv[0][1:])
 	doc = minidom.parseString(sock.read())
 	sock.close()
 	try:
 		id = doc.getElementsByTagName("id")[0].firstChild.toxml()
-		title = ': '.join(doc.getElementsByTagName("title")[0].firstChild.toxml().split(': ')[1:])
+		title = unescape(': '.join(doc.getElementsByTagName("title")[0].firstChild.toxml().split(': ')[1:]),
+			{"&quot;": '"'})
 	except IndexError:
 		c.privmsg(target, "no such bug")
 		return
