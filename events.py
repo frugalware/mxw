@@ -1304,7 +1304,7 @@ def log(e):
 	elif e.eventtype() == "join":
 		sock.write("""<tr><td bgcolor="#FFFFFF" colspan="2"><font size="-1">* %s(%s) has joined %s</font></td><td bgcolor="%s">%s</td></tr>\n""" % (nick, host, e.target(), color, timestr))
 	elif e.eventtype() == "part":
-		sock.write("""<tr><td bgcolor="#FFFFFF" colspan="2"><font size="-1">* %s has left %s (%s)</font></td><td bgcolor="%s">%s</td></tr>\n""" % (nick, e.target(), e.arguments()[0], color, timestr))
+		sock.write("""<tr><td bgcolor="#FFFFFF" colspan="2"><font size="-1">* %s has left %s (%s)</font></td><td bgcolor="%s">%s</td></tr>\n""" % (nick, e.target(), " ".join(e.arguments()), color, timestr))
 	# TODO: quit
 	sock.close()
 
