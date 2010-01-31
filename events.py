@@ -1399,7 +1399,7 @@ def on_join(self, c, e):
 def on_identified(self, c, e):
 	global todo
 
-	nick = e.arguments()[0]
+	nick = e.arguments()[1]
 	if nick not in todo.keys():
 		return
 	for i in todo[nick][-1].split("\n"):
