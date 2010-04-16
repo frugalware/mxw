@@ -1211,7 +1211,7 @@ def check_rss(self, c, e):
 def inxml(nick):
 	xmldoc = minidom.parse(config.authors)
 	for i in xmldoc.getElementsByTagName('author'):
-		if unicode(nick) == i.getElementsByTagName("nick")[0].firstChild.toxml() and i.getElementsByTagName("status")[0].firstChild.toxml() in ["active", "former", "contributor"]:
+		if unicode(nick.lower()) == i.getElementsByTagName("nick")[0].firstChild.toxml().lower() and i.getElementsByTagName("status")[0].firstChild.toxml() in ["active", "former", "contributor"]:
 			return True
 	return False
 
@@ -1399,7 +1399,7 @@ def on_join(self, c, e):
 def on_identified(self, c, e):
 	global todo
 
-	nick = e.arguments()[1].lower()
+	nick = e.arguments()[1]
 	if nick not in todo.keys():
 		return
 	for i in todo[nick][-1].split("\n"):
