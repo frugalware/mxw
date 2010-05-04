@@ -646,7 +646,7 @@ def darcs(c, source, target, argv):
 			local = ""
 		c.privmsg(target, "%s: darcs get --partial %s@darcs.frugalware.org:%s %s" % (source, source, path, local))
 
-def git(c, source, target, argv, anon=False):
+def git(c, source, target, argv, anon=False, ret=False):
 	"""gives you a deepcmdline to clone a given repo. use 'git foo' to get a deepcmdline. use 'git info foo' to get info about a repo"""
 	repodir = "/pub/other/homepage-ng/git/repos"
 	if len(argv) < 1:
@@ -681,7 +681,10 @@ def git(c, source, target, argv, anon=False):
 			if not anon:
 				c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source, path, local))
 			else:
-				c.privmsg(target, "%s: git clone git://git.frugalware.org%s %s" % (source, path, local))
+				if not ret:
+					c.privmsg(target, "%s: git clone git://git.frugalware.org%s %s" % (source, path, local))
+				else:
+					return "%s: git clone git://git.frugalware.org%s %s" % (source, path, local)
 	else:
 		cmd = None
 		cmds = ['info']
@@ -717,6 +720,16 @@ def anongit(c, source, target, argv):
 		c.privmsg(target, "%s: 'anongit' requires a parameter. use the 'git' command to list available repos" % source)
 		return
 	git(c, source, target, argv, True)
+
+def repo(c, source, target, argv):
+	"""gives you config lines to add a given repo to pacman-g2 config"""
+	if len(argv) < 1:
+		c.privmsg(target, "%s: 'repo' requires a parameter" % source)
+		return
+	ret = git(c, source, target, argv, anon=True, ret=True).strip().split(': ')[1]
+	repo = ret.split('/')[-1]
+	c.privmsg(target, "[%s]" % repo)
+	c.privmsg(target, "".join([ret.replace('git clone git://git', 'Server = http://ftp'), "/frugalware-i686"]))
 
 def unicode_unescape(match):
 	return match.group().decode('unicode_escape')
@@ -1127,6 +1140,7 @@ class config:
 			"darcs": darcs,
 			"git": git,
 			"anongit": anongit,
+			"repo": repo,
 			"imdb": imdb,
 			"mojodb": mojodb,
 			"dict": dict,
