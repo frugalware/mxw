@@ -824,6 +824,9 @@ def imdb(c, source, target, data):
 			elif text == "User Rating:":
 				self.invote = True
 
+	class myurlopener(urllib.FancyURLopener):
+		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
+	urllib._urlopener = myurlopener()
 	if len(data) < 1:
 		c.privmsg(target, "%s: 'imdb' requires a parameter (search term)" % source)
 		return
