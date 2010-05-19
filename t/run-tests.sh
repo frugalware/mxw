@@ -32,7 +32,7 @@ fi
 
 for i in $targets
 do
-	. $i
+	. ./$i
 done
 
 echo "passed: $passed, failed $failed"
