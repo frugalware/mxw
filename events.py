@@ -791,7 +791,7 @@ def imdb(c, source, target, data):
 
 		def handle_data(self, text):
 			if self.ingenre:
-				if text == "more":
+				if text == "See more":
 					self.genre = "genre: " + "".join(self.genre).strip().replace('|', '/')
 					self.ingenre = False
 				elif text != "\n":
