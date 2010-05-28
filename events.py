@@ -678,7 +678,7 @@ def lc(c, source, target, data):
 	if tens.find('kilenc') >= 0:
 		num += 9
 	parser.state = num
-	c.privmsg(target, "Gratulalunk, Te is porgettel egyet a LAMMERSZAMLALON! %s" % parser.state)
+	c.privmsg(target, "Congratulations, you successfully incremented the LAMMERCOUNTER! %s" % parser.state)
 	parser.close()
 	sock.close()
 
