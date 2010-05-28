@@ -541,6 +541,143 @@ def lc(c, source, target, data):
 	parser.feed(sock.read())
 	for i in htmlentitydefs.entitydefs:
 		parser.state = re.sub('&%s;' % i, htmlentitydefs.entitydefs[i], parser.state)
+	num = 0
+	thousands = parser.state.split('-')[0]
+	hundreds = parser.state.split('-')[1].split( 'sz\xe1z' )[0]
+	tens = parser.state.split('-')[1].split( 'sz\xe1z' )[1]
+	if thousands.find( 'ezer' ) > 0:
+		num += 1000
+		thousands = thousands.replace('ezer', '')
+		if thousands.find( 't\xedz' ) >= 0:
+			num += 9000
+			thousands = thousands.replace('t\xedz', '')
+		elif thousands.find( 'tizen' ) >= 0:
+			num += 9000
+			thousands = thousands.replace('tizen', '')
+		elif thousands.find( 'h\xfasz' ) >= 0:
+			num += 19000
+			thousands = thousands.replace('h\xfasz', '')
+		elif thousands.find( 'huszon' ) >= 0:
+			num += 19000
+			thousands = thousands.replace('huszon', '')
+		elif thousands.find( 'harmic' ) >= 0:
+			num += 29000
+			thousands = thousands.replace('harmic', '')
+		elif thousands.find( 'negyven' ) >= 0:
+			num += 39000
+			thousands = thousands.replace('negyven', '')
+		elif thousands.find( '\xf6tven' ) >= 0:
+			num += 49000
+			thousands = thousands.replace('\xf6tven', '')
+		elif thousands.find( 'hatvan' ) >= 0:
+			num += 59000
+			thousands = thousands.replace('hatvan', '')
+		elif thousands.find( 'hetven' ) >= 0:
+			num += 69000
+			thousands = thousands.replace('hetven', '')
+		elif thousands.find( 'nyolcvan' ) >= 0:
+			num += 79000
+			thousands = thousands.replace('nyolcvan', '')
+		elif thousands.find( 'kilencven' ) >= 0:
+			num += 89000
+			thousands = thousands.replace('kilencven', '')
+		if thousands.find( 'egy' ) >= 0:
+			num += 1000
+			thousands = thousands.replace('egy', '')
+		elif thousands.find( 'kett\xf5' ) >= 0:
+			num += 2000
+			thousands = thousands.replace('kett\xf5', '')
+		elif thousands.find( 'h\xe1rom' ) >= 0:
+			num += 3000
+			thousands = thousands.replace('h\xe1rom', '')
+		elif thousands.find( 'n\xe9gy' ) >= 0:
+			num += 4000
+			thousands = thousands.replace('n\xe9gy', '')
+		elif thousands.find( '\xf6t' ) >= 0:
+			num += 5000
+			thousands = thousands.replace('\xf6t', '')
+		elif thousands.find( 'hat' ) >= 0:
+			num += 6000
+			thousands = thousands.replace('hat', '')
+		elif thousands.find( 'h\xe9t' ) >= 0:
+			num += 7000
+			thousands = thousands.replace('h\xe9t', '')
+		elif thousands.find( 'nyolc' ) >= 0:
+			num += 8000
+			thousands = thousands.replace('nyolc', '')
+		elif thousands.find( 'kilenc' ) >= 0:
+			num += 9000
+			thousands = thousands.replace('kilenc', '')
+	if hundreds == 'egy':
+		num += 100
+	elif hundreds == 'kett\xf5':
+		num += 200
+	elif hundreds == 'h\xe1rom':
+		num += 300
+	elif hundreds == 'n\xe9gy':
+		num += 400
+	elif hundreds == '\xf6t':
+		num += 500
+	elif hundreds == 'hat':
+		num += 600
+	elif hundreds == 'h\xe9t':
+		num += 700
+	elif hundreds == 'nyolc':
+		num += 800
+	elif hundreds == 'kilenc':
+		num += 900
+	if tens.find('t\xedz') >= 0:
+		num += 10
+		tens = tens.replace('t\xedz', '')
+	elif tens.find('tizen') >= 0:
+		num += 10
+		tens = tens.replace('tizen', '')
+	elif tens.find('h\xfasz') >= 0:
+		num += 20
+		tens = tens.replace('h\xfasz', '')
+	elif tens.find('huszon') >= 0:
+		num += 20
+		tens = tens.replace('huszon', '')
+	elif tens.find('harminc') >= 0:
+		num += 30
+		tens = tens.replace('harminc', '')
+	elif tens.find('negyven') >= 0:
+		num += 30
+		tens = tens.replace('negyven', '')
+	elif tens.find('\xf6tven') >= 0:
+		num += 30
+		tens = tens.replace('\xf6tven', '')
+	elif tens.find('hatvan') >= 0:
+		num += 30
+		tens = tens.replace('hatvan', '')
+	elif tens.find('hetven') >= 0:
+		num += 30
+		tens = tens.replace('hetven', '')
+	elif tens.find('nyolvan') >= 0:
+		num += 30
+		tens = tens.replace('nyolcvan', '')
+	elif tens.find('kilencven') >= 0:
+		num += 30
+		tens = tens.replace('kilencven', '')
+	if tens.find('egy') >= 0:
+		num += 1
+	if tens.find('kett\xf5') >= 0:
+		num += 2
+	if tens.find('h\xe1rom') >= 0:
+		num += 3
+	if tens.find('n\xe9gy') >= 0:
+		num += 4
+	if tens.find('\xf6t') >= 0:
+		num += 5
+	if tens.find('hat') >= 0:
+		num += 6
+	if tens.find('h\xe9t') >= 0:
+		num += 7
+	if tens.find('nyolc') >= 0:
+		num += 8
+	if tens.find('kilenc') >= 0:
+		num += 9
+	parser.state = num
 	c.privmsg(target, "Gratulalunk, Te is porgettel egyet a LAMMERSZAMLALON! %s" % parser.state)
 	parser.close()
 	sock.close()
