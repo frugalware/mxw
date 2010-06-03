@@ -746,6 +746,8 @@ def db_search(c, source, target, argv):
 	else:
 		pattern = "."
 	for k, v in config.database.items():
+		if type(v) == list:
+			v = "\n".join(v)
 		if re.search(pattern, k) or re.search(pattern, v):
 			ret.append(k)
 	if len(ret):
