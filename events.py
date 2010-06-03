@@ -495,14 +495,11 @@ def fight(c, source, target, data):
 		def reset(self):
 			SGMLParser.reset(self)
 			self.inabout = False
-			self.resnum = 0
+			self.resnum = None
 
 		def handle_data(self, text):
-			if text == " of about ":
-				self.inabout = True
-			elif self.inabout:
-				self.resnum = int(text.replace(',', ''))
-				self.inabout = False
+			if not self.resnum and text.startswith("About "):
+				self.resnum = int(text.split(' ')[1].replace(',', ''))
 
 	if len(data) < 2:
 		c.privmsg(target, "%s: 'fight' requires two parameters" % source)
