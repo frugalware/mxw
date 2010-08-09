@@ -816,9 +816,9 @@ def git(c, source, target, argv, anon=False, ret=False):
 				c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source, path, local))
 			else:
 				if not ret:
-					c.privmsg(target, "%s: git clone git://git.frugalware.org%s %s" % (source, path, local))
+					c.privmsg(target, "%s: git clone http://frugalware.org/git%s %s" % (source, path, local))
 				else:
-					return "%s: git clone git://git.frugalware.org%s %s" % (source, path, local)
+					return "%s: git clone http://frugalware.org/git%s %s" % (source, path, local)
 	else:
 		cmd = None
 		cmds = ['info']
@@ -863,7 +863,7 @@ def repo(c, source, target, argv):
 	ret = git(c, source, target, argv, anon=True, ret=True).strip().split(': ')[1]
 	repo = ret.split('/')[-1]
 	c.privmsg(target, "[%s]" % repo)
-	c.privmsg(target, "".join([ret.replace('git clone git://git', 'Server = http://ftp'), "/frugalware-i686"]))
+	c.privmsg(target, "".join([ret.replace('git clone http://frugalware.org/git', 'Server = http://ftp.frugalware.org'), "/frugalware-i686"]))
 
 def unicode_unescape(match):
 	return match.group().decode('unicode_escape')
