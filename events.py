@@ -138,7 +138,7 @@ def deop(c, source, target, argv):
 
 def deopme(c, source, target, argv):
 	"""takes operator status from you on the current channel"""
-	safe_eval(source, 'c.mode("%s", "-o "%s")' % (target, source), c)
+	safe_eval(source, 'c.mode("%s", "-o %s")' % (target, source), c)
 
 def voiceme(c, source, target, argv):
 	"""gives voice to you on the a channel. optional parameter: channel (defaults to current)"""
