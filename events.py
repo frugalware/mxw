@@ -176,6 +176,11 @@ def kick(c, source, target, argv):
 	cmd = 'c.kick("%s", "%s", "%s")' % (target, argv[0], " ".join(argv[1:]))
 	safe_eval(source, cmd, c)
 
+def kickme(c, source, target, argv):
+	"""kicks you from the current channel"""
+	cmd = 'c.kick("%s", "%s", "%s")' % (target, source, "Alright, you're the boss.")
+	safe_eval(source, cmd, c)
+
 def ban(c, source, target, argv):
 	"""bans somebody from the current channel"""
 	if len(argv) < 1:
@@ -1256,6 +1261,7 @@ class config:
 			"voice": voice,
 			"devoice": devoice,
 			"kick": kick,
+			"kickme": kickme,
 			"ban": ban,
 			"unban": unban,
 			"topic": topic,
