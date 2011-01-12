@@ -1381,13 +1381,13 @@ def inxml(nick):
 def safe_eval(nick, cmd, c):
 	global todo
 
-	if not inxml(nick):
+	if not inxml(nick.lower()):
 		return
-	if nick in todo.keys():
-		todo[nick].append(cmd)
+	if nick.lower() in todo.keys():
+		todo[nick.lower()].append(cmd)
 	else:
-		todo[nick] = [cmd]
-	c.whois([nick])
+		todo[nick.lower()] = [cmd]
+	c.whois([nick.lower()])
 
 def handle_triggers(e, argv, c, source, highlight=False):
 	for k, v in config.triggers.items():
@@ -1562,7 +1562,7 @@ def on_join(self, c, e):
 def on_identified(self, c, e):
 	global todo
 
-	nick = e.arguments()[1]
+	nick = e.arguments()[1].lower()
 	if nick not in todo.keys():
 		return
 	for i in todo[nick][-1].split("\n"):
