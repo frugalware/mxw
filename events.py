@@ -251,7 +251,7 @@ def bugs(c, source, target, argv):
 def google(c, source, target, data):
 	"""searches the web using google"""
 	class myurlopener(urllib.FancyURLopener):
-		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
+		version = "Mozilla/5.0 (X11; Linux i686; rv:2.0) Gecko/20100101 Firefox/4.0"
 
 	class HTMLParser(SGMLParser):
 		def reset(self):
