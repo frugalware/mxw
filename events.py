@@ -1223,6 +1223,18 @@ def m8r(c, source, target, argv):
 	socket.close()
 	c.privmsg(target, ret)
 
+def roadmap(c, source, target, argv):
+	""" Return the release date of the next stable version"""
+	url = 'http://frugalware.org/xml/roadmap.xml'
+	xmldoc = minidom.parse(urllib2.urlopen(url))
+	
+	roadmapnode = xmldoc.getElementsByTagName("roadmap")
+	versionnode = roadmapnode[0].getElementsByTagName("version")
+	codenamenode = roadmapnode[0].getElementsByTagName("name")
+	datenode = roadmapnode[0].getElementsByTagName("date")
+	
+	c.privmsg(target, "%s: The next version of Frugalware (%s - Codename %s), will be released on %s" % (source, versionnode[0].firstChild.nodeValue,codenamenode[0].firstChild.nodeValue, datenode[0].firstChild.nodeValue))
+
 class config:
 	server = "irc.freenode.net"
 	port = 6667
@@ -1254,7 +1266,8 @@ class config:
 			"branches": "Frugalware has two branches. -current is about new features and new functionality is pushed there daily. -stable has major updates twice a year with an upgrade howto and between the major updates there are only security-, bug- and documentations fixes.",
 			"ty": "np",
 			"rebase": "git config branch.master.rebase true",
-			"pic": "http://ftp.frugalware.org/pub/other/people/vmiklos/mxw/mxw.jpg"
+			"pic": "http://ftp.frugalware.org/pub/other/people/vmiklos/mxw/mxw.jpg",
+			"roadmap": "Indicate release date of the next stable version of Frugalware"
 			}
 	commands = {
 			# operator commands
@@ -1304,7 +1317,8 @@ class config:
 			"bullshit": bullshit,
 			"bullshit2": bullshit2,
 			"mid": mid,
-			"m8r": m8r
+			"m8r": m8r,
+			"roadmap": roadmap,
 			}
 	triggers = {
 			#(lambda e, argv: e.target() == "#frugalware" and " ... " in e.arguments()[0]): (lambda c, e, source, argv: c.privmsg(e.target(), """%s: using "..." so much isn't polite to other users. please consider changing that habit.""" % source)),
