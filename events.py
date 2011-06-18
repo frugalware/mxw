@@ -1005,7 +1005,9 @@ def imdb(c, source, target, data):
 		return
 	else:
 		try:
-			c.privmsg(target, " || ".join(filter((lambda x: x is not None), [parser.title, parser.genre, parser.vote, parser.plot, parser.runtime, link])))
+			# TODO: parser.genre, parser.vote, parser.plot
+			# (after title)
+			c.privmsg(target, " || ".join(filter((lambda x: x is not None), [parser.title, parser.runtime, link])))
 		except TypeError:
 			c.privmsg(target, "malformed query")
 
