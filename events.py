@@ -968,8 +968,9 @@ def imdb(c, source, target, data):
 				self.invote = True
 
 	class myurlopener(urllib.FancyURLopener):
-		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
+		version = "Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"
 	urllib._urlopener = myurlopener()
+	urllib._urlopener.addheader('Accept-Language', 'en-us,en;q=0.5')
 	if len(data) < 1:
 		c.privmsg(target, "%s: 'imdb' requires a parameter (search term)" % source)
 		return
