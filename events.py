@@ -1209,22 +1209,22 @@ def m8r(c, source, target, argv):
 	ret = ""
 	pkgname = argv[0]
 	dirs = glob.glob(os.path.split(config.authors)[0] + "/../../source/*/" + pkgname)
-	if not len(dirs):
-		c.privmsg(target, "%s: no such package, do you want to package it today?!" % source)
-		return
 	dir = dirs[0]
-	socket = open("%s/FrugalBuild" % dir)
-	while True:
-		line = socket.readline()
-		if not line:
+	try:
+		socket = open("%s/FrugalBuild" % dir)
+		while True:
+			line = socket.readline()
+			if not line:
+				break
+			if line[:14] != "# Maintainer: ":
+				continue
+			# FIXME: we here hardcore the encoding of the FBs
+			ret = line[14:].strip().decode('latin1')
 			break
-		if line[:14] != "# Maintainer: ":
-			continue
-		# FIXME: we here hardcore the encoding of the FBs
-		ret = line[14:].strip().decode('latin1')
-		break
-	socket.close()
-	c.privmsg(target, ret)
+		socket.close()
+		c.privmsg(target, ret)
+	except IOError:
+		c.privmsg(target, "%s: no such package, do you want to package it today?!" % source)
 
 def roadmap(c, source, target, argv):
 	""" Return the release date of the next stable version"""
