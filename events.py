@@ -1572,7 +1572,8 @@ def on_join(self, c, e):
 				host = socket.gethostbyaddr(ip)[0]
 				c.privmsg(e.target(), "%s is from %s (%s)" % (nick, host, ip))
 			except socket.error:
-				c.privmsg(e.target(), "Could not resolve: %s" % ip)
+				#c.privmsg(e.target(), "Could not resolve: %s" % ip)
+				pass
 		except ValueError:
 			pass
 	log(e)
