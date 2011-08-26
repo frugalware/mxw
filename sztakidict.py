@@ -40,7 +40,8 @@ def sztakidict(lang, word):
 
 	parser = HTMLParser()
 	parser.reset()
-	parser.feed(page)
+	# hack: otherwise the parser would handle this js part as a html tag
+	parser.feed(page.replace('i<szotarBannerIds', 'iszotarBannerIds'))
 	parser.close()
 
 	return parser.mes
