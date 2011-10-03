@@ -336,7 +336,8 @@ def google(c, source, target, data):
 
 	parser = HTMLParser()
 	parser.reset()
-	parser.feed(page)
+	noscript = re.sub("<script>.*?</script>", "", page, flags=re.MULTILINE | re.DOTALL)
+	parser.feed(noscript)
 	parser.close()
 
 	if len(parser.titles):
