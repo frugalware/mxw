@@ -1271,7 +1271,8 @@ class config:
 			"ty": "np",
 			"rebase": "git config branch.master.rebase true",
 			"pic": "http://ftp.frugalware.org/pub/other/people/vmiklos/mxw/mxw.jpg",
-			"roadmap": "Indicate release date of the next stable version of Frugalware"
+			"roadmap": "Indicate release date of the next stable version of Frugalware",
+			"faq": "https://wiki.frugalware.org/index.php/FAQ"
 			}
 	commands = {
 			# operator commands
