@@ -881,10 +881,7 @@ def unicode_unescape(match):
 def dict(c, source, target, argv):
 	"""dictionary using dict.sztaki.hu. supported dicts: en,de,fr,it,nl,pl <-> hu. syntax: dict <from>2<to> <word>. example: dict en2hu table (the '2hu' suffix is autocompleted if necessary)"""
 	def ret_err(target, reason):
-		if target == "#debian.hu":
-			c.privmsg(target, "%s, Te itt nem szotarazol bazmeg!!!" % source)
-		else:
-			c.privmsg(target, "problem: %s" % reason)
+		c.privmsg(target, "problem: %s" % reason)
 		return False
 	if len(argv) < 2:
 		c.privmsg(target, "%s: 'dict' requires two parameters" % source)
@@ -1245,7 +1242,7 @@ class config:
 	nick  = "mxw_"
 	password = password.password
 	realname = "yeah"
-	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#frugalware.es', '#debian.hu']
+	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#frugalware.es']
 	authors = "/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 	logpath = "/pub/other/irclogs"
 	# for reporting bugs
@@ -1337,7 +1334,7 @@ class config:
 			(lambda e, argv: e.arguments()[0].lower() == "argh!" and e.target() not in ["#frugalware", "#frugalware.dev"]): (lambda c, e, source, argv: fortune(c, e, source, "murphy-hu.lines", "Argh!")),
 			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
 			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4])) and len(argv)==4): (lambda c, e, source, argv: google(c, source, e.target(), argv)),
-			(lambda e, argv: (not e.target().startswith("#") or e.target() == "#debian.hu") and re.match("^(en|de) [a-zA-Z\xdf\xfc]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv)),
+			(lambda e, argv: (not e.target().startswith("#")) and re.match("^(en|de) [a-zA-Z\xdf\xfc]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv)),
 			(lambda e, argv: re.match("^#[0-9]+$", " ".join(argv))): (lambda c, e, source, argv: bugs(c, source, e.target(), argv)),
 			(lambda e, argv: re.match("^lc$", " ".join(argv))): (lambda c, e, source, argv: lc(c, source, e.target(), argv))
 			}
