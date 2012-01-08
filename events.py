@@ -226,27 +226,36 @@ def integrate(c, source, target, argv):
 
 def bugs(c, source, target, argv):
 	from xml.sax.saxutils import unescape
-	sock = urllib.urlopen("http://bugs.frugalware.org/getinfo/%s" % argv[0][1:])
+	sock = urllib.urlopen("https://bugs.frugalware.org/ticket/%s" % argv[0][1:])
 	doc = minidom.parseString(sock.read())
 	sock.close()
+
+	tmp = doc.getElementsByTagName("title")[0].firstChild.toxml().split('\n')[1].split()
+	id = tmp[0][1:]
+	title = unescape(" ".join(tmp[1:])[1:-1],
+		{"&quot;": '"'})
+
+	for i in doc.getElementsByTagName("span"):
+		if ('class', 'status') in i.attributes.items():
+			tmp = i.firstChild.toxml().strip("()").split()
+			break
+
+	type = " ".join(tmp[1:])
+	status = tmp[0]
+	link = "https://bugs.frugalware.org/ticket/%s" % id
+
+	aname = " (Not assigned)"
+	for i in doc.getElementsByTagName("a"):
+		if "reporter" in str(i.attributes.items()):
+			opener = i.firstChild.toxml()
+		elif "owner" in str(i.attributes.items()):
+			aname = " (Assigned to %s)" % i.firstChild.toxml()
+
 	try:
-		id = doc.getElementsByTagName("id")[0].firstChild.toxml()
-		title = unescape(': '.join(doc.getElementsByTagName("title")[0].firstChild.toxml().split(': ')[1:]),
-			{"&quot;": '"'})
-	except IndexError:
+		c.privmsg(target, "14#%s7 %s3 %s%s7 %s (%s)3 %s" % (id, type, status, aname, title, opener, link))
+	except UnboundLocalError:
 		c.privmsg(target, "no such bug")
 		return
-	type = doc.getElementsByTagName("type")[0].firstChild.toxml()
-	status = doc.getElementsByTagName("status")[0].firstChild.toxml()
-	opener = "Opened by %s" % doc.getElementsByTagName("opener")[0].firstChild.toxml()
-	omail = doc.getElementsByTagName("omail")[0].firstChild.toxml()
-	odate = doc.getElementsByTagName("odate")[0].firstChild.toxml()
-	link = doc.getElementsByTagName("link")[0].firstChild.toxml().replace('task/', '')
-	try:
-		aname = " (Assigned to %s)" % doc.getElementsByTagName("aname")[0].firstChild.toxml()
-	except IndexError:
-		aname = ""
-	c.privmsg(target, "14#%s7 %s3 %s%s7 %s (%s)3 %s" % (id, type, status, aname, title, opener, link))
 
 def google(c, source, target, data):
 	"""searches the web using google"""
