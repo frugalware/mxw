@@ -1600,10 +1600,7 @@ def on_join(self, c, e):
 	def hex2ip(s):
 		return ".".join(["%d"%int(n, 16) for n in (s[0:2],s[2:4],s[4:6],s[6:8])])
 	nick = e.source().split("!")[0]
-	if e.target() == "#frugalware.dev":
-		cmd = 'c.mode("%s", "+v %s")' % (e.target(), nick)
-		safe_eval(nick, cmd, c)
-	elif re.match(r".*[0-9a-f]{8}@.*", e.source()):
+	if re.match(r".*[0-9a-f]{8}@.*", e.source()):
 		try:
 			ip = hex2ip(re.sub(r".*([0-9a-f]{8})@.*", r"\1", e.source()))
 			try:
