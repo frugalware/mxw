@@ -1467,11 +1467,11 @@ def log(e):
 		return
 	nick = e.source().split("!")[0]
 	host = e.source().split("!")[1]
-	logdir = "%s/%s" % (config.logpath, e.target())
+	logdir = "%s/%s" % (config.logpath, e.target().lower())
 	if not os.path.exists(logdir):
 		os.makedirs(logdir)
 	datestr = time.strftime("%d-%m-%Y", time.localtime())
-	logpath = "%s/%s/%s.html" % (config.logpath, e.target().lower(), datestr)
+	logpath = "%s/%s.html" % (logdir, datestr)
 	if os.path.exists(logpath):
 		sock = open(logpath, "a")
 	else:
