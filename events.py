@@ -88,7 +88,7 @@ def sms(c, source, target, argv):
 	safe_eval(source, 'sendsms(c, "%s", "%s", "%s", "%s")' % (source, target, argv[0], " ".join(argv[1:])), c)
 
 def wtf(c, source, target, argv):
-	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve. falls back to 'define' (you can improve the db at /pub/other/people/vmiklos/mxw/acronyms!)"""
+	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve. falls back to 'define' (you can improve the db at /pub/other/mxw/acronyms!)"""
 	if len(argv)<1:
 		c.privmsg(target, "%s: 'wtf' requires a parameter" % source)
 		return
@@ -1306,9 +1306,9 @@ class config:
 			"branches": "Frugalware has two branches. -current is about new features and new functionality is pushed there daily. -stable has major updates twice a year with an upgrade howto and between the major updates there are only security-, bug- and documentations fixes.",
 			"ty": "np",
 			"slown": "I have this sudden urge to package something I just found in the AUR.",
-			"dejavu": "http://ftp.frugalware.org/pub/other/people/vmiklos/mxw/dejavu.py",
+			"dejavu": "http://ftp.frugalware.org/pub/other/mxw/dejavu.py",
 			"rebase": "git config branch.master.rebase true",
-			"pic": "http://ftp.frugalware.org/pub/other/people/vmiklos/mxw/mxw.jpg",
+			"pic": "http://ftp.frugalware.org/pub/other/mxw/mxw.jpg",
 			"roadmap": "Indicate release date of the next stable version of Frugalware",
 			"faq": "https://wiki.frugalware.org/index.php/FAQ"
 			}
