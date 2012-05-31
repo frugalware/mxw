@@ -1305,6 +1305,8 @@ class config:
 			"persze": "http://www.kancso.hu/zenek/repeta050906.mp3",
 			"branches": "Frugalware has two branches. -current is about new features and new functionality is pushed there daily. -stable has major updates twice a year with an upgrade howto and between the major updates there are only security-, bug- and documentations fixes.",
 			"ty": "np",
+			"slown": "I have this sudden urge to package something I just found in the AUR.",
+			"dejavu": "http://ftp.frugalware.org/pub/other/people/vmiklos/mxw/dejavu.py",
 			"rebase": "git config branch.master.rebase true",
 			"pic": "http://ftp.frugalware.org/pub/other/people/vmiklos/mxw/mxw.jpg",
 			"roadmap": "Indicate release date of the next stable version of Frugalware",
