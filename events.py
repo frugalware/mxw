@@ -1285,7 +1285,7 @@ class config:
 	authors = "/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 	logpath = "/pub/other/irclogs"
 	# for reporting bugs
-	owner = "vmiklos"
+	owner = "#frugalware.dev"
 
 	feeds = [Rss("http://frugalware.org/rss/blogs", ["#frugalware", "#frugalware.fr"], "blogs"),
 			Rss("http://frugalware.org/rss/bugs", ["#frugalware.dev"], "bugs")]
