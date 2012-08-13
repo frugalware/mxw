@@ -1333,7 +1333,6 @@ class config:
 			"wipstatus": wipstatus,
 			"notify": notify,
 			"parsedate": parsedate,
-			"sms": sms,
 			"wtf": wtf,
 			"choose": choose,
 			"integrate": integrate,
