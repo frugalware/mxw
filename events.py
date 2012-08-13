@@ -69,24 +69,6 @@ class SockThread(threading.Thread):
 ##
 # functions used by commands
 ##
-def sendsms(c, source, target, number, message):
-	ret = os.system("~/bin/baratikor-sms -a vmiklos@vmiklos.hu %s %s" % (number, message))
-	if ret == 0:
-		c.privmsg(target, "%s: sent!" % source)
-	else:
-		c.privmsg(target, "%s: sth went wrong ;/" % source)
-
-def sms(c, source, target, argv):
-	"""sends sms. example: 'sms 30301234567 foo bar'"""
-	if len(argv)<2:
-		sock = os.popen("~/bin/baratikor-sms -a vmiklos@vmiklos.hu -b 2>/dev/null")
-		buf = sock.read()
-		sock.close()
-		b = re.sub(r".*: (.*),.*", r"\1", buf)
-		c.privmsg(target, "%s: 'sms' requires two parameters (number, message). current balance: %s" % (source, b))
-		return
-	safe_eval(source, 'sendsms(c, "%s", "%s", "%s", "%s")' % (source, target, argv[0], " ".join(argv[1:])), c)
-
 def wtf(c, source, target, argv):
 	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve. falls back to 'define' (you can improve the db at /pub/other/mxw/acronyms!)"""
 	if len(argv)<1:
