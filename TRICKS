@@ -21,3 +21,9 @@ in most cases. If a change has been made for example to the anydatetime module,
 you need:
 
 eval reload(anydatetime)
+
+Reconnect:
+
+eval c.quit()
+
+it will reconnect automatically.
