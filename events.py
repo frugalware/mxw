@@ -288,9 +288,9 @@ def google(c, source, target, data):
 				self.descs.append(None)
 				self.links.append(None)
 
-		def start_div(self, attrs):
+		def start_span(self, attrs):
 			for k, v in attrs:
-				if k == "class" and v == "s":
+				if k == "class" and v == "st":
 					self.indesc = True
 
 		def start_br(self, attrs):
