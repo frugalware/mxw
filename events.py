@@ -1545,19 +1545,18 @@ def on_pubmsg(self, c, e):
 	source = e.source().split("!")[0]
 	argv = e.arguments()[0].split(" ")
 	data = e.arguments()[0][len(c.get_nickname()):]
-	if data[:1] == "," or data[:1] == ":":
+	if data[:1] == "," or data[:1] == ":" pr data[:1] == " ":
 		data = data[1:]
-	# highlight
-	if e.arguments()[0].startswith(c.get_nickname()):
-		highlight = True
-		if command(self, c, source, e.target(), data.strip()):
-			return
-		# trigger
-		# hack. create an event sutable for triggers
-		e = Event(e.eventtype(), e.source(), e.target(), [data.strip()])
-		argv = e.arguments()[0].split(" ")
-		if handle_triggers(e, argv, c, source, highlight=True):
-			return
+		if e.arguments()[0][:(len(c.get_nickname()))] == c.get_nickname():
+			highlight = True
+			if command(self, c, source, e.target(), data.strip()):
+				return
+			# trigger
+			# hack. create an event sutable for triggers
+			e = Event(e.eventtype(), e.source(), e.target(), [data.strip()])
+			argv = e.arguments()[0].split(" ")
+			if handle_triggers(e, argv, c, source, highlight=True):
+				return
 	# trigger
 	if handle_triggers(e, argv, c, source):
 		return
