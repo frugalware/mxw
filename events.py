@@ -1545,7 +1545,7 @@ def on_pubmsg(self, c, e):
 	source = e.source().split("!")[0]
 	argv = e.arguments()[0].split(" ")
 	data = e.arguments()[0][len(c.get_nickname()):]
-	if data[:1] == "," or data[:1] == ":" pr data[:1] == " ":
+	if data[:1] == "," or data[:1] == ":" or data[:1] == " ":
 		data = data[1:]
 		if e.arguments()[0][:(len(c.get_nickname()))] == c.get_nickname():
 			highlight = True
