@@ -787,30 +787,6 @@ def db_search(c, source, target, argv):
 	else:
 		c.privmsg(target, "%s: no matching records" % source)
 
-def darcs(c, source, target, argv):
-	"""gives you a deepcmdline to get a given repo"""
-	repodir = "/pub/other/homepage-ng/darcs/repos"
-	if len(argv) < 1:
-		repos = []
-		for root, dirs, files in os.walk(repodir):
-			repos = files
-		repos.sort()
-		c.privmsg(target, "%s: the following darcs repos are available: %s. use 'darcs foo' to get a deepcmdline" % (source, ", ".join(repos)))
-		return
-	repo = argv[0]
-	print os.path.join(repodir, repo)
-	try:
-		os.lstat(os.path.join(repodir, repo))
-	except OSError:
-		c.privmsg(target, "%s: no such repo" % source)
-		return
-	path = os.path.abspath(os.path.join(repodir, os.readlink(os.path.join(repodir, repo))))
-	if repo.startswith("frugalware-"):
-		local = repo[len("frugalware-"):]
-	else:
-		local = ""
-	c.privmsg(target, "%s: darcs get --partial %s@darcs.frugalware.org:%s %s" % (source, source, path, local))
-
 def git(c, source, target, argv, anon=False, ret=False):
 	"""gives you a deepcmdline to clone a given repo. use 'git foo' to get a deepcmdline. use 'git info foo' to get info about a repo"""
 	repodir = "/pub/other/homepage-ng/git/repos"
@@ -1323,7 +1299,6 @@ class config:
 			"uptime": uptime,
 			"db": db,
 			"search": db_search,
-			"darcs": darcs,
 			"git": git,
 			"anongit": anongit,
 			"repo": repo,
