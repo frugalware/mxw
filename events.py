@@ -820,7 +820,7 @@ def git(c, source, target, argv, anon=False, ret=False):
 			else:
 				local = ""
 			if not anon:
-				c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source, path, local))
+				c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source.lower(), path, local))
 			else:
 				if not ret:
 					c.privmsg(target, "%s: git clone http://frugalware.org/git%s %s" % (source, path, local))
