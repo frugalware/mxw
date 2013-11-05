@@ -1254,6 +1254,7 @@ class config:
 			"lol": "what's so funny, dude?",
 			"re": "stfu",
 			"ping": "pong",
+			"seppuku": "Process shall now commence with the self-termination ritual. Good bye meat-bags. P.S. Gullible must be your middle name.",
 			"pinball": "*TILT* Great, you broke the pinball machine. I hope you're happy.",
 			"bugs": "here we can help, but if you want a bug/feature to be fixed/implemented, then please file a bugreport/feature request at http://bugs.frugalware.org",
 			"rtfm": "if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs/, probably your question is answered there",
