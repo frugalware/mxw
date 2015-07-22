@@ -1245,8 +1245,7 @@ class config:
 	# for reporting bugs
 	owner = "#frugalware.dev"
 
-	feeds = [Rss("http://frugalware.org/rss/blogs", ["#frugalware", "#frugalware.fr"], "blogs"),
-			Rss("http://frugalware.org/rss/bugs", ["#frugalware.dev"], "bugs")]
+	feeds = []
 	duped_feeds = "feeds"
 	database = {
 			":)": ":D",
