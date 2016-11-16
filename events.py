@@ -870,7 +870,7 @@ def repo(c, source, target, argv):
 	ret = git(c, source, target, argv, anon=True, ret=True).strip().split(': ')[1]
 	repo = ret.split('/')[-1]
 	c.privmsg(target, "[%s]" % repo)
-	c.privmsg(target, "".join([ret.replace('git clone http://frugalware.org/git', 'Server = http://ftp.frugalware.org'), "/frugalware-i686"]))
+	c.privmsg(target, "".join([ret.replace('git clone http://frugalware.org/git', 'Server = http://ftp.frugalware.org'), "/frugalware-x86_64"]))
 
 def unicode_unescape(match):
 	return match.group().decode('unicode_escape')
