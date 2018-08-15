@@ -1491,10 +1491,10 @@ def log(e):
 def on_nicknameinuse(self, c, e):
 	c.nick(config.nick + "_")
 	c.privmsg("nickserv", "ghost %s %s" % (config.nick, config.password))
-	time.sleep(2)
+	time.sleep(15)
 	c.nick(config.nick)
 	c.privmsg("nickserv", "identify %s" % config.password)
-	time.sleep(2)
+	time.sleep(15)
 
 def on_welcome(self, c, e):
 	c.privmsg("nickserv", "identify %s" % config.password)
