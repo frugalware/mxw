@@ -1498,7 +1498,7 @@ def on_nicknameinuse(self, c, e):
 
 def on_welcome(self, c, e):
 	c.privmsg("nickserv", "identify %s" % config.password)
-	time.sleep(2)
+	time.sleep(15)
 	for i in config.channels:
 		c.join(i)
 
