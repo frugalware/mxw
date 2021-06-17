@@ -328,7 +328,7 @@ class Connection:
 		self.irclibobj = irclibobj
 
 	def _get_socket():
-		raise IRCError, "Not overridden"
+		raise IRCError("Not overridden")
 
 	##############################
 	### Convenience wrappers.
@@ -360,7 +360,7 @@ class Thread(threading.Thread):
 				self.c.disconnect("Connection timed out")
 				break
 			if lag > 30 and DEBUG:
-				print "Lag: %d" % lag
+				print("Lag: %d" % lag)
 			self.c.ping(self.c.get_nickname())
 			time.sleep(10)
 
@@ -427,10 +427,10 @@ class ServerConnection(Connection):
 		try:
 			self.socket.bind((self.localaddress, self.localport))
 			self.socket.connect((self.server, self.port))
-		except socket.error, x:
+		except socket.error as x:
 			self.socket.close()
 			self.socket = None
-			raise ServerConnectionError, "Couldn't connect to socket: %s" % x
+			raise ServerConnectionError("Couldn't connect to socket: %s" % x)
 		self.connected = 1
 		self.lastpong = time.time()
 		self.ctcppinger = Thread(self)
@@ -485,8 +485,8 @@ class ServerConnection(Connection):
 		"""[Internal]"""
 
 		try:
-			new_data = self.socket.recv(2**14)
-		except socket.error, x:
+			new_data = self.socket.recv(2**14).decode('utf-8')
+		except socket.error as x:
 			# The server hung up.
 			self.disconnect("Connection reset by peer")
 			return
@@ -503,7 +503,7 @@ class ServerConnection(Connection):
 
 		for line in lines:
 			if DEBUG:
-				print "FROM SERVER:", line
+				print("FROM SERVER:", line)
 
 			if not line:
 				continue
@@ -557,7 +557,7 @@ class ServerConnection(Connection):
 						command = "privnotice"
 
 				for m in messages:
-					if type(m) is types.TupleType:
+					if type(m) is type(()):
 						if command in ["privmsg", "pubmsg"]:
 							command = "ctcp"
 						else:
@@ -565,15 +565,15 @@ class ServerConnection(Connection):
 
 						m = list(m)
 						if DEBUG:
-							print "command: %s, source: %s, target: %s, arguments: %s" % (
-								command, prefix, target, m)
+							print("command: %s, source: %s, target: %s, arguments: %s" % (
+								command, prefix, target, m))
 						self._handle_event(Event(command, prefix, target, m))
 						if command == "ctcp" and m[0] == "ACTION":
 							self._handle_event(Event("action", prefix, target, m[1:]))
 					else:
 						if DEBUG:
-							print "command: %s, source: %s, target: %s, arguments: %s" % (
-								command, prefix, target, [m])
+							print("command: %s, source: %s, target: %s, arguments: %s" % (
+								command, prefix, target, [m]))
 						self._handle_event(Event(command, prefix, target, [m]))
 			else:
 				target = None
@@ -591,8 +591,8 @@ class ServerConnection(Connection):
 						command = "umode"
 
 				if DEBUG:
-					print "command: %s, source: %s, target: %s, arguments: %s" % (
-						command, prefix, target, arguments)
+					print("command: %s, source: %s, target: %s, arguments: %s" % (
+						command, prefix, target, arguments))
 				self._handle_event(Event(command, prefix, target, arguments))
 
 	def _handle_event(self, event):
@@ -656,7 +656,7 @@ class ServerConnection(Connection):
 
 		try:
 			self.socket.close()
-		except socket.error, x:
+		except socket.error as x:
 			pass
 		self.socket = None
 		self._handle_event(Event("disconnect", self.server, "", [message]))
@@ -785,14 +785,14 @@ class ServerConnection(Connection):
 		The string will be padded with appropriate CR LF.
 		"""
 		if self.socket is None:
-			raise ServerNotConnectedError, "Not connected."
+			raise ServerNotConnectedError("Not connected.")
 		if len(string) > 510:
 			string = string[:510]
 		try:
-			self.socket.send(string + "\r\n")
+			self.socket.send((string + "\r\n").encode('utf-8'))
 			if DEBUG:
-				print "TO SERVER:", string
-		except socket.error, x:
+				print("TO SERVER:", string)
+		except socket.error as x:
 			# Ouch!
 			self.disconnect("Connection reset by peer.")
 
@@ -989,7 +989,7 @@ def mask_matches(nick, mask):
 
 _special = "-[]\\`^{}"
 nick_characters = string.ascii_letters + string.digits + _special
-_ircstring_translation = string.maketrans(string.ascii_uppercase + "[]\\^",
+_ircstring_translation = str.maketrans(string.ascii_uppercase + "[]\\^",
 										  string.ascii_lowercase + "{}|~")
 
 def irc_lower(s):
@@ -1362,4 +1362,4 @@ protocol_events = [
 	"pong",
 ]
 
-all_events = generated_events + protocol_events + numeric_events.values()
+all_events = generated_events + protocol_events + list(numeric_events.values())

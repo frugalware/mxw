@@ -1,15 +1,11 @@
-import traceback, inspect, sys, password, time, urllib, re, pickle
+import traceback, inspect, sys, time, re, pickle
 sys.path.append("/usr/lib")
-import feedparser, htmlentitydefs, random, os, threading, string, glob
+import feedparser, html.entities, random, os, threading, string, glob
 import anydatetime, socket
 from xml.dom import minidom
 from sgmllib import SGMLParser
 from irclib import Event
-import sztakidict
-import urllib2
-
-sys = reload(sys)
-sys.setdefaultencoding("utf-8")
+from urllib import request as urllib
 
 class Rss:
 	def __init__(self, url, targets, title):
@@ -58,7 +54,7 @@ class SockThread(threading.Thread):
 		if os.path.exists("mxw2.sock"):
 			os.remove("mxw2.sock")
 		server.bind ("mxw2.sock")
-		os.chmod("mxw2.sock", 0777)
+		os.chmod("mxw2.sock", 0o777)
 		while True:
 			buf = server.recv(1024)
 			if not buf:
@@ -70,7 +66,7 @@ class SockThread(threading.Thread):
 # functions used by commands
 ##
 def wtf(c, source, target, argv):
-	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve. falls back to 'define' (you can improve the db at /pub/other/mxw/acronyms!)"""
+	"""resolves an abbreviation. requires one parameter: the abbreviation to resolve (you can improve the db at /pub/other/mxw/acronyms!)"""
 	if len(argv)<1:
 		c.privmsg(target, "%s: 'wtf' requires a parameter" % source)
 		return
@@ -85,7 +81,7 @@ def wtf(c, source, target, argv):
 	if buf != "%s: nothing appropriate" % argv[0]:
 		c.privmsg(target, "%s: %s" % (source, buf))
 	else:
-		define(c, source, target, argv)
+		c.privmsg(target, "%s: nothing found" % (source))
 
 def choose(c, source, target, argv):
 	"""chooses a random value from a list. example: choose foo bar"""
@@ -199,521 +195,10 @@ def myreload(c, source, target, argv):
 	"""reloads the event handlers"""
 	safe_eval(source, 'self.reload()', c)
 
-def integrate(c, source, target, argv):
-	"""integrates a math expression. example: (cos(x))^2"""
-	if len(argv) < 1:
-		c.privmsg(target, "%s: 'integrate' requires a parameter (expression)" % source)
-		return
-	c.privmsg(target, "http://integrals.wolfram.com/index.jsp?%s" % urllib.urlencode({'expr':argv[0]}))
-
-def bugs(c, source, target, argv):
-	from xml.sax.saxutils import unescape
-	sock = urllib.urlopen("https://bugs.frugalware.org/ticket/%s" % argv[0][1:])
-	doc = minidom.parseString(sock.read())
-	sock.close()
-
-	tmp = doc.getElementsByTagName("title")[0].firstChild.toxml().split('\n')[1].split()
-	id = tmp[0][1:]
-	title = unescape(" ".join(tmp[1:])[1:-1],
-		{"&quot;": '"'})
-
-	for i in doc.getElementsByTagName("span"):
-		if ('class', 'status') in i.attributes.items():
-			tmp = i.firstChild.toxml().strip("()").split()
-			break
-
-	type = " ".join(tmp[1:])
-	status = tmp[0]
-	link = "https://bugs.frugalware.org/ticket/%s" % id
-
-	aname = " (Not assigned)"
-	for i in doc.getElementsByTagName("a"):
-		if "reporter" in str(i.attributes.items()):
-			opener = i.firstChild.toxml()
-		elif "owner" in str(i.attributes.items()):
-			aname = " (Assigned to %s)" % i.firstChild.toxml()
-
-	try:
-		c.privmsg(target, "14#%s7 %s3 %s%s7 %s (%s)3 %s" % (id, type, status, aname, title, opener, link))
-	except UnboundLocalError:
-		c.privmsg(target, "no such bug")
-		return
-
-def google(c, source, target, data):
-	"""searches the web using google"""
-	class myurlopener(urllib.FancyURLopener):
-		version = "Mozilla/5.0 (X11; Linux i686; rv:2.0) Gecko/20100101 Firefox/4.0"
-
-	class HTMLParser(SGMLParser):
-		def reset(self):
-			SGMLParser.reset(self)
-			self.intitle = False
-			self.indesc = False
-			self.titles = []
-			self.title = []
-			self.descs = []
-			self.desc = []
-			self.links = []
-			self.link = None
-
-		def start_a(self, attrs):
-			for k, v in attrs:
-				if k == "class" and v == "l":
-					self.intitle = True
-					self.links.append(self.link)
-				elif k == "href":
-					self.link = v
-
-		def start_ul(self, attrs):
-			for k, v in attrs:
-				if k == "type" and v == "disc":
-					self.intitle = True
-
-		def end_a(self):
-			if self.intitle:
-				self.titles.append("".join(self.title))
-				self.title = []
-				self.intitle = False
-
-		def start_h2(self, attrs):
-			for k, v in attrs:
-				if k == "class" and v == "r":
-					self.intitle = True
-
-		def end_h2(self):
-			if self.intitle:
-				self.titles.append("".join(self.title))
-				self.title = []
-				self.intitle = False
-				self.descs.append(None)
-				self.links.append(None)
-
-		def start_span(self, attrs):
-			for k, v in attrs:
-				if k == "class" and v == "st":
-					self.indesc = True
-
-		def start_br(self, attrs):
-			if self.indesc:
-				self.descs.append("".join(self.desc))
-				self.desc = []
-				self.indesc = False
-			elif self.intitle:
-				s = "".join(self.title)
-				if s[-3:] == "...":
-					s = s[:-4]
-				self.titles.append(s)
-				self.title = []
-				self.intitle = False
-				self.descs.append(None)
-				self.links.append(None)
-
-		def handle_data(self, text):
-			if self.intitle:
-				self.title.append(text)
-			elif self.indesc:
-				self.desc.append(text)
-
-	if len(data) < 1:
-		c.privmsg(target, "%s: 'google' requires a parameter (search term)" % source)
-		return
-	elif " ".join(data) == "ryuo's little secret":
-		c.privmsg(target, "pwned!")
-		return
-	urllib._urlopener = myurlopener()
-	sock = urllib.urlopen("http://www.google.com/search?" + urllib.urlencode({'q':" ".join(data)}))
-	page = sock.read()
-	sock.close()
-
-	parser = HTMLParser()
-	parser.reset()
-	noscript = re.sub("<script>.*?</script>", "", page, flags=re.MULTILINE | re.DOTALL)
-	parser.feed(noscript)
-	parser.close()
-
-	if len(parser.titles):
-		c.privmsg(target, parser.titles[0].strip())
-	else:
-		c.privmsg(target, "your search did not match any documents")
-	if len(parser.descs) and parser.descs[0]:
-		c.privmsg(target, parser.descs[0])
-	if len(parser.links) and parser.links[0]:
-		c.privmsg(target, parser.links[0])
-
-def tv(c, source, target, data):
-	"""spams the channel with television info"""
-	class myurlopener(urllib.FancyURLopener):
-		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
-
-	class ChanListParser(SGMLParser):
-		def reset(self):
-			SGMLParser.reset(self)
-			self.channels = {}
-			self.lastchan = None
-			self.intable = False
-			self.inspan = False
-			self.span = []
-
-		def start_table(self, attrs):
-			for k, v in attrs:
-				if k == "id" and v == "ctl00_C_G":
-					self.intable = True
-
-		def end_table(self):
-			self.intable = False
-
-		def start_img(self, attrs):
-			if self.intable:
-				for k, v in attrs:
-					if k == "src":
-						self.lastchan = v.split('/')[-1].split('.')[0]
-
-		def start_span(self, attrs):
-			if self.intable:
-				self.inspan = True
-
-		def end_span(self):
-			if self.intable:
-				self.inspan = False
-				if self.lastchan:
-					self.channels["".join(self.span).lower()] = self.lastchan
-					self.span = []
-					self.lastchan = None
-
-		def handle_data(self, text):
-			if self.inspan:
-				self.span.append(text)
-
-	if len(data) < 1:
-		c.privmsg(target, "%s: 'tv' requires at least one parameter (channel name)" % source)
-		return
-	url = "http://tv.animare.hu/rss.aspx"
-	url2 = "http://tv.animare.hu/rssfeed.aspx?tartalom=aktualistvmusor&tvcsatorna="
-	urllib._urlopener = myurlopener()
-	sock = urllib.urlopen(url)
-	page = sock.read()
-	sock.close()
-
-	clp = ChanListParser()
-	clp.reset()
-	clp.feed(page)
-	clp.close()
-
-	channel = " ".join(data)
-	if channel.lower() not in clp.channels.keys():
-		c.privmsg(target, "no such channel. see %s for available channels" % url)
-		return
-	id = clp.channels[channel.lower()]
-	try:
-		sock = urllib.urlopen(url2 + id)
-	except IOError, s:
-		c.privmsg(target, "problem: %s" % s)
-		return
-	buf = sock.read()
-	try:
-		doc = minidom.parseString(buf)
-	except Exception, s:
-		c.privmsg(target, "problem: %s; %s" % (s, url))
-		return
-	for i in doc.getElementsByTagName("item"):
-		c.notice(source, i.getElementsByTagName("title")[0].firstChild.toxml().replace("\n", ""))
-
-def isbn(c, source, target, data):
-	"""searches for isbn numbers using google"""
-	class myurlopener(urllib.FancyURLopener):
-		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
-
-	class HTMLParser(SGMLParser):
-		def reset(self):
-			SGMLParser.reset(self)
-			self.intitle = False
-			self.title = []
-			self.indesc = False
-			self.desc = []
-			self.link = None
-
-		def start_a(self, attrs):
-			if self.intitle:
-				for k, v in attrs:
-					if k == "href":
-						self.link = v.replace('&cd=1', '')
-
-		def end_a(self):
-			if self.intitle:
-				self.title = ["".join(self.title)]
-				self.intitle = False
-
-		def end_span(self):
-			if self.indesc:
-				self.desc = ["by " + "".join(self.desc)]
-				self.indesc = False
-
-		def start_div(self, attrs):
-			for k, v in attrs:
-				if k == "class" and v == "resbdy":
-					self.intitle = True
-
-		def start_span(self, attrs):
-			for k, v in attrs:
-				if k == "class" and v == "ln2":
-					self.indesc = True
-
-		def handle_data(self, text):
-			if self.intitle:
-				self.title.append(text)
-			elif self.indesc:
-				self.desc.append(text)
-
-	if len(data) < 1:
-		c.privmsg(target, "%s: 'isbn' requires a parameter (search term)" % source)
-		return
-	urllib._urlopener = myurlopener()
-	sock = urllib.urlopen("http://books.google.com/books?" + urllib.urlencode({'as_isbn':" ".join(data)}))
-	page = sock.read()
-	sock.close()
-
-	parser = HTMLParser()
-	parser.reset()
-	parser.feed(page)
-	parser.close()
-
-	if len(parser.title):
-		# :-3 becase the end contains some unnecessary utf8 crap
-		c.privmsg(target, parser.title[0][:-3])
-	else:
-		c.privmsg(target, "your search did not match any documents")
-	if len(parser.desc):
-		c.privmsg(target, parser.desc[0])
-	if parser.link:
-		c.privmsg(target, parser.link)
-
-def fight(c, source, target, data):
-	"""compares the popularity of two words using googlefight"""
-	class myurlopener(urllib.FancyURLopener):
-		version = "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.1.2) Gecko/20070225 Firefox/2.0.0.2"
-
-	class HTMLParser(SGMLParser):
-		def reset(self):
-			SGMLParser.reset(self)
-			self.inabout = False
-			self.resnum = None
-
-		def handle_data(self, text):
-			if not self.resnum and text.startswith("About "):
-				self.resnum = int(text.split(' ')[1].replace(',', ''))
-
-	if len(data) < 2:
-		c.privmsg(target, "%s: 'fight' requires two parameters" % source)
-		return
-	urllib._urlopener = myurlopener()
-	res = []
-	for i in data:
-		sock = urllib.urlopen("http://www.google.com/search?hl=en&q=%s" % i)
-		page = sock.read()
-		sock.close()
-
-		parser = HTMLParser()
-		parser.reset()
-		parser.feed(page)
-		parser.close()
-		res.append(parser.resnum)
-
-	if res[0] > res[1]:
-		win = data[0]
-	else:
-		win = data[1]
-	c.privmsg(target, "googlefight: %s wins! %s vs %s" % (win, res[0], res[1]))
-
-def lc(c, source, target, data):
-	"""porget egyet a lamerszamlalon"""
-	class HTMLParser(SGMLParser):
-		def start_img(self, attrs):
-			for k, v in attrs:
-				if k == "alt":
-					self.state = v
-
-	sock = urllib.urlopen('http://dawn.royalcomp.hu/~raas/lc.html')
-
-	parser = HTMLParser()
-	parser.reset()
-	parser.feed(sock.read())
-	for i in htmlentitydefs.entitydefs:
-		parser.state = re.sub('&%s;' % i, htmlentitydefs.entitydefs[i], parser.state)
-	num = 0
-	thousands = parser.state.split('-')[0]
-	hundreds = parser.state.split('-')[1].split( 'sz\xe1z' )[0]
-	tens = parser.state.split('-')[1].split( 'sz\xe1z' )[1]
-	if thousands.find( 'ezer' ) > 0:
-		num += 1000
-		thousands = thousands.replace('ezer', '')
-		if thousands.find( 'sz\xe1z' ) >= 0:
-			ht = thousands.split( 'sz\xe1z' )[0]
-			thousands = thousands.split( 'sz\xe1z' )[1]
-			if ht.find( 'egy' ) >= 0:
-				num += 99000
-				ht = ht.replace( 'egy', '' )
-			elif ht.find( 'kett\xf5' ) >= 0:
-				num += 199000
-				ht = ht.replace( 'kett\xf5', '' )
-			elif ht.find( 'h\xe1rom' ) >= 0:
-				num += 299000
-				ht = ht.replace( 'h\xe1rom', '' )
-			elif ht.find( 'n\xe9gy' ) >= 0:
-				num += 399000
-				ht = ht.replace( 'n\xe9gy', '' )
-			elif ht.find( '\xf6t' ) >= 0:
-				num += 499000
-				ht = ht.replace( '\xf6t', '' )
-			elif ht.find( 'hat' ) >= 0:
-				num += 599000
-				ht = ht.replace( 'hat', '' )
-			elif ht.find( 'h\xe9t' ) >= 0:
-				num += 699000
-				ht = ht.replace( 'h\xe9t', '' )
-			elif ht.find( 'nyolc' ) >= 0:
-				num += 799000
-				ht = ht.replace( 'nyolc', '' )
-			elif ht.find( 'kilenc' ) >= 0:
-				num += 899000
-				ht = ht.replace( 'kilenc', '' )
-		if thousands.find( 't\xedz' ) >= 0:
-			num += 9000
-			thousands = thousands.replace('t\xedz', '')
-		elif thousands.find( 'tizen' ) >= 0:
-			num += 9000
-			thousands = thousands.replace('tizen', '')
-		elif thousands.find( 'h\xfasz' ) >= 0:
-			num += 19000
-			thousands = thousands.replace('h\xfasz', '')
-		elif thousands.find( 'huszon' ) >= 0:
-			num += 19000
-			thousands = thousands.replace('huszon', '')
-		elif thousands.find( 'harmic' ) >= 0:
-			num += 29000
-			thousands = thousands.replace('harmic', '')
-		elif thousands.find( 'negyven' ) >= 0:
-			num += 39000
-			thousands = thousands.replace('negyven', '')
-		elif thousands.find( '\xf6tven' ) >= 0:
-			num += 49000
-			thousands = thousands.replace('\xf6tven', '')
-		elif thousands.find( 'hatvan' ) >= 0:
-			num += 59000
-			thousands = thousands.replace('hatvan', '')
-		elif thousands.find( 'hetven' ) >= 0:
-			num += 69000
-			thousands = thousands.replace('hetven', '')
-		elif thousands.find( 'nyolcvan' ) >= 0:
-			num += 79000
-			thousands = thousands.replace('nyolcvan', '')
-		elif thousands.find( 'kilencven' ) >= 0:
-			num += 89000
-			thousands = thousands.replace('kilencven', '')
-		if thousands.find( 'egy' ) >= 0:
-			num += 1000
-			thousands = thousands.replace('egy', '')
-		elif thousands.find( 'kett\xf5' ) >= 0:
-			num += 2000
-			thousands = thousands.replace('kett\xf5', '')
-		elif thousands.find( 'h\xe1rom' ) >= 0:
-			num += 3000
-			thousands = thousands.replace('h\xe1rom', '')
-		elif thousands.find( 'n\xe9gy' ) >= 0:
-			num += 4000
-			thousands = thousands.replace('n\xe9gy', '')
-		elif thousands.find( '\xf6t' ) >= 0:
-			num += 5000
-			thousands = thousands.replace('\xf6t', '')
-		elif thousands.find( 'hat' ) >= 0:
-			num += 6000
-			thousands = thousands.replace('hat', '')
-		elif thousands.find( 'h\xe9t' ) >= 0:
-			num += 7000
-			thousands = thousands.replace('h\xe9t', '')
-		elif thousands.find( 'nyolc' ) >= 0:
-			num += 8000
-			thousands = thousands.replace('nyolc', '')
-		elif thousands.find( 'kilenc' ) >= 0:
-			num += 9000
-			thousands = thousands.replace('kilenc', '')
-	if hundreds == 'egy':
-		num += 100
-	elif hundreds == 'kett\xf5':
-		num += 200
-	elif hundreds == 'h\xe1rom':
-		num += 300
-	elif hundreds == 'n\xe9gy':
-		num += 400
-	elif hundreds == '\xf6t':
-		num += 500
-	elif hundreds == 'hat':
-		num += 600
-	elif hundreds == 'h\xe9t':
-		num += 700
-	elif hundreds == 'nyolc':
-		num += 800
-	elif hundreds == 'kilenc':
-		num += 900
-	if tens.find('t\xedz') >= 0:
-		num += 10
-		tens = tens.replace('t\xedz', '')
-	elif tens.find('tizen') >= 0:
-		num += 10
-		tens = tens.replace('tizen', '')
-	elif tens.find('h\xfasz') >= 0:
-		num += 20
-		tens = tens.replace('h\xfasz', '')
-	elif tens.find('huszon') >= 0:
-		num += 20
-		tens = tens.replace('huszon', '')
-	elif tens.find('harminc') >= 0:
-		num += 30
-		tens = tens.replace('harminc', '')
-	elif tens.find('negyven') >= 0:
-		num += 40
-		tens = tens.replace('negyven', '')
-	elif tens.find('\xf6tven') >= 0:
-		num += 50
-		tens = tens.replace('\xf6tven', '')
-	elif tens.find('hatvan') >= 0:
-		num += 60
-		tens = tens.replace('hatvan', '')
-	elif tens.find('hetven') >= 0:
-		num += 70
-		tens = tens.replace('hetven', '')
-	elif tens.find('nyolvan') >= 0:
-		num += 80
-		tens = tens.replace('nyolcvan', '')
-	elif tens.find('kilencven') >= 0:
-		num += 90
-		tens = tens.replace('kilencven', '')
-	if tens.find('egy') >= 0:
-		num += 1
-	if tens.find('kett\xf5') >= 0:
-		num += 2
-	if tens.find('h\xe1rom') >= 0:
-		num += 3
-	if tens.find('n\xe9gy') >= 0:
-		num += 4
-	if tens.find('\xf6t') >= 0:
-		num += 5
-	if tens.find('hat') >= 0:
-		num += 6
-	if tens.find('h\xe9t') >= 0:
-		num += 7
-	if tens.find('nyolc') >= 0:
-		num += 8
-	if tens.find('kilenc') >= 0:
-		num += 9
-	parser.state = num
-	c.privmsg(target, "Congratulations, you successfully incremented the LAMMERCOUNTER! %s" % parser.state)
-	parser.close()
-	sock.close()
-
 def help(c, source, target, argv):
 	"""prints this help message"""
 	if len(argv) < 1:
-		cmds = config.commands.keys()
+		cmds = list(config.commands.keys())
 		cmds.sort()
 		c.privmsg(target, "%s: %d available commands: %s" % (source, len(cmds), ", ".join(cmds)))
 	else:
@@ -823,9 +308,9 @@ def git(c, source, target, argv, anon=False, ret=False):
 				c.privmsg(target, "%s: git clone %s@git.frugalware.org:%s %s" % (source, source.lower(), path, local))
 			else:
 				if not ret:
-					c.privmsg(target, "%s: git clone http://frugalware.org/git%s %s" % (source, path, local))
+					c.privmsg(target, "%s: git clone https://frugalware.org/git%s %s" % (source, path, local))
 				else:
-					return "%s: git clone http://frugalware.org/git%s %s" % (source, path, local)
+					return "%s: git clone https://frugalware.org/git%s %s" % (source, path, local)
 	else:
 		cmd = None
 		cmds = ['info']
@@ -853,7 +338,7 @@ def git(c, source, target, argv, anon=False, ret=False):
 				sock.close()
 				c.privmsg(target, "%s: desc: '%s', owner: '%s'" % (source, desc, owner))
 			else:
-				c.privmsg(target, "%s: http://git.frugalware.org/gitweb/gitweb.cgi?p=%s.git;a=commitdiff;h=%s" % (source, argv[0], argv[1]))
+				c.privmsg(target, "%s: https://git.frugalware.org/gitweb/gitweb.cgi?p=%s.git;a=commitdiff;h=%s" % (source, argv[0], argv[1]))
 
 def anongit(c, source, target, argv):
 	"""gives you a deepcmdline to clone a given repo anonymously"""
@@ -870,142 +355,10 @@ def repo(c, source, target, argv):
 	ret = git(c, source, target, argv, anon=True, ret=True).strip().split(': ')[1]
 	repo = ret.split('/')[-1]
 	c.privmsg(target, "[%s]" % repo)
-	c.privmsg(target, "".join([ret.replace('git clone http://frugalware.org/git', 'Server = http://ftp.frugalware.org'), "/frugalware-x86_64"]))
+	c.privmsg(target, "".join([ret.replace('git clone https://frugalware.org/git', 'Server = https://ftp.frugalware.org'), "/frugalware-x86_64"]))
 
 def unicode_unescape(match):
 	return match.group().decode('unicode_escape')
-
-def dict(c, source, target, argv):
-	"""dictionary using dict.sztaki.hu. supported dicts: en,de,fr,it,nl,pl <-> hu. syntax: dict <from>2<to> <word>. example: dict en2hu table (the '2hu' suffix is autocompleted if necessary)"""
-	def ret_err(target, reason):
-		c.privmsg(target, "problem: %s" % reason)
-		return False
-	if len(argv) < 2:
-		c.privmsg(target, "%s: 'dict' requires two parameters" % source)
-		return
-	lang = argv[0]
-	word = " ".join(argv[1:])
-	try:
-		ret = sztakidict.helper(lang, word)
-	except IOError:
-		ret_err(target, "IOError")
-		return
-	if ret == "%s: " % word:
-		return ret_err(target, "not found")
-	c.privmsg(target, ret)
-
-def imdb(c, source, target, data):
-	"""searches movies using imdb"""
-	class SHTMLParser(SGMLParser):
-		def reset(self):
-			SGMLParser.reset(self)
-			self.link = None
-
-		def start_a(self, attrs):
-			for k, v in attrs:
-				if k == "href" and v.startswith("/title/"):
-					if not self.link:
-						self.link = "http://www.imdb.com%s" % v
-
-	class FHTMLParser(SGMLParser):
-		def reset(self):
-			SGMLParser.reset(self)
-			self.ingenre = False
-			self.inruntime = False
-			self.inplot = False
-			self.invote = False
-			self.intitle = False
-			self.genre = []
-			self.runtime = None
-			self.plot = None
-			self.vote = []
-			self.title = []
-
-		def start_title(self, attrs):
-			self.intitle = True
-		def end_title(self):
-			self.title = "".join(self.title)
-			self.intitle = False
-
-		def handle_data(self, text):
-			if self.ingenre:
-				if text == "See more":
-					self.genre = "genre: " + "".join(self.genre).strip().replace('|', '/')
-					self.ingenre = False
-				elif text != "\n":
-					self.genre.append(text)
-			elif self.inruntime:
-				self.runtime = "runtime: " + text.strip().replace('|', '/').replace('  ', ' ')
-				if self.runtime != "runtime: ":
-					self.inruntime = False
-			elif self.inplot:
-				self.plot = text.strip()
-				if len(self.plot):
-					self.inplot = False
-			elif self.invote:
-				if "/" in text:
-					self.vote = "score: %s" % text.split("/")[0]
-				elif text[-5:] == "votes":
-					self.vote += re.sub(r"(.*) votes", r"/\1", text)
-					self.invote = False
-				elif text == "(awaiting 5 votes)":
-					self.vote = None
-					self.invote = False
-			elif self.intitle:
-				self.title.append(text.strip())
-			if text == "Genre:":
-				self.ingenre = True
-			elif text == "Runtime:":
-				self.inruntime = True
-			elif text == "Plot:":
-				self.inplot = True
-			elif text == "User Rating:":
-				self.invote = True
-
-	class myurlopener(urllib.FancyURLopener):
-		version = "Mozilla/5.0 (X11; Linux i686; rv:2.0.1) Gecko/20100101 Firefox/4.0.1"
-	urllib._urlopener = myurlopener()
-	urllib._urlopener.addheader('Accept-Language', 'en-us,en;q=0.5')
-	if len(data) < 1:
-		c.privmsg(target, "%s: 'imdb' requires a parameter (search term)" % source)
-		return
-	try:
-		int(data[0])
-		id = data[0]
-	except ValueError:
-		id = None
-	if not id:
-		sock = sock = urllib.urlopen("http://www.imdb.com/find?" + urllib.urlencode({'s':'all', 'q':" ".join(data)}))
-		page = sock.read()
-		sock.close()
-		parser = SHTMLParser()
-		parser.reset()
-		parser.feed(page)
-		parser.close()
-		link = parser.link
-	else:
-		link = "http://www.imdb.com/title/tt%s/" % id
-	try:
-		sock = urllib.urlopen(link)
-	except AttributeError:
-		c.privmsg(target, "no matches")
-		return
-	page = sock.read()
-	sock.close()
-	parser = FHTMLParser()
-	parser.reset()
-	parser.feed(page)
-	parser.close()
-	if parser.title.startswith("IMDb:"):
-		c.privmsg(target, "no matches")
-		return
-	else:
-		try:
-			# TODO: parser.genre, parser.vote, parser.plot
-			# (after title)
-			c.privmsg(target, " || ".join(filter((lambda x: x is not None), [parser.title, parser.runtime, link])))
-		except TypeError:
-			c.privmsg(target, "malformed query")
 
 def wipstatus(c, source, target, argv):
 	"""compares the amount of fpms in a wip repo, compared to current. example: 'wipstatus krix/gnome22 x86_64 gnome gnome-extra'"""
@@ -1059,62 +412,11 @@ def notify(c, source, target, argv):
 	else:
 		config.notifythread.todo.append((nick, t, text, target, source))
 
-def mojodb(c, source, target, argv):
-	"""mirror of Mojojojo's database. one parameter needed. valid subcommands: h[elp]|s[earch]. they require a parameter, too"""
-	if len(argv) < 1:
-		c.privmsg(target, "%s: 'mojodb' requires a parameter (record name)" % source)
-		return
-	sock = open("mojodb")
-	records = pickle.load(sock)
-	sock.close()
-	if len(argv) == 1:
-		key = argv[0]
-		if key in records.keys():
-			c.privmsg(target, "%s: %s => %s" % (source, key, records[key]))
-		else:
-			for k, v in records.items():
-				if re.search("^" + key.replace("-", ".*-"), k):
-					c.privmsg(target, "%s: %s => %s" % (source, k, v))
-					return
-			c.privmsg(target, "%s: no such key" % source)
-		return
-	elif len(argv) == 2:
-		if argv[0][0] == 's':
-			ret = []
-			for k, v in records.items():
-				if re.search(argv[1], k) or re.search(argv[1], v):
-					ret.append(k)
-			if len(ret):
-				c.privmsg(target, "%s: mojodb search results: %s" % (source, ", ".join(ret)))
-			else:
-				c.privmsg(target, "%s: no mojodb search results" % source)
-		else:
-			c.privmsg(target, "%s: '%s' is not a valid mojodb subcommand" % (source, argv[0]))
-
 def fortune(c, e, source, file, prefix):
 	sock = open(file)
 	lines = "".join(sock.readlines()).split("\000\n")
 	sock.close()
 	c.privmsg(e.target(), "%s %s" % (prefix, random.choice(lines).replace("\n", ' ').strip()))
-
-def define(c, source, target, argv):
-	"Defines a term using Google."
-	if not len(argv):
-		c.privmsg(target, "%s: defines requires a parameter" % source)
-		return
-	google(c, source, target, ["define:"+argv[0]] + argv[1:])
-
-def mid(c, source, target, argv):
-	"Searches articles with a given Message-ID on GMane."
-	if not len(argv):
-		c.privmsg(target, "%s: mid requires at least one parameter" % source)
-		return
-	opener = urllib2.build_opener()
-	sock = opener.open("http://mid.gmane.org/%s" % argv[0])
-	if sock.url.startswith("http://mid"):
-		c.privmsg(target, "%s: mid '%s' not found" % (source, argv[0]))
-	else:
-		c.privmsg(target, "%s: %s" % (source, sock.url))
 
 def bullshit(c, source, target, argv):
 	"""Web Economy Bullshit Generator (example: 'optimize next-generation e-business')"""
@@ -1223,8 +525,8 @@ def m8r(c, source, target, argv):
 
 def roadmap(c, source, target, argv):
 	""" Return the release date of the next stable version"""
-	url = 'http://frugalware.org/xml/roadmap.xml'
-	xmldoc = minidom.parse(urllib2.urlopen(url))
+	url = 'https://frugalware.org/xml/roadmap.xml'
+	xmldoc = minidom.parse(urllib.urlopen(url))
 	
 	roadmapnode = xmldoc.getElementsByTagName("roadmap")
 	versionnode = roadmapnode[0].getElementsByTagName("version")
@@ -1237,7 +539,7 @@ class config:
 	server = "irc.libera.chat"
 	port = 6667
 	nick  = "mxw_"
-	password = password.password
+	password = None
 	realname = "yeah"
 	channels = ['#frugalware', '#frugalware.dev']
 	authors = "/pub/frugalware/frugalware-current/docs/xml/authors.xml"
@@ -1255,18 +557,18 @@ class config:
 			"ping": "pong",
 			"seppuku": "Process shall now commence with the self-termination ritual. Good bye meat-bags. P.S. Gullible must be your middle name.",
 			"pinball": "*TILT* Great, you broke the pinball machine. I hope you're happy.",
-			"bugs": "here we can help, but if you want a bug/feature to be fixed/implemented, then please file a bugreport/feature request at http://bugs.frugalware.org",
-			"rtfm": "if you're new to Frugalware, then before asking please read our documentation at http://frugalware.org/docs/, probably your question is answered there",
+			"bugs": "here we can help, but if you want a bug/feature to be fixed/implemented, then please file a bugreport/feature request at https://bugs.frugalware.org",
+			"rtfm": "if you're new to Frugalware, then before asking please read our documentation at https://frugalware.org/docs/, probably your question is answered there",
 			"flame": "Frugalware is best! All other distros suck! Oh, sure, we plan to take over the world any minute now ;)",
 			"dance": ["0-<\n0-/\n0-\\", " o      o     o    o     o    <o     <o>    o>    o \n.|.    \\|.   \\|/   //    X     \\      |    <|    <|>\n /\\     >\\   /<    >\\   /<     >\\    /<     >\\   /<"],
-			"paste": "if you have a few lines of an error message to others in the channel, please use our Pastebin: http://frugalware.org/paste/. this is because 1) IRC is slow and 2) it breaks other conversations. thanks",
-			"persze": "http://www.kancso.hu/zenek/repeta050906.mp3",
+			"paste": "if you have a few lines of an error message to others in the channel, please use our Pastebin: https://frugalware.org/paste/. this is because 1) IRC is slow and 2) it breaks other conversations. thanks",
+			"persze": "https://www.kancso.hu/zenek/repeta050906.mp3",
 			"branches": "Frugalware has two branches. -current is about new features and new functionality is pushed there daily. -stable has major updates twice a year with an upgrade howto and between the major updates there are only security-, bug- and documentations fixes.",
 			"ty": "np",
 			"slown": "I have this sudden urge to package something I just found in the AUR.",
-			"dejavu": "http://ftp.frugalware.org/pub/other/mxw/dejavu.py",
+			"dejavu": "https://ftp.frugalware.org/pub/other/mxw/dejavu.py",
 			"rebase": "git config branch.master.rebase true",
-			"pic": "http://ftp.frugalware.org/pub/other/mxw/mxw.jpg",
+			"pic": "https://ftp.frugalware.org/pub/other/mxw/mxw.jpg",
 			"roadmap": "Indicate release date of the next stable version of Frugalware",
 			"faq": "https://wiki.frugalware.org/index.php/FAQ"
 			}
@@ -1285,15 +587,8 @@ class config:
 			"ban": ban,
 			"unban": unban,
 			"topic": topic,
-			# web services
-			"google": google,
-			"btssearch": (lambda c, source, target, argv: google(c, source, target, ("site:bugs.frugalware.org %s" % " ".join(argv)).split(' '))),
-			"fight": fight,
-			"lc": lc,
-			"define": define,
 			# misc
 			"help": help,
-			"calc": google,
 			"eval": myeval,
 			"reload": myreload,
 			"uptime": uptime,
@@ -1302,20 +597,13 @@ class config:
 			"git": git,
 			"anongit": anongit,
 			"repo": repo,
-			"imdb": imdb,
-			"mojodb": mojodb,
-			"dict": dict,
 			"wipstatus": wipstatus,
 			"notify": notify,
 			"parsedate": parsedate,
 			"wtf": wtf,
 			"choose": choose,
-			"integrate": integrate,
-			"isbn": isbn,
-			"tv": tv,
 			"bullshit": bullshit,
 			"bullshit2": bullshit2,
-			"mid": mid,
 			"m8r": m8r,
 			"roadmap": roadmap,
 			}
@@ -1330,9 +618,6 @@ class config:
 			(lambda e, argv: e.arguments()[0].lower() == "yepp!"): (lambda c, e, source, argv: fortune(c, e, source, "akii-fun.lines", "Yepp!")),
 			(lambda e, argv: e.arguments()[0].lower() == "argh!" and e.target() not in ["#frugalware", "#frugalware.dev"]): (lambda c, e, source, argv: fortune(c, e, source, "murphy-hu.lines", "Argh!")),
 			(lambda e, argv: e.arguments()[0].lower() == "yow!"): (lambda c, e, source, argv: fortune(c, e, source, "yow.lines", "Yow!")),
-			(lambda e, argv: re.match("^[0-9.]+[KM]? [a-zA-Z]+ in [a-zA-Z]+$", " ".join(argv[:4])) and len(argv)==4): (lambda c, e, source, argv: google(c, source, e.target(), argv)),
-			(lambda e, argv: (not e.target().startswith("#")) and re.match("^(en|de) [a-zA-Z\xdf\xfc]+$", " ".join(argv))): (lambda c, e, source, argv: dict(c, source, e.target(), argv)),
-			(lambda e, argv: re.match("^#[0-9]+$", " ".join(argv))): (lambda c, e, source, argv: bugs(c, source, e.target(), argv)),
 			(lambda e, argv: re.match("^lc$", " ".join(argv))): (lambda c, e, source, argv: lc(c, source, e.target(), argv))
 			}
 	highlight_triggers = {
@@ -1546,9 +831,9 @@ def on_pubmsg(self, c, e):
 def on_bug(self, c, e):
 	type, value, tb = sys.exc_info()
 	stype = str(type).split("'")[1]
-	print "Traceback (most recent call last):"
-	print "".join(traceback.format_tb(tb)).strip()
-	print "%s: %s" % (stype, value)
+	print("Traceback (most recent call last):")
+	print("".join(traceback.format_tb(tb)).strip())
+	print("%s: %s" % (stype, value))
 
 	badline = inspect.trace()[-1]
 	c.privmsg(config.owner, "%s at file %s line %d" % (stype, badline[1], badline[2]))

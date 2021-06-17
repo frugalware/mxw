@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from ircbot import SingleServerIRCBot
-import events
+import events, imp
 
 class Mxw2(SingleServerIRCBot):
 	def __init__(self):
@@ -10,7 +10,7 @@ class Mxw2(SingleServerIRCBot):
 		self.reload()
 	
 	def reload(self):
-		reload(events)
+		imp.reload(events)
 		self.events = {}
 		for i in dir(events):
 			if not i.startswith("__"):

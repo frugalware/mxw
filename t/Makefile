@@ -1,2 +1,2 @@
 all:
-	@sh run-tests.sh
+	@bash run-tests.sh
