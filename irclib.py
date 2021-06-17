@@ -68,6 +68,7 @@ import sys
 import time
 import types
 import threading
+import ssl
 
 VERSION = 0, 4, 6
 DEBUG = 1
@@ -427,6 +428,10 @@ class ServerConnection(Connection):
 		try:
 			self.socket.bind((self.localaddress, self.localport))
 			self.socket.connect((self.server, self.port))
+			if self.port == 6697:
+				ctx = ssl.create_default_context()
+				ctx.options |= ssl.OP_NO_SSLv2 | ssl.OP_NO_SSLv3 | ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1
+				self.socket = ctx.wrap_socket(self.socket, server_hostname=self.server)
 		except socket.error as x:
 			self.socket.close()
 			self.socket = None

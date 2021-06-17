@@ -537,7 +537,7 @@ def roadmap(c, source, target, argv):
 
 class config:
 	server = "irc.libera.chat"
-	port = 6667
+	port = 6697
 	nick  = "mxw_"
 	password = None
 	realname = "yeah"
