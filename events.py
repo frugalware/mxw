@@ -1234,12 +1234,12 @@ def roadmap(c, source, target, argv):
 	c.privmsg(target, "%s: The next version of Frugalware (%s - Codename %s), will be released on %s" % (source, versionnode[0].firstChild.nodeValue,codenamenode[0].firstChild.nodeValue, datenode[0].firstChild.nodeValue))
 
 class config:
-	server = "irc.freenode.net"
+	server = "irc.libera.chat"
 	port = 6667
 	nick  = "mxw_"
 	password = password.password
 	realname = "yeah"
-	channels = ['#frugalware', '#frugalware.dev', '#frugalware.hu', '#frugalware.fr', '#frugalware.es']
+	channels = ['#frugalware', '#frugalware.dev']
 	authors = "/pub/frugalware/frugalware-current/docs/xml/authors.xml"
 	logpath = "/pub/other/irclogs"
 	# for reporting bugs
