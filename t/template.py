@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 sys.path.append("..")
@@ -6,9 +6,9 @@ from events import @FUNCTION@
 
 class C:
 	def privmsg(self, target, text):
-		print "privmsg: %s" % text
+		print("privmsg: %s" % text)
 	def notice(self, target, text):
-		print "notice: %s" % text
+		print("notice: %s" % text)
 
 c = C()
 

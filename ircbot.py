@@ -26,7 +26,7 @@ write simpler bots.
 
 import sys
 import time
-from UserDict import UserDict
+from collections import UserDict
 
 from irclib import SimpleIRCClient
 from irclib import nm_to_n, irc_lower, all_events

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 passed=0
 failed=0
