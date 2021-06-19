@@ -1,35 +1,10 @@
 import traceback, inspect, sys, time, re, pickle
 sys.path.append("/usr/lib")
-import feedparser, html.entities, random, os, threading, string, glob
+import html.entities, random, os, threading, string, glob
 import anydatetime, socket
 from xml.dom import minidom
-from sgmllib import SGMLParser
 from irclib import Event
 from urllib import request as urllib
-
-class Rss:
-	def __init__(self, url, targets, title):
-		self.url = url
-		self.targets = targets
-		self.title = title
-		self.feed = None
-		self.updated = time.time()
-
-class RssThread(threading.Thread):
-	def __init__(self, s, c, e):
-		threading.Thread.__init__(self)
-		self.s = s
-		self.c = c
-		self.e = e
-		self.dieplz = False
-		self.lastcheck = 0
-	def run(self):
-		while(True):
-			if self.dieplz:
-				break
-			time.sleep(180)
-			check_rss(self.s, self.c, self.e)
-			self.lastcheck = time.time()
 
 class NotifyThread(threading.Thread):
 	def __init__(self, c):
@@ -547,8 +522,6 @@ class config:
 	# for reporting bugs
 	owner = "#frugalware.dev"
 
-	feeds = []
-	duped_feeds = "feeds"
 	database = {
 			":)": ":D",
 			":D": "lol",
@@ -652,23 +625,6 @@ def command(self, c, source, target, data):
 	if config.commands['db'](c, source, target, argv):
 		return True
 	return False
-
-def check_rss(self, c, e):
-	current = time.time()
-	for i in config.feeds:
-		gray = i.title
-		i.feed = feedparser.parse(i.url)
-		for j in i.feed.entries:
-			i.updated = max(time.mktime(j.updated_parsed), i.updated)
-			for k in i.targets:
-				if time.mktime(j.updated_parsed) > i.updated:
-					if i.title == "ping":
-						brown = j.author
-						green = j.title
-					else: # blogs and bugs
-						brown = j.title.encode('latin2') # FIXME: hardwired charset
-						green = j.link
-					c.privmsg(k, "14%s7 %s3 %s" % (gray, brown, green))
 
 def inxml(nick):
 	xmldoc = minidom.parse(config.authors)
@@ -868,12 +824,9 @@ def on_identified(self, c, e):
 		del todo[nick]
 
 def on_quit(self, c, e):
-	self.rssthread.dieplz = True
+	log(e)
 
 def on_pong(self, c, e):
-	if not hasattr(self, "rssthread") or not self.rssthread.isAlive():
-		self.rssthread = RssThread(self, c, e)
-		self.rssthread.start()
 	if not hasattr(self, "sockthread") or not self.sockthread.isAlive():
 		self.sockthread = SockThread(c)
 		self.sockthread.start()
