@@ -5,4 +5,4 @@ log=mxw2.log
 cd `dirname $0`
 
 date > $log
-python mxw2.py >>$log 2>>$log &
+python3 mxw2.py >>$log 2>>$log &

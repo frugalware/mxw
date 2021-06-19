@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 ''' $ python when.py [-h|--help] [-f "format"] [date]
 	Example dates:
 		today
